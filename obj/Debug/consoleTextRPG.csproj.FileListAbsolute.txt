@@ -1,0 +1,7 @@
+C:\Users\Angel\source\repos\consoleTextRPG\bin\Debug\consoleTextRPG.exe.config
+C:\Users\Angel\source\repos\consoleTextRPG\bin\Debug\consoleTextRPG.exe
+C:\Users\Angel\source\repos\consoleTextRPG\bin\Debug\consoleTextRPG.pdb
+C:\Users\Angel\source\repos\consoleTextRPG\obj\Debug\consoleTextRPG.csproj.AssemblyReference.cache
+C:\Users\Angel\source\repos\consoleTextRPG\obj\Debug\consoleTextRPG.csproj.CoreCompileInputs.cache
+C:\Users\Angel\source\repos\consoleTextRPG\obj\Debug\consoleTextRPG.exe
+C:\Users\Angel\source\repos\consoleTextRPG\obj\Debug\consoleTextRPG.pdb
