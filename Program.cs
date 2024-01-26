@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Xml.Linq;
 using System.ComponentModel;
+using System.Diagnostics.Eventing.Reader;
 
 
 namespace consoleTextRPG
@@ -20,39 +21,15 @@ namespace consoleTextRPG
             Archer archer = new Archer("Лучник", 80, 20, 1, 1, 0);
 
 
-            //Welcome();
+            Welcome();
 
 
-            ShowClassList(warrior, sorcerer, slayer, archer);
+            int chosenClass = playerPick(warrior, sorcerer, slayer, archer);
 
-            bool inChoice = true;
-            var pressedKey = Console.ReadKey();
 
-            string text = "\n   Нажмите Enter для выбора класса или любую другую клавишу чтобы вернуться к списку классов";
-            switch (pressedKey.Key)
-            { 
-                case ConsoleKey.D1:
-                    warrior.ShowStats();
-                    SlowWrite(text, needClear: false);
-                    break;
-                case ConsoleKey.D2:
-                    sorcerer.ShowStats();
-                    SlowWrite(text, needClear: false);
-                    break;
-                case ConsoleKey.D3:
-                    slayer.ShowStats();
-                    SlowWrite(text, needClear: false);
-                    break;
-                case ConsoleKey.D4:
-                    archer.ShowStats();
-                    SlowWrite(text, needClear: false);
-                    break;
-                default:
-                    ShowClassList(warrior, sorcerer, slayer, archer);
-                    break;
-            }
+            BaseClass player = ClassFactory.CreateInstance(chosenClass);
+            SlowWrite("Продолжение следует...");
 
-            
             while (true)
             {
                 Console.ReadKey();
@@ -61,8 +38,55 @@ namespace consoleTextRPG
 
         }
 
+
+        static void Welcome()
+        {
+            Console.CursorVisible = false;
+            SlowWrite("Нажми любую клавишу чтобы начать...");
+            SlowWrite("Привет!");
+            SlowWrite("Это текстовая РПГ для моего обучения.");
+            SlowWrite("Для начала выбери класс персонажа:");
+        }
+
+        static int playerPick(Warrior warrior, Sorcerer sorcerer, Slayer slayer, Archer archer)
+        {
+            ShowClassList(warrior, sorcerer, slayer, archer);
+
+            bool inChoice = true;
+            int chosenClass = 0;
+            ConsoleKeyInfo PressedKey;
+            while (inChoice)
+            {
+                PressedKey = Console.ReadKey();
+                inChoice = ChoisingClass(warrior, sorcerer, slayer, archer, PressedKey, ref chosenClass);
+            }
+
+
+            switch (chosenClass)
+            {
+                case 1:
+                    SlowWrite("Выбран Воин!");
+                    break;
+
+                case 2:
+                    SlowWrite("Выбран Маг!");
+                    break;
+                case 3:
+                    SlowWrite("Выбран Убийца!");
+                    break;
+                case 4:
+                    SlowWrite("Выбран Лучник!");
+                    break;
+                default:
+                    Console.WriteLine("Шота сломалось :(");
+                    break;
+            }
+            return chosenClass;
+        }
+
         static void SlowWrite(string str, ConsoleColor textColor = ConsoleColor.Yellow, bool needClear = true)
         {
+
             Console.ForegroundColor = textColor;
             if (needClear)
             {
@@ -83,17 +107,9 @@ namespace consoleTextRPG
             }
         }
 
-        static void Welcome()
-        {
-            Console.CursorVisible = false;
-            SlowWrite("Нажми любую клавишу чтобы начать...");
-            SlowWrite("Привет!");
-            SlowWrite("Это текстовая РПГ для моего обучения.");
-            SlowWrite("Для начала выбери класс персонажа:");
-        }
-
         static void ShowClassList(Warrior warrior, Sorcerer sorcerer, Slayer slayer, Archer archer)
         {
+            Console.Clear();
             SlowWrite($"1. {warrior.Name}", ConsoleColor.Red, false);
             SlowWrite($"2. {sorcerer.Name}", ConsoleColor.Blue, false);
             SlowWrite($"3. {slayer.Name}", ConsoleColor.DarkRed, false);
@@ -102,11 +118,11 @@ namespace consoleTextRPG
             SlowWrite("Нажми соответствующую цифру для получения подробной информации о классе.", needClear: false);
         }
 
-        static int ChoisingClass(Warrior warrior, Sorcerer sorcerer, Slayer slayer, Archer archer, bool inChoice)
+        static bool ChoisingClass(Warrior warrior, Sorcerer sorcerer, Slayer slayer, Archer archer, ConsoleKeyInfo pressedKey, ref int chosenClass)
         {
-            var pressedKey = Console.ReadKey();
 
-            string text = "\n   Нажмите Enter для выбора класса или любую другую клавишу чтобы вернуться к списку классов";
+            string text = "\n   Нажмите Enter для выбора класса или любую другую клавишу чтобы вернуться к списку классов.";
+            bool inChoice = true;
             switch (pressedKey.Key)
             {
                 case ConsoleKey.D1:
@@ -126,26 +142,51 @@ namespace consoleTextRPG
                     SlowWrite(text, needClear: false);
                     break;
                 default:
+                    Console.Clear();
                     ShowClassList(warrior, sorcerer, slayer, archer);
-                    break;
+                    return inChoice;
             }
-            var nextKey = Console.ReadKey();
-            switch (nextKey.Key)
+            ConsoleKey secondKey = Console.ReadKey().Key;
+            switch (secondKey)
             {
                 case ConsoleKey.Enter:
                     if (pressedKey.Key == ConsoleKey.D1)
-                        return 1;
+                    {
+                        chosenClass = 1;
+                        inChoice = false;
+                        return inChoice;
+                    }
                     else if (pressedKey.Key == ConsoleKey.D2)
-                        return 2;
+                    {
+                        chosenClass = 2;
+                        inChoice = false;
+                        return inChoice;
+                    }
                     else if (pressedKey.Key == ConsoleKey.D3)
-                        return 3;
+                    {
+                        chosenClass = 3;
+                        inChoice = false;
+                        return inChoice;
+                    }
                     else if (pressedKey.Key == ConsoleKey.D4)
-                        return 4;
-                    break;
+                    {
+                        chosenClass = 4;
+                        inChoice = false;
+                        return inChoice;
+                    }
+                    else
+                    {
+                        Console.Clear();
+                        ShowClassList(warrior, sorcerer, slayer, archer);
+                        break;
+                    }
                 default:
-                    return 0;
+                    Console.Clear();
+                    ShowClassList(warrior, sorcerer, slayer, archer);
+                    break;
             }
-            
+
+            return inChoice;
 
         }
 
@@ -235,6 +276,31 @@ namespace consoleTextRPG
             }
         }
 
+        class ClassFactory
+        {
+            public static BaseClass CreateInstance(int value)
+            {
+                if (value == 1)
+                {
+                    return new Warrior("Воин", 120, 20, 0, 1, 0);
+                }
+                else if (value == 2)
+                {
+                    return new Sorcerer("Маг", 70, 60, 1, 1, 0);
+                }
+                else if (value == 3)
+                {
+                    return new Slayer("Убийца", 90, 30, 0, 1, 0);
+                }
+                else if (value == 4)
+                {
+                    return new Archer("Лучник", 80, 20, 1, 1, 0);
+                }
+                else { throw new ArgumentException("Неверный класс"); }
+
+            }
+            
+        }
     }
 }
 
