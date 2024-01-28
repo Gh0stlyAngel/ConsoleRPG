@@ -7,6 +7,7 @@ using System.Threading;
 using System.Xml.Linq;
 using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
+using System.Runtime.CompilerServices;
 
 
 namespace consoleTextRPG
@@ -15,6 +16,7 @@ namespace consoleTextRPG
     {
         static void Main(string[] args)
         {
+
             Warrior warrior = new Warrior("Воин", 120, 20, 0, 1, 0);
             Sorcerer sorcerer = new Sorcerer("Маг", 70, 60, 1, 1, 0);
             Slayer slayer = new Slayer("Убийца", 90, 30, 0, 1, 0);
@@ -37,7 +39,6 @@ namespace consoleTextRPG
 
 
         }
-
 
         static void Welcome()
         {
@@ -93,11 +94,32 @@ namespace consoleTextRPG
                 Console.Clear();
 
             }
-            Console.Write("\n   ");
-            foreach (char letter in str)
+            if (str.Length < 106)
             {
-                Console.Write(letter);
-                Thread.Sleep(14);
+                Console.Write("\n   ");
+                foreach (char letter in str)
+                {
+                    Console.Write(letter);
+                    Thread.Sleep(14);
+                }
+            }
+            else
+            {
+                Console.Write("\n   ");
+                for (int i = 0; i < 106; i++)
+                {
+                    Console.Write(str[i]);
+                    Thread.Sleep(14);
+                }
+                if (str[106] == ' ')
+                    Console.Write("\n   ");
+                else
+                    Console.Write("-\n   ");
+                for (int i = 106; i < str.Length; i++)
+                {
+                    Console.Write(str[i]);
+                    Thread.Sleep(14);
+                }
             }
 
             if (needClear)
@@ -200,8 +222,6 @@ namespace consoleTextRPG
             public int Level { get; private set; }
             public int EXP { get; private set; }
 
-
-
             public BaseClass(string name, int hp, int mp, int atcRange, int level, int exp)
             {
                 Name = name;
@@ -212,7 +232,7 @@ namespace consoleTextRPG
                 EXP = exp;
             }
 
-            public void ShowStats()
+            public virtual void ShowStats()
             {
                 Console.Clear();
                 SlowWrite($"{Name}\n", ConsoleColor.Yellow, false);
@@ -223,13 +243,16 @@ namespace consoleTextRPG
                 else
                     SlowWrite("Дальний бой", ConsoleColor.Yellow, false);
 
+                Console.WriteLine();
+
+
 
             }
 
             public void GainExp(int amountEXP)
             {
                 EXP += amountEXP;
-                while(EXP >= 10)
+                while (EXP >= 10)
                 {
                     EXP -= 10;
                     LevelUp();
@@ -246,33 +269,98 @@ namespace consoleTextRPG
 
         class Warrior : BaseClass
         {
+            public WarriorActiveAbility ActiveAbility { get; private set; }
+
+            public WarriorPassiveAbility PassiveAbility { get; private set; }
             public Warrior(string name, int hp, int mp, int atcRange, int level, int exp) : base(name, hp, mp, atcRange, level, exp)
             {
-
+                ActiveAbility = new WarriorActiveAbility("Калечащий удар", "Воин наносит сильный удар противнику, уменьшая наносимый им урон на 2 хода. Нанесение урона покалеченному противнику оглушает его.");
+                PassiveAbility = new WarriorPassiveAbility("Нарастающая ярость", "Течение битвы ожесточает воина, увеличивая наносимый им урон.");
             }
+
+            public override void ShowStats()
+            {
+                base.ShowStats();
+                SlowWrite(ActiveAbility.Name, needClear: false);
+                SlowWrite(ActiveAbility.Description, needClear: false);
+                Console.WriteLine();
+                SlowWrite(PassiveAbility.Name, needClear: false);
+                SlowWrite(PassiveAbility.Description, needClear: false);
+                Console.WriteLine();
+            }
+
         }
 
         class Sorcerer : BaseClass
         {
+            public SorcererActiveAbility ActiveAbility { get; private set; }
+
+            public SorcererPassiveAbility PassiveAbility { get; private set; }
+
             public Sorcerer(string name, int hp, int mp, int atcRange, int level, int exp) : base(name, hp, mp, atcRange, level, exp)
             {
 
+                ActiveAbility = new SorcererActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит урон замораживает цель на 1 ход.");
+                PassiveAbility = new SorcererPassiveAbility("Благословение богов", "Боги направляют руку мага, что может значительно усилить его заклинания.");
+
+            }
+            public override void ShowStats()
+            {
+                base.ShowStats();
+                SlowWrite(ActiveAbility.Name, needClear: false);
+                SlowWrite(ActiveAbility.Description, needClear: false);
+                Console.WriteLine();
+                SlowWrite(PassiveAbility.Name, needClear: false);
+                SlowWrite(PassiveAbility.Description, needClear: false);
+                Console.WriteLine();
             }
         }
 
         class Slayer : BaseClass
         {
+            public SlayerActiveAbility ActiveAbility { get; private set; }
+
+            public SlayerPassiveAbility PassiveAbility { get; private set; }
             public Slayer(string name, int hp, int mp, int atcRange, int level, int exp) : base(name, hp, mp, atcRange, level, exp)
             {
 
+                ActiveAbility = new SlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком. Чем серьезнее противник ранен, тем выше вероятность, что умение может мгновенно убить его.");
+                PassiveAbility = new SlayerPassiveAbility("Ловкость", "Ловкость убийцы позволяет ему уклоняться от ударов противника.");
+
+            }
+            public override void ShowStats()
+            {
+                base.ShowStats();
+                SlowWrite(ActiveAbility.Name, needClear: false);
+                SlowWrite(ActiveAbility.Description, needClear: false);
+                Console.WriteLine();
+                SlowWrite(PassiveAbility.Name, needClear: false);
+                SlowWrite(PassiveAbility.Description, needClear: false);
+                Console.WriteLine();
             }
         }
 
         class Archer : BaseClass
         {
+            public ArcherActiveAbility ActiveAbility { get; private set; }
+
+            public ArcherPassiveAbility PassiveAbility { get; private set; }
             public Archer(string name, int hp, int mp, int atcRange, int level, int exp) : base(name, hp, mp, atcRange, level, exp)
             {
 
+                ActiveAbility = new ArcherActiveAbility("Отступление", "Лучник разрывает дистанцию с противником, нанося урон.");
+                PassiveAbility = new ArcherPassiveAbility("Меткий глаз", "Меткость лучника позволяет ему наносить дополнительный урон удаленным целям, а также почти никогда не промахиваться.");
+
+            }
+            public override void ShowStats()
+            {
+                base.ShowStats();
+                SlowWrite(ActiveAbility.Name, needClear: false);
+                SlowWrite(ActiveAbility.Description, needClear: false);
+                Console.WriteLine();
+                SlowWrite(PassiveAbility.Name, needClear: false);
+                SlowWrite(PassiveAbility.Description, needClear: false);
+                Console.WriteLine();
             }
         }
 
@@ -299,12 +387,103 @@ namespace consoleTextRPG
                 else { throw new ArgumentException("Неверный класс"); }
 
             }
-            
+
         }
+
+        class BaseAbility
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
+
+            public BaseAbility(string name, string description)
+            {
+                Name = name;
+                Description = description;
+            }
+        }
+
+        class BaseActiveAbility : BaseAbility
+        {
+            public BaseActiveAbility(string name, string description) : base(name, description)
+            {
+
+            }
+        }
+
+        class BasePassiveAbility : BaseAbility
+        {
+            public BasePassiveAbility(string name, string description) : base(name, description)
+            {
+
+            }
+        }
+
+        class WarriorActiveAbility : BaseActiveAbility
+        {
+            public WarriorActiveAbility(string name, string description) : base(name, description)
+            {
+
+            }
+        }
+
+        class WarriorPassiveAbility : BasePassiveAbility
+        {
+            public WarriorPassiveAbility(string name, string description) : base(name, description)
+            {
+
+            }
+        }
+
+        class SorcererActiveAbility : BaseActiveAbility
+        {
+            public SorcererActiveAbility(string name, string description) : base(name, description)
+            {
+
+            }
+        }
+
+        class SorcererPassiveAbility : BasePassiveAbility
+        {
+            public SorcererPassiveAbility(string name, string description) : base(name, description)
+            {
+
+            }
+        }
+
+        class SlayerActiveAbility : BaseActiveAbility
+        {
+            public SlayerActiveAbility(string name, string description) : base(name, description)
+            {
+
+            }
+        }
+
+        class SlayerPassiveAbility : BasePassiveAbility
+        {
+            public SlayerPassiveAbility(string name, string description) : base(name, description)
+            {
+
+            }
+        }
+
+        class ArcherActiveAbility : BaseActiveAbility
+        {
+            public ArcherActiveAbility(string name, string description) : base(name, description)
+            {
+
+            }
+        }
+
+        class ArcherPassiveAbility : BasePassiveAbility
+        {
+            public ArcherPassiveAbility(string name, string description) : base(name, description)
+            {
+
+            }
+        }
+
     }
 }
-
-
 
 
 
