@@ -9,12 +9,27 @@ using System.ComponentModel;
 using System.Diagnostics.Eventing.Reader;
 using System.Runtime.CompilerServices;
 using ConsoleFight;
+using static System.Collections.Specialized.BitVector32;
 
 
 namespace consoleTextRPG
 {
     internal class Program
     {
+
+        internal static void Block()
+        {
+            ConsoleKeyInfo key;
+            do
+            {
+                key = Console.ReadKey(true);
+                if (key != null)
+                {
+                    // Ignore letters
+                    continue;
+                }
+            } while (key.Key != ConsoleKey.Enter);
+        }
         static void Main(string[] args)
         {
 
@@ -29,7 +44,7 @@ namespace consoleTextRPG
             Archer archer = new Archer("Лучник", 80, 20, 1, 1, 0, baseArcherWeapon);
 
 
-            Fight.StartWariorFight(ref warrior);
+            Fight.StartFight(ref warrior);
 
             if (warrior.HP <= 0)
             {
@@ -57,7 +72,7 @@ namespace consoleTextRPG
 
             while (true)
             {
-                Console.ReadKey();
+                Console.ReadKey(true);
             }
 
 
@@ -81,7 +96,7 @@ namespace consoleTextRPG
             ConsoleKeyInfo PressedKey;
             while (inChoice)
             {
-                PressedKey = Console.ReadKey();
+                PressedKey = Console.ReadKey(true);
                 inChoice = ChoisingClass(warrior, sorcerer, slayer, archer, PressedKey, ref chosenClass);
             }
 
@@ -112,6 +127,7 @@ namespace consoleTextRPG
         {
 
             Console.ForegroundColor = textColor;
+
             if (needClear)
             {
                 Console.Clear();
@@ -147,10 +163,12 @@ namespace consoleTextRPG
 
             if (needClear)
             {
-                Console.ReadKey();
+                Console.ReadKey(true);
 
             }
+
         }
+
 
         static void ShowClassList(Warrior warrior, Sorcerer sorcerer, Slayer slayer, Archer archer)
         {
@@ -191,7 +209,7 @@ namespace consoleTextRPG
                     ShowClassList(warrior, sorcerer, slayer, archer);
                     return inChoice;
             }
-            ConsoleKey secondKey = Console.ReadKey().Key;
+            ConsoleKey secondKey = Console.ReadKey(true).Key;
             switch (secondKey)
             {
                 case ConsoleKey.Enter:
@@ -540,6 +558,18 @@ namespace consoleTextRPG
             {
 
             }
+        }
+
+
+        public partial class NativeMethods
+        {
+
+            /// Return Type: BOOL->int
+            ///fBlockIt: BOOL->int
+            [System.Runtime.InteropServices.DllImportAttribute("user32.dll", EntryPoint = "BlockInput")]
+            [return: System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.Bool)]
+            public static extern bool BlockInput([System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.Bool)] bool fBlockIt);
+
         }
 
     }
