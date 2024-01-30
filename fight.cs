@@ -21,8 +21,10 @@ namespace ConsoleFight
 
     public class Fight
     {
-        internal static int StartFight(ref Program.Warrior player)
+        internal static int StartFight(ref Program.PlayerClass player)
         {
+            ConsoleKey[] actions = { ConsoleKey.D1, ConsoleKey.D2, ConsoleKey.D3, ConsoleKey.D4 };
+
             int eventCounter = 0;
             int logPositionY = 23;
             int logPositionX = 21;
@@ -34,48 +36,91 @@ namespace ConsoleFight
             DrawGUI(6, 13, 6, 15, player, baseEnemy);
 
             int distance = 0;
-            int playerSkipNext = 0;
-            int enemySkipNext = 0;
+            int playerSkipDueAtcRange = 0;
+            int enemySkipDueAtcRange = 0;
+
+            int enemyStuned = 0;
+            int playerStuned = 0;
+
             if (baseEnemy.AtcRange > player.AtcRange)
             {
                 distance = baseEnemy.AtcRange;
-                playerSkipNext = distance - player.AtcRange;
+                playerSkipDueAtcRange = distance - player.AtcRange;
             }
             else
             {
                 distance = player.AtcRange;
-                enemySkipNext = distance - baseEnemy.AtcRange;
+                enemySkipDueAtcRange = distance - baseEnemy.AtcRange;
             }
             while (baseEnemy.HP > 0 && player.HP > 0)
             {
+                WriteActions(player, ConsoleColor.DarkYellow);
+                // Player's turn
                 eventCounter++;
-                Console.SetCursorPosition(logPositionX, logPositionY);
-                if (playerSkipNext > 0)
+                if (playerSkipDueAtcRange > 0)
                 {
-                    playerSkipNext -= 1;
-                    WriteLogs(logQueue, $"{player.Name} пропускает ход.");
+                    playerSkipDueAtcRange -= 1;
+                    WriteLogs(logQueue, $"{player.Name} сокращает дистанцию дл€ атаки.");
+                }
+                else if (playerStuned > 0)
+                {
+                    playerStuned -= 1;
+                    WriteLogs(logQueue, $"{player.Name} оглушен.");
                 }
 
                 else
                 {
-                    baseEnemy.GetDamage(player.Weapon.Damage);
-                    WriteLogs(logQueue, $"{baseEnemy.Name} получает {player.Weapon.Damage} урона.");
+                    WriteActions(player, ConsoleColor.Yellow);
+                    ConsoleKey playerAction = GetPlayerAction(actions);
+                    int dealtDamage;
+                    switch (playerAction)
+                    {
+                        case ConsoleKey.D1:
+                            dealtDamage = player.Weapon.Damage + rnd.Next(-2, 2);
+                            baseEnemy.GetDamage(dealtDamage);
+                            WriteLogs(logQueue, $"{player.Name} атакует. {baseEnemy.Name} получает {dealtDamage} урона.");
+                            break;
+                        case ConsoleKey.D2:
+                            dealtDamage = player.Weapon.Damage + rnd.Next(-2, 2);
+                            baseEnemy.GetDamage(dealtDamage);
+                            WriteLogs(logQueue, $"{player.Name} примен€ет {player.ActiveAbility.Name}. {baseEnemy.Name} получает {dealtDamage} урона.");
+                            break;
+                        case ConsoleKey.D3:
+                            WriteLogs(logQueue, "Ќапример заюзать банку");
+                            break;
+                        case ConsoleKey.D4:
+                            WriteLogs(logQueue, "Ќапример сделать какую-нибудь фигню");
+                            break;
+                       
+                        default:
+                            break;
+                    }
+
                 }
+                WriteActions(player, ConsoleColor.DarkYellow);
                 DrawGUI(6, 13, 6, 15, player, baseEnemy);
                 Console.ReadKey(true);
-                Console.SetCursorPosition(logPositionX, logPositionY);
                 eventCounter++;
                 if (baseEnemy.HP > 0)
                 {
-                    if (enemySkipNext > 0)
+                    if (enemySkipDueAtcRange > 0)
                     {
-                        enemySkipNext -= 1;
-                        WriteLogs(logQueue, "ѕротивник пропускает ход.");
+                        enemySkipDueAtcRange -= 1;
+                        WriteLogs(logQueue, $"{baseEnemy.Name} сокращает дистанцию дл€ атаки.");
                     }
                     else
                     {
+                        int bash = rnd.Next(0, 101);
+                        int bashDamage = 3;
+                        if (bash >= 95)
+                        {
+                            player.GetDamage(baseEnemy.Damage + bashDamage);
+                            WriteLogs(logQueue, $"{baseEnemy.Name} атакует и оглушает игрока на 1 ход. {player.Name} получает {baseEnemy.Damage} урона.");
+                            playerStuned += 1;
+                        }
                         player.GetDamage(baseEnemy.Damage);
-                        WriteLogs(logQueue, $"{player.Name} получает {baseEnemy.Damage} урона.");
+                        WriteLogs(logQueue, $"{baseEnemy.Name} атакует. {player.Name} получает {baseEnemy.Damage} урона.");
+
                     }
                 }
 
@@ -86,7 +131,7 @@ namespace ConsoleFight
             return player.HP;
         }
 
-        internal static void DrawGUI(int hpPosX, int hpPosY, int manaPosX, int manaPosY, Program.BaseClass player, BaseEnemy enemy = null)
+        internal static void DrawGUI(int hpPosX, int hpPosY, int manaPosX, int manaPosY, Program.PlayerClass player, BaseEnemy enemy = null)
         {
             int startX = 21;
             int startY = 8;
@@ -132,6 +177,8 @@ namespace ConsoleFight
             Console.BackgroundColor = defaultColor;
             for (int i = currentPercent; i < 10; i++)
             {
+                if (i < 0)
+                    i = 0;
                 Console.Write(bar[i]);
             }
             Console.Write(']');
@@ -199,10 +246,44 @@ namespace ConsoleFight
             {
                 Console.SetCursorPosition(logPositionX, logPositionY);
                 logPositionY++;
-                Console.Write(logPositionY - 24 + ". " + log);
+                Console.Write( log);
 
             }
 
+        }
+
+        internal static void WriteActions(Program.PlayerClass player, ConsoleColor actionsColor)
+        {
+            int startX = 38;
+            int startY = 13;
+            Console.CursorVisible = false;
+            Console.ForegroundColor = actionsColor;
+            Console.SetCursorPosition(startX, startY);
+            Console.Write("1. јтаковать\n");
+            Console.SetCursorPosition(startX, startY + 1);
+            Console.Write($"2. ѕрименить {player.ActiveAbility.Name}");
+            Console.SetCursorPosition(startX, startY + 2);
+            Console.Write($"3. Ќапример заюзать банку");
+            Console.SetCursorPosition(startX, startY + 3);
+            Console.Write($"4. Ќапример сделать какую-нибудь фигню");
+        }
+
+        internal static ConsoleKey GetPlayerAction(ConsoleKey[] actions)
+        {
+            bool inArray = false;
+            ConsoleKey playerAction;
+            do
+            {
+                playerAction = Console.ReadKey(true).Key;
+                foreach (var action in actions)
+                {
+                    if (action == playerAction)
+                        inArray = true;
+                }
+            }
+            while (!inArray);
+            
+            return playerAction;
         }
         
 

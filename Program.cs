@@ -44,7 +44,17 @@ namespace consoleTextRPG
             Archer archer = new Archer("Лучник", 80, 20, 1, 1, 0, baseArcherWeapon);
 
 
-            Fight.StartFight(ref warrior);
+
+
+/*            Welcome();
+
+
+            int chosenClass = PlayerPick(warrior, sorcerer, slayer, archer);*/
+
+            int chosenClass = 1;
+            PlayerClass player = PlayerClassFactory.CreateInstance(chosenClass);
+
+            Fight.StartFight(ref player);
 
             if (warrior.HP <= 0)
             {
@@ -57,14 +67,6 @@ namespace consoleTextRPG
                 Console.ReadKey();
             }
 
-
-            Welcome();
-
-
-            int chosenClass = PlayerPick(warrior, sorcerer, slayer, archer);
-
-
-            BaseClass player = ClassFactory.CreateInstance(chosenClass);
 
 
 
@@ -324,6 +326,89 @@ namespace consoleTextRPG
 
 
         }
+        internal class PlayerClass
+        {
+
+            public string Name { get; private set; }
+            public int HP { get; private set; }
+            public int MP { get; private set; }
+            public int AtcRange { get; private set; }
+            public int Level { get; private set; }
+            public int EXP { get; private set; }
+            public int MaxHP { get; private set; }
+            public int MaxMP { get; private set; }
+            public Weapon Weapon { get; private set; }
+            public PlayerActiveAbility ActiveAbility { get; private set; }
+            public PlayerPassiveAbility PassiveAbility { get; private set; }
+            public PlayerClass(string name, int hp, int mp, int atcRange, int level, int exp, Weapon weapon, PlayerActiveAbility activeAbility, PlayerPassiveAbility passiveAbility)
+            {
+                Name = name;
+                HP = hp;
+                MP = mp;
+                AtcRange = atcRange;
+                Level = level;
+                EXP = exp;
+                Weapon = weapon;
+                MaxHP = HP;
+                MaxMP = MP;
+                ActiveAbility = activeAbility; 
+                PassiveAbility = passiveAbility;
+            }
+
+            public virtual void ShowStats()
+            {
+                Console.Clear();
+                SlowWrite($"{Name}\n", ConsoleColor.Yellow, false);
+                SlowWrite($"Здоровье: {HP}", ConsoleColor.Yellow, false);
+                SlowWrite($"Мана: {MP}", ConsoleColor.Yellow, false);
+                if (AtcRange < 1)
+                    SlowWrite("Ближний бой", ConsoleColor.Yellow, false);
+                else
+                    SlowWrite("Дальний бой", ConsoleColor.Yellow, false);
+
+                Console.WriteLine();
+                SlowWrite($"Снаряжение: {Weapon.Name}  Урон: {Weapon.Damage}", ConsoleColor.Yellow, false);
+
+                Console.WriteLine();
+
+                SlowWrite(ActiveAbility.Name, needClear: false);
+                SlowWrite(ActiveAbility.Description, needClear: false);
+                Console.WriteLine();
+                SlowWrite(PassiveAbility.Name, needClear: false);
+                SlowWrite(PassiveAbility.Description, needClear: false);
+                Console.WriteLine();
+
+
+
+            }
+
+            public void GainExp(int amountEXP)
+            {
+                EXP += amountEXP;
+                while (EXP >= 10)
+                {
+                    EXP -= 10;
+                    LevelUp();
+                }
+            }
+            private void LevelUp()
+            {
+                Level += 1;
+                HP += 5;
+            }
+
+            public void GetDamage(int dealtDamage)
+            {
+                HP -= dealtDamage;
+            }
+
+            public void restoreHP(int RestoredHP)
+            {
+                HP += RestoredHP;
+            }
+
+
+        }
 
         internal class Warrior : BaseClass
         {
@@ -345,11 +430,6 @@ namespace consoleTextRPG
                 SlowWrite(PassiveAbility.Name, needClear: false);
                 SlowWrite(PassiveAbility.Description, needClear: false);
                 Console.WriteLine();
-            }
-
-            public void UseActiveAbility()
-            {
-
             }
 
         }
@@ -456,6 +536,45 @@ namespace consoleTextRPG
             }
 
         }
+        internal class PlayerClassFactory
+        {
+            public static PlayerClass CreateInstance(int value)
+            {
+                PlayerActiveAbility ActiveAbility;
+                PlayerPassiveAbility PassiveAbility;
+                if (value == 1)
+                {
+                    ActiveAbility = new PlayerActiveAbility("Калечащий удар", "Воин наносит сильный удар противнику, уменьшая наносимый им урон на 2 хода. Нанесение урона покалеченному противнику оглушает его.");
+                    PassiveAbility = new PlayerPassiveAbility("Нарастающая ярость", "Течение битвы ожесточает воина, увеличивая наносимый им урон.");
+                    Weapon weapon1 = new Weapon("Стандартный меч", 10);
+                    return new PlayerClass("Воин", 120, 20, 0, 1, 0, weapon1, ActiveAbility, PassiveAbility);
+                }
+                else if (value == 2)
+                {
+                    ActiveAbility = new PlayerActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит урон замораживает цель на 1 ход.");
+                    PassiveAbility = new PlayerPassiveAbility("Благословение богов", "Боги направляют руку мага, что может значительно усилить его заклинания.");
+                    Weapon weapon2 = new Weapon("Стандартный посох", 17);
+                    return new PlayerClass("Маг", 70, 60, 1, 1, 0, weapon2, ActiveAbility, PassiveAbility);
+                }
+                else if (value == 3)
+                {
+                    ActiveAbility = new PlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком. Чем серьезнее противник ранен, тем выше вероятность, что умение может мгновенно убить его.");
+                    PassiveAbility = new PlayerPassiveAbility("Ловкость", "Ловкость убийцы позволяет ему уклоняться от ударов противника.");
+                    Weapon weapon3 = new Weapon("Стандартный кинжал", 15);
+                    return new PlayerClass("Убийца", 90, 30, 0, 1, 0, weapon3, ActiveAbility, PassiveAbility);
+                }
+                else if (value == 4)
+                {
+                    ActiveAbility = new PlayerActiveAbility("Отступление", "Лучник разрывает дистанцию с противником, нанося урон.");
+                    PassiveAbility = new PlayerPassiveAbility("Меткий глаз", "Меткость лучника позволяет ему наносить дополнительный урон удаленным целям, а также почти никогда не промахиваться.");
+                    Weapon weapon4 = new Weapon("Стандартный лук", 12);
+                    return new PlayerClass("Лучник", 80, 20, 1, 1, 0, weapon4, ActiveAbility, PassiveAbility);
+                }
+                else { throw new ArgumentException("Неверный класс"); }
+
+            }
+
+        }
 
         internal class Weapon
         {
@@ -467,6 +586,35 @@ namespace consoleTextRPG
                 Damage = weaponDamage;
             }
         }
+
+
+        internal class PlayerBaseAbility
+        {
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public PlayerBaseAbility(string name, string description)
+            {
+                Name = name;
+                Description = description;
+            }
+        }
+
+        internal class PlayerActiveAbility : PlayerBaseAbility
+        {
+            public PlayerActiveAbility(string name, string description) : base(name, description)
+            {
+
+            }
+        }
+
+        internal class PlayerPassiveAbility : PlayerBaseAbility
+        {
+            public PlayerPassiveAbility(string name, string description) : base(name, description)
+            {
+
+            }
+        }
+
 
         internal class BaseAbility
         {
@@ -558,18 +706,6 @@ namespace consoleTextRPG
             {
 
             }
-        }
-
-
-        public partial class NativeMethods
-        {
-
-            /// Return Type: BOOL->int
-            ///fBlockIt: BOOL->int
-            [System.Runtime.InteropServices.DllImportAttribute("user32.dll", EntryPoint = "BlockInput")]
-            [return: System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.Bool)]
-            public static extern bool BlockInput([System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.Bool)] bool fBlockIt);
-
         }
 
     }
