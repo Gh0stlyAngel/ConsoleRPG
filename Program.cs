@@ -544,28 +544,28 @@ namespace consoleTextRPG
                 PlayerPassiveAbility PassiveAbility;
                 if (value == 1)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Калечащий удар", "Воин наносит сильный удар противнику, уменьшая наносимый им урон на 2 хода. Нанесение урона покалеченному противнику оглушает его.");
+                    ActiveAbility = new PlayerActiveAbility("Калечащий удар", "Воин наносит сильный удар противнику, уменьшая наносимый им урон на 2 хода. Нанесение урона покалеченному противнику оглушает его.", 15);
                     PassiveAbility = new PlayerPassiveAbility("Нарастающая ярость", "Течение битвы ожесточает воина, увеличивая наносимый им урон.");
                     Weapon weapon1 = new Weapon("Стандартный меч", 10);
                     return new PlayerClass("Воин", 120, 20, 0, 1, 0, weapon1, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 2)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит урон замораживает цель на 1 ход.");
+                    ActiveAbility = new PlayerActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит урон замораживает цель на 1 ход.", 22);
                     PassiveAbility = new PlayerPassiveAbility("Благословение богов", "Боги направляют руку мага, что может значительно усилить его заклинания.");
                     Weapon weapon2 = new Weapon("Стандартный посох", 17);
                     return new PlayerClass("Маг", 70, 60, 1, 1, 0, weapon2, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 3)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком. Чем серьезнее противник ранен, тем выше вероятность, что умение может мгновенно убить его.");
+                    ActiveAbility = new PlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком. Чем серьезнее противник ранен, тем выше вероятность, что умение может мгновенно убить его.", 20);
                     PassiveAbility = new PlayerPassiveAbility("Ловкость", "Ловкость убийцы позволяет ему уклоняться от ударов противника.");
                     Weapon weapon3 = new Weapon("Стандартный кинжал", 15);
                     return new PlayerClass("Убийца", 90, 30, 0, 1, 0, weapon3, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 4)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Отступление", "Лучник разрывает дистанцию с противником, нанося урон.");
+                    ActiveAbility = new PlayerActiveAbility("Отступление", "Лучник разрывает дистанцию с противником, нанося урон.", 8);
                     PassiveAbility = new PlayerPassiveAbility("Меткий глаз", "Меткость лучника позволяет ему наносить дополнительный урон удаленным целям, а также почти никогда не промахиваться.");
                     Weapon weapon4 = new Weapon("Стандартный лук", 12);
                     return new PlayerClass("Лучник", 80, 20, 1, 1, 0, weapon4, ActiveAbility, PassiveAbility);
@@ -590,8 +590,8 @@ namespace consoleTextRPG
 
         internal class PlayerBaseAbility
         {
-            public string Name { get; set; }
-            public string Description { get; set; }
+            public string Name { get; private set; }
+            public string Description { get; private set; }
             public PlayerBaseAbility(string name, string description)
             {
                 Name = name;
@@ -601,9 +601,11 @@ namespace consoleTextRPG
 
         internal class PlayerActiveAbility : PlayerBaseAbility
         {
-            public PlayerActiveAbility(string name, string description) : base(name, description)
-            {
+            public int Damage { get; private set; }
 
+            public PlayerActiveAbility(string name, string description, int damage) : base(name, description)
+            {
+                Damage = damage;
             }
         }
 

@@ -24,6 +24,7 @@ namespace ConsoleFight
         internal static int StartFight(ref Program.PlayerClass player)
         {
             ConsoleKey[] actions = { ConsoleKey.D1, ConsoleKey.D2, ConsoleKey.D3, ConsoleKey.D4 };
+            ConsoleKey[] actionsOnCD = { ConsoleKey.D1, ConsoleKey.D3, ConsoleKey.D4 };
 
             int eventCounter = 0;
             int logPositionY = 23;
@@ -35,12 +36,18 @@ namespace ConsoleFight
 
             DrawGUI(6, 13, 6, 15, player, baseEnemy);
 
+            int playerAbilityCooldown = 0;
+
             int distance = 0;
             int playerSkipDueAtcRange = 0;
             int enemySkipDueAtcRange = 0;
 
             int enemyStuned = 0;
             int playerStuned = 0;
+
+            int enemyHurt = 0;
+
+            int warriorAdditionalDamage = 0;
 
             if (baseEnemy.AtcRange > player.AtcRange)
             {
@@ -54,7 +61,7 @@ namespace ConsoleFight
             }
             while (baseEnemy.HP > 0 && player.HP > 0)
             {
-                WriteActions(player, ConsoleColor.DarkYellow);
+                WriteActions(player, ConsoleColor.DarkYellow, playerAbilityCooldown);
                 // Player's turn
                 eventCounter++;
                 if (playerSkipDueAtcRange > 0)
@@ -70,8 +77,12 @@ namespace ConsoleFight
 
                 else
                 {
-                    WriteActions(player, ConsoleColor.Yellow);
-                    ConsoleKey playerAction = GetPlayerAction(actions);
+                    WriteActions(player, ConsoleColor.Yellow, playerAbilityCooldown);
+                    ConsoleKey playerAction;
+                    if (playerAbilityCooldown <= 0)
+                        playerAction = GetPlayerAction(actions);
+                    else
+                        playerAction = GetPlayerAction(actionsOnCD);
                     int dealtDamage;
                     switch (playerAction)
                     {
@@ -80,7 +91,34 @@ namespace ConsoleFight
                             baseEnemy.GetDamage(dealtDamage);
                             WriteLogs(logQueue, $"{player.Name} атакует. {baseEnemy.Name} получает {dealtDamage} урона.");
                             break;
+
                         case ConsoleKey.D2:
+                            switch (player.Name)
+                            {
+                                case "Воин":
+                                    // Изнурение 
+                                    enemyHurt += 2;
+                                    playerAbilityCooldown += 4;
+                                    dealtDamage = player.ActiveAbility.Damage;
+                                    baseEnemy.GetDamage(dealtDamage);
+                                    WriteLogs(logQueue, $"{player.Name} применяет {player.ActiveAbility.Name}. {baseEnemy.Name} получает {dealtDamage} урона.");
+                                    break;
+
+                                case "Маг":
+
+                                    break;
+
+                                case "Убийца":
+
+                                    break;
+
+                                case "Лучник":
+
+                                    break;
+
+                                default:
+                                    break;
+                            }
                             dealtDamage = player.Weapon.Damage + rnd.Next(-2, 2);
                             baseEnemy.GetDamage(dealtDamage);
                             WriteLogs(logQueue, $"{player.Name} применяет {player.ActiveAbility.Name}. {baseEnemy.Name} получает {dealtDamage} урона.");
@@ -94,13 +132,17 @@ namespace ConsoleFight
                        
                         default:
                             break;
+
+
                     }
 
                 }
-                WriteActions(player, ConsoleColor.DarkYellow);
+                WriteActions(player, ConsoleColor.DarkYellow, playerAbilityCooldown);
                 DrawGUI(6, 13, 6, 15, player, baseEnemy);
                 Console.ReadKey(true);
                 eventCounter++;
+                playerStuned = CheckOnZero(playerStuned);
+                playerAbilityCooldown = CheckOnZero(playerAbilityCooldown);
                 if (baseEnemy.HP > 0)
                 {
                     if (enemySkipDueAtcRange > 0)
@@ -123,7 +165,9 @@ namespace ConsoleFight
 
                     }
                 }
-
+                enemyStuned = CheckOnZero(enemyStuned);
+                enemyStuned = CheckOnZero(enemyStuned);
+                warriorAdditionalDamage++;
                 DrawGUI(6, 13, 6, 15, player, baseEnemy);
                 Console.ReadKey(true);
 
@@ -252,18 +296,25 @@ namespace ConsoleFight
 
         }
 
-        internal static void WriteActions(Program.PlayerClass player, ConsoleColor actionsColor)
+        internal static void WriteActions(Program.PlayerClass player, ConsoleColor actionsColor, int abilityOnCD)
         {
             int startX = 38;
             int startY = 13;
             Console.CursorVisible = false;
             Console.ForegroundColor = actionsColor;
+
             Console.SetCursorPosition(startX, startY);
             Console.Write("1. Атаковать\n");
+
             Console.SetCursorPosition(startX, startY + 1);
+            if (abilityOnCD > 0)
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write($"2. Применить {player.ActiveAbility.Name}");
+
             Console.SetCursorPosition(startX, startY + 2);
+            Console.ForegroundColor = actionsColor;
             Console.Write($"3. Например заюзать банку");
+
             Console.SetCursorPosition(startX, startY + 3);
             Console.Write($"4. Например сделать какую-нибудь фигню");
         }
@@ -284,6 +335,15 @@ namespace ConsoleFight
             while (!inArray);
             
             return playerAction;
+        }
+
+        internal static int CheckOnZero(int value)
+        {
+            if (value <= 0)
+                value = 0;
+            else
+                value -= 1;
+            return value;
         }
         
 
