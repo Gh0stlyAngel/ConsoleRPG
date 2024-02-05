@@ -10,6 +10,7 @@ using System.Diagnostics.Eventing.Reader;
 using System.Runtime.CompilerServices;
 using ConsoleFight;
 using static System.Collections.Specialized.BitVector32;
+using static ConsoleFight.Fight;
 
 
 namespace consoleTextRPG
@@ -34,26 +35,22 @@ namespace consoleTextRPG
         {
 
             Weapon baseWarriorWeapon = new Weapon("Стандартный меч", 10);
-            Weapon baseSorcererWeapon = new Weapon("Стандартный посох", 17);
-            Weapon baseSlayerWeapon = new Weapon("Стандартный кинжал", 15);
+            Weapon baseSorcererWeapon = new Weapon("Стандартный посох", 14);
+            Weapon baseSlayerWeapon = new Weapon("Стандартный кинжал", 13);
             Weapon baseArcherWeapon = new Weapon("Стандартный лук", 12);
 
             Warrior warrior = new Warrior("Воин", 120, 20, 0, 1, 0, baseWarriorWeapon);
-            Sorcerer sorcerer = new Sorcerer("Маг", 70, 60, 1, 1, 0, baseSorcererWeapon);
+            Sorcerer sorcerer = new Sorcerer("Маг", 60, 70, 1, 1, 0, baseSorcererWeapon);
             Slayer slayer = new Slayer("Убийца", 90, 30, 0, 1, 0, baseSlayerWeapon);
             Archer archer = new Archer("Лучник", 80, 20, 1, 1, 0, baseArcherWeapon);
 
 
 
+            /*            Welcome();*/
 
-/*            Welcome();
 
-
-            int chosenClass = PlayerPick(warrior, sorcerer, slayer, archer);*/
-
-            int chosenClass = 1;
+            int chosenClass = PlayerPick(warrior, sorcerer, slayer, archer);
             PlayerClass player = PlayerClassFactory.CreateInstance(chosenClass);
-
             Fight.StartFight(ref player);
 
             if (warrior.HP <= 0)
@@ -407,6 +404,11 @@ namespace consoleTextRPG
                 HP += RestoredHP;
             }
 
+            public void SpendMana()
+            {
+                MP -= ActiveAbility.ManaCost;
+            }
+
 
         }
 
@@ -417,7 +419,7 @@ namespace consoleTextRPG
             public WarriorPassiveAbility PassiveAbility { get; private set; }
             public Warrior(string name, int hp, int mp, int atcRange, int level, int exp, Weapon weapon) : base(name, hp, mp, atcRange, level, exp, weapon)
             {
-                ActiveAbility = new WarriorActiveAbility("Калечащий удар", "Воин наносит сильный удар противнику, уменьшая наносимый им урон на 2 хода. Нанесение урона покалеченному противнику оглушает его.");
+                ActiveAbility = new WarriorActiveAbility("Изнуряющий удар", "Воин наносит сильный удар противнику, уменьшая наносимый им урон на 2 хода. Нанесение урона изнуренному противнику оглушает его.");
                 PassiveAbility = new WarriorPassiveAbility("Нарастающая ярость", "Течение битвы ожесточает воина, увеличивая наносимый им урон.");
             }
 
@@ -518,7 +520,7 @@ namespace consoleTextRPG
                 }
                 else if (value == 2)
                 {
-                    Weapon weapon2 = new Weapon("Стандартный посох", 17);
+                    Weapon weapon2 = new Weapon("Стандартный посох", 15);
                     return new Sorcerer("Маг", 70, 60, 1, 1, 0, weapon2);
                 }
                 else if (value == 3)
@@ -529,7 +531,7 @@ namespace consoleTextRPG
                 else if (value == 4)
                 {
                     Weapon weapon4 = new Weapon("Стандартный лук", 12);
-                    return new Archer("Лучник", 80, 20, 1, 1, 0, weapon4);
+                    return new Archer("Лучник", 80, 20, 2, 1, 0, weapon4);
                 }
                 else { throw new ArgumentException("Неверный класс"); }
 
@@ -544,31 +546,31 @@ namespace consoleTextRPG
                 PlayerPassiveAbility PassiveAbility;
                 if (value == 1)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Калечащий удар", "Воин наносит сильный удар противнику, уменьшая наносимый им урон на 2 хода. Нанесение урона покалеченному противнику оглушает его.", 15);
+                    ActiveAbility = new PlayerActiveAbility("Изнуряющий удар", "Воин наносит сильный удар противнику, уменьшая наносимый им урон на 2 хода. Нанесение урона изнуренному противнику оглушает его.", 15, 6);
                     PassiveAbility = new PlayerPassiveAbility("Нарастающая ярость", "Течение битвы ожесточает воина, увеличивая наносимый им урон.");
                     Weapon weapon1 = new Weapon("Стандартный меч", 10);
                     return new PlayerClass("Воин", 120, 20, 0, 1, 0, weapon1, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 2)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит урон замораживает цель на 1 ход.", 22);
+                    ActiveAbility = new PlayerActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит урон замораживает цель на 1 ход.", 18, 15);
                     PassiveAbility = new PlayerPassiveAbility("Благословение богов", "Боги направляют руку мага, что может значительно усилить его заклинания.");
-                    Weapon weapon2 = new Weapon("Стандартный посох", 17);
-                    return new PlayerClass("Маг", 70, 60, 1, 1, 0, weapon2, ActiveAbility, PassiveAbility);
+                    Weapon weapon2 = new Weapon("Стандартный посох", 14);
+                    return new PlayerClass("Маг", 60, 70, 1, 1, 0, weapon2, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 3)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком. Чем серьезнее противник ранен, тем выше вероятность, что умение может мгновенно убить его.", 20);
+                    ActiveAbility = new PlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком. Чем серьезнее противник ранен, тем выше вероятность, что умение может мгновенно убить его.", 18, 14);
                     PassiveAbility = new PlayerPassiveAbility("Ловкость", "Ловкость убийцы позволяет ему уклоняться от ударов противника.");
-                    Weapon weapon3 = new Weapon("Стандартный кинжал", 15);
+                    Weapon weapon3 = new Weapon("Стандартный кинжал", 13);
                     return new PlayerClass("Убийца", 90, 30, 0, 1, 0, weapon3, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 4)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Отступление", "Лучник разрывает дистанцию с противником, нанося урон.", 8);
+                    ActiveAbility = new PlayerActiveAbility("Отступление", "Лучник разрывает дистанцию с противником, нанося урон.", 8, 6);
                     PassiveAbility = new PlayerPassiveAbility("Меткий глаз", "Меткость лучника позволяет ему наносить дополнительный урон удаленным целям, а также почти никогда не промахиваться.");
                     Weapon weapon4 = new Weapon("Стандартный лук", 12);
-                    return new PlayerClass("Лучник", 80, 20, 1, 1, 0, weapon4, ActiveAbility, PassiveAbility);
+                    return new PlayerClass("Лучник", 80, 20, 2, 1, 0, weapon4, ActiveAbility, PassiveAbility);
                 }
                 else { throw new ArgumentException("Неверный класс"); }
 
@@ -596,6 +598,7 @@ namespace consoleTextRPG
             {
                 Name = name;
                 Description = description;
+
             }
         }
 
@@ -603,9 +606,12 @@ namespace consoleTextRPG
         {
             public int Damage { get; private set; }
 
-            public PlayerActiveAbility(string name, string description, int damage) : base(name, description)
+            public int ManaCost { get; private set; }
+
+            public PlayerActiveAbility(string name, string description, int damage, int manaCost) : base(name, description)
             {
                 Damage = damage;
+                ManaCost = manaCost;
             }
         }
 

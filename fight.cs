@@ -11,6 +11,7 @@ using System.Runtime.CompilerServices;
 using consoleTextRPG;
 using System.Linq.Expressions;
 using static consoleTextRPG.Program;
+using static System.Net.Mime.MediaTypeNames;
 
 
 
@@ -23,6 +24,7 @@ namespace ConsoleFight
     {
         internal static int StartFight(ref Program.PlayerClass player)
         {
+
             ConsoleKey[] actions = { ConsoleKey.D1, ConsoleKey.D2, ConsoleKey.D3, ConsoleKey.D4 };
             ConsoleKey[] actionsOnCD = { ConsoleKey.D1, ConsoleKey.D3, ConsoleKey.D4 };
 
@@ -32,22 +34,35 @@ namespace ConsoleFight
             Queue<string> logQueue = new Queue<string>();
 
             Random rnd = new Random();
-            BaseEnemy baseEnemy = new BaseEnemy("Базовый противник", 50, 10, 1);
-
-            DrawGUI(6, 13, 6, 15, player, baseEnemy);
-
-            int playerAbilityCooldown = 0;
+            BaseEnemy baseEnemy = new BaseEnemy("Базовый противник", 80, 10, 1);
 
             int distance = 0;
-            int playerSkipDueAtcRange = 0;
-            int enemySkipDueAtcRange = 0;
 
-            int enemyStuned = 0;
+            // Player
+            int playerAbilityCooldown = 0;
             int playerStuned = 0;
+            int playerSkipDueAtcRange = 0;
 
+            int enemySkipDueAtcRange = 0;
+            int enemyEvadeChance = 8;
+
+            // Warrior
+            int enemyStuned = 0;
             int enemyHurt = 0;
-
             int warriorAdditionalDamage = 0;
+
+            // Sorcerer
+            int enemyFreezed = 0;
+
+            // Slayer
+            int PlayerEvadeChance = 5;
+            if (player.Name == "Убийца")
+                PlayerEvadeChance = 15;
+
+            // Archer
+            int archerAdditionalDamage = 0;
+            if (player.Name == "Лучник")
+                enemyEvadeChance = 3;
 
             if (baseEnemy.AtcRange > player.AtcRange)
             {
@@ -59,6 +74,10 @@ namespace ConsoleFight
                 distance = player.AtcRange;
                 enemySkipDueAtcRange = distance - baseEnemy.AtcRange;
             }
+            
+            DrawGUI(6, 13, 6, 15, player, distance, baseEnemy);
+            WriteActions(player, ConsoleColor.DarkYellow, playerAbilityCooldown);
+            Console.ReadKey(true);
             while (baseEnemy.HP > 0 && player.HP > 0)
             {
                 WriteActions(player, ConsoleColor.DarkYellow, playerAbilityCooldown);
@@ -67,6 +86,7 @@ namespace ConsoleFight
                 if (playerSkipDueAtcRange > 0)
                 {
                     playerSkipDueAtcRange -= 1;
+                    distance -= 1;
                     WriteLogs(logQueue, $"{player.Name} сокращает дистанцию для атаки.");
                 }
                 else if (playerStuned > 0)
@@ -79,49 +99,97 @@ namespace ConsoleFight
                 {
                     WriteActions(player, ConsoleColor.Yellow, playerAbilityCooldown);
                     ConsoleKey playerAction;
-                    if (playerAbilityCooldown <= 0)
+                    if (playerAbilityCooldown <= 0 || player.ActiveAbility.ManaCost > player.MP)
                         playerAction = GetPlayerAction(actions);
                     else
                         playerAction = GetPlayerAction(actionsOnCD);
                     int dealtDamage;
+                    if (distance > 0)
+                        archerAdditionalDamage = 3;
+                    else
+                        archerAdditionalDamage = 0;
                     switch (playerAction)
                     {
                         case ConsoleKey.D1:
-                            dealtDamage = player.Weapon.Damage + rnd.Next(-2, 2);
-                            baseEnemy.GetDamage(dealtDamage);
-                            WriteLogs(logQueue, $"{player.Name} атакует. {baseEnemy.Name} получает {dealtDamage} урона.");
+                            int playerChanceToMiss = rnd.Next(0, 101);
+                            if (playerChanceToMiss < enemyEvadeChance)
+                                WriteLogs(logQueue, $"{player.Name} промахивается атакой.");
+                            else
+                            {
+                                dealtDamage = player.Weapon.Damage + rnd.Next(-2, 2) + warriorAdditionalDamage;
+                                if (player.Name == "Лучник")
+                                    dealtDamage += archerAdditionalDamage;
+                                baseEnemy.GetDamage(dealtDamage);
+                                WriteLogs(logQueue, $"{player.Name} атакует. {baseEnemy.Name} получает {dealtDamage} урона.");
+                                if (enemyHurt > 0)
+                                {
+                                    enemyStuned += 1;
+                                    enemyHurt = 0;
+                                }
+                            }
                             break;
 
                         case ConsoleKey.D2:
                             switch (player.Name)
                             {
                                 case "Воин":
-                                    // Изнурение 
+                                    // Изнуряющий удар
                                     enemyHurt += 2;
                                     playerAbilityCooldown += 4;
                                     dealtDamage = player.ActiveAbility.Damage;
                                     baseEnemy.GetDamage(dealtDamage);
                                     WriteLogs(logQueue, $"{player.Name} применяет {player.ActiveAbility.Name}. {baseEnemy.Name} получает {dealtDamage} урона.");
+                                    player.SpendMana();
                                     break;
 
                                 case "Маг":
-
+                                    // Ледяное копье
+                                    int passiveChance = rnd.Next(0,101);
+                                    enemyFreezed += 1;
+                                    playerAbilityCooldown += 3;
+                                    dealtDamage = player.ActiveAbility.Damage;
+                                    baseEnemy.GetDamage(dealtDamage);
+                                    WriteLogs(logQueue, $"{player.Name} применяет {player.ActiveAbility.Name}. {baseEnemy.Name} получает {dealtDamage} урона.");
+                                    if (passiveChance >= 70)
+                                    {
+                                        baseEnemy.GetDamage((int)(dealtDamage / 2));
+                                        WriteLogs(logQueue, $"Божественное вмешательство! {player.Name} повторно применяет {player.ActiveAbility.Name}, нанося {(int)(dealtDamage / 2)} урона.");
+                                    }
+                                    player.SpendMana();
                                     break;
 
                                 case "Убийца":
-
+                                    // Казнь
+                                    playerAbilityCooldown += 3;
+                                    if (baseEnemy.HP <= Math.Round(baseEnemy.MaxHP * 0.3))
+                                    {
+                                        baseEnemy.GetDamage(baseEnemy.HP);
+                                        WriteLogs(logQueue, $"{player.Name} применяет {player.ActiveAbility.Name}. {baseEnemy.Name} получил смертельный удар.");
+                                    }
+                                    else
+                                    {
+                                        dealtDamage = player.ActiveAbility.Damage;
+                                        baseEnemy.GetDamage(dealtDamage);
+                                        WriteLogs(logQueue, $"{player.Name} применяет {player.ActiveAbility.Name}. {baseEnemy.Name} получает {dealtDamage} урона.");
+                                    }
+                                    player.SpendMana();
                                     break;
 
                                 case "Лучник":
-
+                                    // Отступление
+                                    playerAbilityCooldown += 2;
+                                    dealtDamage = player.ActiveAbility.Damage;
+                                    baseEnemy.GetDamage(dealtDamage);
+                                    WriteLogs(logQueue, $"{player.Name} применяет {player.ActiveAbility.Name}. {baseEnemy.Name} получает {dealtDamage} урона.");
+                                    distance += 1;
+                                    if (distance > baseEnemy.AtcRange)
+                                        enemySkipDueAtcRange += 1;
+                                    player.SpendMana();
                                     break;
 
                                 default:
                                     break;
                             }
-                            dealtDamage = player.Weapon.Damage + rnd.Next(-2, 2);
-                            baseEnemy.GetDamage(dealtDamage);
-                            WriteLogs(logQueue, $"{player.Name} применяет {player.ActiveAbility.Name}. {baseEnemy.Name} получает {dealtDamage} урона.");
                             break;
                         case ConsoleKey.D3:
                             WriteLogs(logQueue, "Например заюзать банку");
@@ -138,7 +206,7 @@ namespace ConsoleFight
 
                 }
                 WriteActions(player, ConsoleColor.DarkYellow, playerAbilityCooldown);
-                DrawGUI(6, 13, 6, 15, player, baseEnemy);
+                DrawGUI(6, 13, 6, 15, player, distance, baseEnemy);
                 Console.ReadKey(true);
                 eventCounter++;
                 playerStuned = CheckOnZero(playerStuned);
@@ -148,34 +216,67 @@ namespace ConsoleFight
                     if (enemySkipDueAtcRange > 0)
                     {
                         enemySkipDueAtcRange -= 1;
+                        distance -= 1;
                         WriteLogs(logQueue, $"{baseEnemy.Name} сокращает дистанцию для атаки.");
+                    }
+                    else if (enemyStuned > 0)
+                    {
+                        enemyStuned = CheckOnZero(enemyStuned);
+                        WriteLogs(logQueue, $"{baseEnemy.Name} оглушен.");
+                    }
+                    else if (enemyFreezed > 0)
+                    {
+                        enemyFreezed = CheckOnZero(enemyFreezed);
+                        WriteLogs(logQueue, $"{baseEnemy.Name} заморожен.");
                     }
                     else
                     {
+                        float enemyDamageChange = 0f;
+                        if (enemyHurt > 0)
+                            enemyDamageChange += 0.3f;
                         int bash = rnd.Next(0, 101);
                         int bashDamage = 3;
+
+                        int dealtDamage;
+                        int EnemyChanceToMiss = rnd.Next(0, 101);
                         if (bash >= 95)
                         {
-                            player.GetDamage(baseEnemy.Damage + bashDamage);
-                            WriteLogs(logQueue, $"{baseEnemy.Name} атакует и оглушает игрока на 1 ход. {player.Name} получает {baseEnemy.Damage} урона.");
-                            playerStuned += 1;
+                            dealtDamage = (int)(baseEnemy.Damage + bashDamage - Math.Round(baseEnemy.Damage * enemyDamageChange));
+                            if (EnemyChanceToMiss < PlayerEvadeChance)
+                                WriteLogs(logQueue, $"{baseEnemy.Name} промахивается атакой.");
+                            else
+                            {
+                                player.GetDamage(dealtDamage);
+                                WriteLogs(logQueue, $"{baseEnemy.Name} атакует и оглушает игрока на 1 ход. {player.Name} получает {dealtDamage} урона.");
+                                playerStuned += 1;
+                            }
                         }
-                        player.GetDamage(baseEnemy.Damage);
-                        WriteLogs(logQueue, $"{baseEnemy.Name} атакует. {player.Name} получает {baseEnemy.Damage} урона.");
+                        else
+                        {
+                            if (EnemyChanceToMiss < PlayerEvadeChance)
+                                WriteLogs(logQueue, $"{baseEnemy.Name} промахивается атакой.");
+                            else
+                            {
+                                dealtDamage = (int)(baseEnemy.Damage - Math.Round(baseEnemy.Damage * enemyDamageChange));
+                                player.GetDamage(dealtDamage);
+                                WriteLogs(logQueue, $"{baseEnemy.Name} атакует. {player.Name} получает {dealtDamage} урона.");
+                            }
+                        }
 
                     }
                 }
-                enemyStuned = CheckOnZero(enemyStuned);
-                enemyStuned = CheckOnZero(enemyStuned);
-                warriorAdditionalDamage++;
-                DrawGUI(6, 13, 6, 15, player, baseEnemy);
+                
+                enemyHurt = CheckOnZero(enemyHurt);
+                if (player.Name == "Воин")
+                    warriorAdditionalDamage++;
+                DrawGUI(6, 13, 6, 15, player, distance, baseEnemy);
                 Console.ReadKey(true);
 
             }
             return player.HP;
         }
 
-        internal static void DrawGUI(int hpPosX, int hpPosY, int manaPosX, int manaPosY, Program.PlayerClass player, BaseEnemy enemy = null)
+        internal static void DrawGUI(int hpPosX, int hpPosY, int manaPosX, int manaPosY, Program.PlayerClass player, int distance, BaseEnemy enemy = null)
         {
             int startX = 21;
             int startY = 8;
@@ -184,6 +285,7 @@ namespace ConsoleFight
             DrawBar(manaPosX, manaPosY, player.MP, player.MaxMP, ConsoleColor.Blue);
             if (enemy != null)
                 DrawBar(95, hpPosY + 1, enemy.HP, enemy.MaxHP, ConsoleColor.Red, enemy.Name);
+            WriteInfo(distance);
 
             
         }
@@ -268,12 +370,24 @@ namespace ConsoleFight
 
         }
 
+        internal static void WriteInfo(int distance)
+        {
+            int distancePosX = 20;
+            int distancePosY = 5;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.SetCursorPosition(distancePosX, distancePosY);
+            Console.Write($"Расстояние: {distance}");
+
+        }
+
         internal static void WriteLogs(Queue<string> logQueue, string newlog)
         {
-            Console.CursorVisible = false;
-            Console.ForegroundColor = ConsoleColor.Yellow;
             int logPositionY = 24;
             int logPositionX = 21;
+
+            Console.CursorVisible = false;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+
             Console.SetCursorPosition(logPositionX, logPositionY - 1);
             Console.Write("   История:");
             Console.SetCursorPosition(logPositionX, logPositionY);
@@ -307,7 +421,7 @@ namespace ConsoleFight
             Console.Write("1. Атаковать\n");
 
             Console.SetCursorPosition(startX, startY + 1);
-            if (abilityOnCD > 0)
+            if (abilityOnCD > 0 || player.ActiveAbility.ManaCost > player.MP)
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write($"2. Применить {player.ActiveAbility.Name}");
 
