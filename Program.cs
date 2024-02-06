@@ -58,7 +58,7 @@ namespace consoleTextRPG
 
             //Fight.StartFight(ref player);
 
-            Shop.ToShop();
+            Shop.ToShop(player);
 
             Console.ReadKey(true);
 
@@ -129,7 +129,7 @@ namespace consoleTextRPG
             return chosenClass;
         }
 
-        internal static void SlowWrite(string str, ConsoleColor textColor = ConsoleColor.Yellow, bool needClear = true)
+        internal static void SlowWrite(string str, ConsoleColor textColor = ConsoleColor.Yellow, bool needClear = true, int speed = 14)
         {
 
             Console.ForegroundColor = textColor;
@@ -163,7 +163,7 @@ namespace consoleTextRPG
                 for (int i = 106; i < str.Length; i++)
                 {
                     Console.Write(str[i]);
-                    Thread.Sleep(14);
+                    Thread.Sleep(speed);
                 }
             }
 

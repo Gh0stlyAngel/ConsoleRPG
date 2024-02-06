@@ -11,12 +11,20 @@ namespace ConsoleShop
 {
     internal class Shop
     {
-        internal static void ToShop()
+        public static int HealingPotionPrice { get; private set; }
+
+        public static int ManaPotionPrice { get; private set; }
+        public Shop()
+        {
+            HealingPotionPrice = 5;
+            ManaPotionPrice = 5;
+        }
+        internal static void ToShop(PlayerClass player)
         {
             SlowWrite("Вы прибыли в магазин.");
             Console.Clear();
-            SlowWrite("1. Посмотреть ассортимент.", needClear: false);
-            SlowWrite("2. Уйти.", needClear: false);
+            SlowWrite("1. Посмотреть ассортимент", needClear: false);
+            SlowWrite("2. Уйти", needClear: false);
             ConsoleKey[] actions = { ConsoleKey.D1, ConsoleKey.D2 };
             ConsoleKey playerAction = GetPlayerAction(actions);
 
@@ -41,7 +49,11 @@ namespace ConsoleShop
 
         internal static void OpenShop()
         {
-            SlowWrite("Ассортимент:");
+            Console.Clear();
+            SlowWrite("Ассортимент:", needClear: false, speed: 0);
+            Console.WriteLine();
+            SlowWrite($"1. Зелье лечения - {HealingPotionPrice} монет", needClear: false, speed: 0);
+            SlowWrite($"2. Зелье маны - {ManaPotionPrice} монет", needClear: false, speed: 0);
         }
     }
 }
