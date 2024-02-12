@@ -42,6 +42,9 @@ namespace consoleTextRPG
             Weapon baseSlayerWeapon = new Weapon("Стандартный кинжал", 13);
             Weapon baseArcherWeapon = new Weapon("Стандартный лук", 12);
 
+            HealingPotion healingPotion = new HealingPotion();
+            ManaPotion manaPotion = new ManaPotion();
+
             Warrior warrior = new Warrior("Воин", 120, 20, 0, 1, 0, baseWarriorWeapon);
             Sorcerer sorcerer = new Sorcerer("Маг", 60, 70, 1, 1, 0, baseSorcererWeapon);
             Slayer slayer = new Slayer("Убийца", 90, 30, 0, 1, 0, baseSlayerWeapon);
@@ -49,18 +52,23 @@ namespace consoleTextRPG
 
 
 
-            /*            Welcome();*/
+            //Welcome();
 
 
             //int chosenClass = PlayerPick(warrior, sorcerer, slayer, archer);
             int chosenClass = 1;
             PlayerClass player = PlayerClassFactory.CreateInstance(chosenClass);
+            player.Inventory.AppendItem(healingPotion);
+            player.Inventory.AppendItem(manaPotion);
 
-            //Fight.StartFight(ref player);
 
-            Shop.ToShop(player);
+            //Shop.ToShop(player);
 
-            Console.ReadKey(true);
+
+
+            Fight.StartFight(ref player);
+
+
 
             if (player.HP <= 0)
             {
@@ -72,9 +80,6 @@ namespace consoleTextRPG
                 Console.WriteLine("YouWIN");
                 Console.ReadKey();
             }
-
-
-
 
             SlowWrite("Продолжение следует...");
 
@@ -145,7 +150,7 @@ namespace consoleTextRPG
                 foreach (char letter in str)
                 {
                     Console.Write(letter);
-                    Thread.Sleep(14);
+                    Thread.Sleep(speed);
                 }
             }
             else
@@ -154,7 +159,7 @@ namespace consoleTextRPG
                 for (int i = 0; i < 106; i++)
                 {
                     Console.Write(str[i]);
-                    Thread.Sleep(14);
+                    Thread.Sleep(speed);
                 }
                 if (str[106] == ' ')
                     Console.Write("\n   ");
@@ -196,19 +201,19 @@ namespace consoleTextRPG
             {
                 case ConsoleKey.D1:
                     warrior.ShowStats();
-                    SlowWrite(text, needClear: false);
+                    SlowWrite(text, needClear: false, speed: 1);
                     break;
                 case ConsoleKey.D2:
                     sorcerer.ShowStats();
-                    SlowWrite(text, needClear: false);
+                    SlowWrite(text, needClear: false, speed: 1);
                     break;
                 case ConsoleKey.D3:
                     slayer.ShowStats();
-                    SlowWrite(text, needClear: false);
+                    SlowWrite(text, needClear: false, speed: 1);
                     break;
                 case ConsoleKey.D4:
                     archer.ShowStats();
-                    SlowWrite(text, needClear: false);
+                    SlowWrite(text, needClear: false, speed: 1);
                     break;
                 default:
                     Console.Clear();
@@ -291,16 +296,16 @@ namespace consoleTextRPG
             public virtual void ShowStats()
             {
                 Console.Clear();
-                SlowWrite($"{Name}\n", ConsoleColor.Yellow, false);
-                SlowWrite($"Здоровье: {HP}", ConsoleColor.Yellow, false);
-                SlowWrite($"Мана: {MP}", ConsoleColor.Yellow, false);
+                SlowWrite($"{Name}\n", ConsoleColor.Yellow, false, speed: 0);
+                SlowWrite($"Здоровье: {HP}", ConsoleColor.Yellow, false, speed: 0);
+                SlowWrite($"Мана: {MP}", ConsoleColor.Yellow, false, speed: 0);
                 if (AtcRange < 1)
-                    SlowWrite("Ближний бой", ConsoleColor.Yellow, false);
+                    SlowWrite("Ближний бой", ConsoleColor.Yellow, false, speed: 0);
                 else
-                    SlowWrite("Дальний бой", ConsoleColor.Yellow, false);
+                    SlowWrite("Дальний бой", ConsoleColor.Yellow, false, speed: 0);
 
                 Console.WriteLine();
-                SlowWrite($"Снаряжение: {Weapon.Name}  Урон: {Weapon.Damage}", ConsoleColor.Yellow, false);
+                SlowWrite($"Снаряжение: {Weapon.Name}  Урон: {Weapon.Damage}", ConsoleColor.Yellow, false, speed: 0);
 
                 Console.WriteLine();
 
@@ -369,24 +374,24 @@ namespace consoleTextRPG
             public virtual void ShowStats()
             {
                 Console.Clear();
-                SlowWrite($"{Name}\n", ConsoleColor.Yellow, false);
-                SlowWrite($"Здоровье: {HP}", ConsoleColor.Yellow, false);
-                SlowWrite($"Мана: {MP}", ConsoleColor.Yellow, false);
+                SlowWrite($"{Name}\n", ConsoleColor.Yellow, false, speed: 0);
+                SlowWrite($"Здоровье: {HP}", ConsoleColor.Yellow, false, speed: 0);
+                SlowWrite($"Мана: {MP}", ConsoleColor.Yellow, false, speed: 0);
                 if (AtcRange < 1)
-                    SlowWrite("Ближний бой", ConsoleColor.Yellow, false);
+                    SlowWrite("Ближний бой", ConsoleColor.Yellow, false, speed: 0);
                 else
-                    SlowWrite("Дальний бой", ConsoleColor.Yellow, false);
+                    SlowWrite("Дальний бой", ConsoleColor.Yellow, false, speed: 0);
 
                 Console.WriteLine();
-                SlowWrite($"Снаряжение: {Weapon.Name}  Урон: {Weapon.Damage}", ConsoleColor.Yellow, false);
+                SlowWrite($"Снаряжение: {Weapon.Name}  Урон: {Weapon.Damage}", ConsoleColor.Yellow, false, speed: 0);
 
                 Console.WriteLine();
 
-                SlowWrite(ActiveAbility.Name, needClear: false);
-                SlowWrite(ActiveAbility.Description, needClear: false);
+                SlowWrite(ActiveAbility.Name, needClear: false, speed: 0);
+                SlowWrite(ActiveAbility.Description, needClear: false, speed: 0);
                 Console.WriteLine();
-                SlowWrite(PassiveAbility.Name, needClear: false);
-                SlowWrite(PassiveAbility.Description, needClear: false);
+                SlowWrite(PassiveAbility.Name, needClear: false, speed: 0);
+                SlowWrite(PassiveAbility.Description, needClear: false, speed: 0);
                 Console.WriteLine();
 
 
@@ -413,14 +418,34 @@ namespace consoleTextRPG
                 HP -= dealtDamage;
             }
 
-            public void restoreHP(int RestoredHP)
+            public void RestoreHP(int RestoredHP)
             {
                 HP += RestoredHP;
+                if (HP > MaxHP)
+                    HP = MaxHP;
             }
 
             public void SpendMana()
             {
                 MP -= ActiveAbility.ManaCost;
+            }
+
+            public void RestoreMP(int restoreValue)
+            {
+                MP += restoreValue;
+                if (MP > MaxMP)
+                    MP = MaxMP;
+            }
+
+            public bool SpendGold(int goldToSpend)
+            {
+                if (Gold >= goldToSpend)
+                {
+                    Gold -= goldToSpend;
+                    return true;
+                }
+                else
+                    return false;
             }
 
 
@@ -433,18 +458,18 @@ namespace consoleTextRPG
             public WarriorPassiveAbility PassiveAbility { get; private set; }
             public Warrior(string name, int hp, int mp, int atcRange, int level, int exp, Weapon weapon) : base(name, hp, mp, atcRange, level, exp, weapon)
             {
-                ActiveAbility = new WarriorActiveAbility("Изнуряющий удар", "Воин наносит сильный удар противнику, уменьшая наносимый им урон на 2 хода. Нанесение урона изнуренному противнику оглушает его.");
-                PassiveAbility = new WarriorPassiveAbility("Нарастающая ярость", "Течение битвы ожесточает воина, увеличивая наносимый им урон.");
+                ActiveAbility = new WarriorActiveAbility("Изнуряющий удар", $"Воин наносит 15 урона противнику, уменьшая наносимый им урон на 30% на 2 хода. Нанесение урона изнуренному противнику оглушает его.");
+                PassiveAbility = new WarriorPassiveAbility("Нарастающая ярость", "Течение битвы ожесточает воина, увеличивая наносимый им урон на 1 за ход.");
             }
 
             public override void ShowStats()
             {
                 base.ShowStats();
-                SlowWrite(ActiveAbility.Name, needClear: false);
-                SlowWrite(ActiveAbility.Description, needClear: false);
+                SlowWrite(ActiveAbility.Name, needClear: false, speed: 0);
+                SlowWrite(ActiveAbility.Description, needClear: false, speed: 0);
                 Console.WriteLine();
-                SlowWrite(PassiveAbility.Name, needClear: false);
-                SlowWrite(PassiveAbility.Description, needClear: false);
+                SlowWrite(PassiveAbility.Name, needClear: false, speed: 0);
+                SlowWrite(PassiveAbility.Description, needClear: false, speed: 0);
                 Console.WriteLine();
             }
 
@@ -459,18 +484,18 @@ namespace consoleTextRPG
             public Sorcerer(string name, int hp, int mp, int atcRange, int level, int exp, Weapon weapon) : base(name, hp, mp, atcRange, level, exp, weapon)
             {
 
-                ActiveAbility = new SorcererActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит урон замораживает цель на 1 ход.");
+                ActiveAbility = new SorcererActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит 18 урона и замораживает цель на 1 ход.");
                 PassiveAbility = new SorcererPassiveAbility("Благословение богов", "Боги направляют руку мага, что может значительно усилить его заклинания.");
 
             }
             public override void ShowStats()
             {
                 base.ShowStats();
-                SlowWrite(ActiveAbility.Name, needClear: false);
-                SlowWrite(ActiveAbility.Description, needClear: false);
+                SlowWrite(ActiveAbility.Name, needClear: false, speed: 0);
+                SlowWrite(ActiveAbility.Description, needClear: false, speed: 0);
                 Console.WriteLine();
-                SlowWrite(PassiveAbility.Name, needClear: false);
-                SlowWrite(PassiveAbility.Description, needClear: false);
+                SlowWrite(PassiveAbility.Name, needClear: false, speed: 0);
+                SlowWrite(PassiveAbility.Description, needClear: false, speed: 0);
                 Console.WriteLine();
             }
         }
@@ -483,18 +508,18 @@ namespace consoleTextRPG
             public Slayer(string name, int hp, int mp, int atcRange, int level, int exp, Weapon weapon) : base(name, hp, mp, atcRange, level, exp, weapon)
             {
 
-                ActiveAbility = new SlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком. Чем серьезнее противник ранен, тем выше вероятность, что умение может мгновенно убить его.");
-                PassiveAbility = new SlayerPassiveAbility("Ловкость", "Ловкость убийцы позволяет ему уклоняться от ударов противника.");
+                ActiveAbility = new SlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком (18 урона). Умение может мгновенно убить противника, если его здоровье ниже 30%.");
+                PassiveAbility = new SlayerPassiveAbility("Ловкость", "Ловкость убийцы позволяет ему уклоняться от ударов противника с вероятностью 15%.");
 
             }
             public override void ShowStats()
             {
                 base.ShowStats();
-                SlowWrite(ActiveAbility.Name, needClear: false);
-                SlowWrite(ActiveAbility.Description, needClear: false);
+                SlowWrite(ActiveAbility.Name, needClear: false, speed: 0);
+                SlowWrite(ActiveAbility.Description, needClear: false, speed: 0);
                 Console.WriteLine();
-                SlowWrite(PassiveAbility.Name, needClear: false);
-                SlowWrite(PassiveAbility.Description, needClear: false);
+                SlowWrite(PassiveAbility.Name, needClear: false, speed: 0);
+                SlowWrite(PassiveAbility.Description, needClear: false, speed: 0);
                 Console.WriteLine();
             }
         }
@@ -507,18 +532,18 @@ namespace consoleTextRPG
             public Archer(string name, int hp, int mp, int atcRange, int level, int exp, Weapon weapon) : base(name, hp, mp, atcRange, level, exp, weapon)
             {
 
-                ActiveAbility = new ArcherActiveAbility("Отступление", "Лучник разрывает дистанцию с противником, нанося урон.");
-                PassiveAbility = new ArcherPassiveAbility("Меткий глаз", "Меткость лучника позволяет ему наносить дополнительный урон удаленным целям, а также почти никогда не промахиваться.");
+                ActiveAbility = new ArcherActiveAbility("Отступление", "Лучник разрывает дистанцию с противником на 1, нанося 8 урона.");
+                PassiveAbility = new ArcherPassiveAbility("Меткий глаз", "Меткость лучника позволяет ему наносить дополнительные 3 урона удаленным целям, а также почти никогда не промахиваться.");
 
             }
             public override void ShowStats()
             {
                 base.ShowStats();
-                SlowWrite(ActiveAbility.Name, needClear: false);
-                SlowWrite(ActiveAbility.Description, needClear: false);
+                SlowWrite(ActiveAbility.Name, needClear: false, speed: 0);
+                SlowWrite(ActiveAbility.Description, needClear: false, speed: 0);
                 Console.WriteLine();
-                SlowWrite(PassiveAbility.Name, needClear: false);
-                SlowWrite(PassiveAbility.Description, needClear: false);
+                SlowWrite(PassiveAbility.Name, needClear: false, speed: 0);
+                SlowWrite(PassiveAbility.Description, needClear: false, speed: 0);
                 Console.WriteLine();
             }
         }
@@ -558,33 +583,34 @@ namespace consoleTextRPG
             {
                 PlayerActiveAbility ActiveAbility;
                 PlayerPassiveAbility PassiveAbility;
+                Weapon weapon;
                 if (value == 1)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Изнуряющий удар", "Воин наносит сильный удар противнику, уменьшая наносимый им урон на 2 хода. Нанесение урона изнуренному противнику оглушает его.", 15, 6);
-                    PassiveAbility = new PlayerPassiveAbility("Нарастающая ярость", "Течение битвы ожесточает воина, увеличивая наносимый им урон.");
-                    Weapon weapon1 = new Weapon("Стандартный меч", 10);
-                    return new PlayerClass("Воин", 120, 20, 0, 1, 0, weapon1, ActiveAbility, PassiveAbility);
+                    ActiveAbility = new PlayerActiveAbility("Изнуряющий удар", $"Воин наносит 15 урона противнику, уменьшая наносимый им урон на 30% на 2 хода. Нанесение урона изнуренному противнику оглушает его.", 15, 6);
+                    PassiveAbility = new PlayerPassiveAbility("Нарастающая ярость", "Течение битвы ожесточает воина, увеличивая наносимый им урон на 1 за ход.");
+                    weapon = new Weapon("Стандартный меч", 10);
+                    return new PlayerClass("Воин", 120, 20, 0, 1, 0, weapon, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 2)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит урон замораживает цель на 1 ход.", 18, 15);
+                    ActiveAbility = new PlayerActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит 18 урона и замораживает цель на 1 ход.", 18, 15);
                     PassiveAbility = new PlayerPassiveAbility("Благословение богов", "Боги направляют руку мага, что может значительно усилить его заклинания.");
-                    Weapon weapon2 = new Weapon("Стандартный посох", 14);
-                    return new PlayerClass("Маг", 60, 70, 1, 1, 0, weapon2, ActiveAbility, PassiveAbility);
+                    weapon = new Weapon("Стандартный посох", 14);
+                    return new PlayerClass("Маг", 60, 70, 1, 1, 0, weapon, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 3)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком. Чем серьезнее противник ранен, тем выше вероятность, что умение может мгновенно убить его.", 18, 14);
-                    PassiveAbility = new PlayerPassiveAbility("Ловкость", "Ловкость убийцы позволяет ему уклоняться от ударов противника.");
-                    Weapon weapon3 = new Weapon("Стандартный кинжал", 13);
-                    return new PlayerClass("Убийца", 90, 30, 0, 1, 0, weapon3, ActiveAbility, PassiveAbility);
+                    ActiveAbility = new PlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком (18 урона). Умение может мгновенно убить противника, если его здоровье ниже 30%.", 18, 14);
+                    PassiveAbility = new PlayerPassiveAbility("Ловкость", "Ловкость убийцы позволяет ему уклоняться от ударов противника с вероятностью 15%.");
+                    weapon = new Weapon("Стандартный кинжал", 13);
+                    return new PlayerClass("Убийца", 90, 30, 0, 1, 0, weapon, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 4)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Отступление", "Лучник разрывает дистанцию с противником, нанося урон.", 8, 6);
-                    PassiveAbility = new PlayerPassiveAbility("Меткий глаз", "Меткость лучника позволяет ему наносить дополнительный урон удаленным целям, а также почти никогда не промахиваться.");
-                    Weapon weapon4 = new Weapon("Стандартный лук", 12);
-                    return new PlayerClass("Лучник", 80, 20, 2, 1, 0, weapon4, ActiveAbility, PassiveAbility);
+                    ActiveAbility = new PlayerActiveAbility("Отступление", "Лучник разрывает дистанцию с противником на 1, нанося 8 урона.", 8, 6);
+                    PassiveAbility = new PlayerPassiveAbility("Меткий глаз", "Меткость лучника позволяет ему наносить дополнительные 3 урона удаленным целям, а также почти никогда не промахиваться.");
+                    weapon = new Weapon("Стандартный лук", 12);
+                    return new PlayerClass("Лучник", 80, 20, 2, 1, 0, weapon, ActiveAbility, PassiveAbility);
                 }
                 else { throw new ArgumentException("Неверный класс"); }
 
@@ -733,7 +759,8 @@ namespace consoleTextRPG
 
         internal class Inventory
         {
-            private List<Item> playerItems;
+
+            public List<Item> playerItems = new List<Item>() { };
 
             public void ShowItems()
             {
@@ -743,9 +770,17 @@ namespace consoleTextRPG
                 }
                 else
                 {
+                    int yPos = 2;
                     foreach (Item item in playerItems)
                     {
-                        Console.WriteLine(item.Name);
+                        Console.SetCursorPosition(3, yPos);
+                        if (item.GetType() == typeof(HealingPotion))
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        else if (item.GetType() == typeof(ManaPotion))
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                        Console.Write($"{item.Name}: {item.AmountOfItems}\n");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        yPos++;
                     }
                 }
             }
@@ -760,13 +795,26 @@ namespace consoleTextRPG
 
         internal abstract class Item
         {
-            public string Name { get; private set; }
+            public string Name { get; protected set; }
 
             public int AmountOfItems {  get; private set; }
             public Item(string name)
             {
                 Name = name;
                 AmountOfItems = 0;
+            }
+
+            public void AddItem()
+            {
+                AmountOfItems++;
+            }
+            
+            public Item RemoveItem()
+            {
+                if ( AmountOfItems <= 0 )
+                    return this;
+                AmountOfItems--;
+                return this;
             }
         }
 
@@ -782,16 +830,18 @@ namespace consoleTextRPG
 
         internal class HealingPotion : Potion
         {
-            public HealingPotion(string name) : base(name)
+            public HealingPotion(string name = "") : base(name)
             {
+                Name = "Зелье лечения";
                 RestoreValue = 20;
             }
         }
 
         internal class ManaPotion : Potion
         {
-            public ManaPotion(string name) : base(name)
+            public ManaPotion(string name = "") : base(name)
             {
+                Name = "Зелье маны";
                 RestoreValue = 10;
             }
         }
