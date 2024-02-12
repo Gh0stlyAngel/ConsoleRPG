@@ -115,6 +115,18 @@ namespace ConsoleFight
                     dealtDamage = PlayerTurn(ref player, ref playerAbilityCooldown, ref distance, ref archerAdditionalDamage, ref rnd, ref enemyEvadeChance, ref logQueue, ref warriorAdditionalDamage, ref baseEnemy, ref enemyHurt, ref enemyStuned, ref enemyFreezed, ref  enemySkipDueAtcRange, ref dealtDamage, startDamage);
                     /*WriteActions(player, ConsoleColor.Yellow, playerAbilityCooldown);
                     ConsoleKey playerAction = GetPlayerAction(player, playerAbilityCooldown);
+>>>>>>>>> Temporary merge branch 2
+                        playerAction = GetPlayerAction(actions);
+                    else
+                        playerAction = GetPlayerAction(actionsOnCD);
+>>>>>>>>> Temporary merge branch 2
+                        playerAction = GetPlayerAction(actions);
+                    else
+                        playerAction = GetPlayerAction(actionsOnCD);
+>>>>>>>>> Temporary merge branch 2
+                        playerAction = GetPlayerAction(actions);
+                    else
+                        playerAction = GetPlayerAction(actionsOnCD);
                     int dealtDamage;
                     if (distance > 0)
                         archerAdditionalDamage = 3;
