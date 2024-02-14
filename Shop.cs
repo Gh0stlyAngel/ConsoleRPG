@@ -14,7 +14,7 @@ namespace ConsoleShop
 
         internal static void ToShop(PlayerClass player)
         {
-            SlowWrite("Вы прибыли в магазин.");
+            SlowWrite("Вы прибыли в лавку торговца.");
             Console.Clear();
             SlowWrite("1. Посмотреть ассортимент", needClear: false);
             SlowWrite("2. Покинуть магазин", needClear: false);

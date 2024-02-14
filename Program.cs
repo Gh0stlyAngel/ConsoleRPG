@@ -13,27 +13,95 @@ using static System.Collections.Specialized.BitVector32;
 using static ConsoleFight.Fight;
 using ConsoleHub;
 using ConsoleShop;
+using System.Runtime.InteropServices;
 
 
 
 namespace consoleTextRPG
 {
-    internal class Program
+    public class Program
     {
 
-        internal static void Block()
+        class writeThread
         {
-            ConsoleKeyInfo key;
-            do
+            public Thread thread;
+
+            public writeThread(object[] parameters) //Конструктор получает имя функции и номер до кторого ведется счет
             {
-                key = Console.ReadKey(true);
-                if (key != null)
+
+                thread = new Thread(func);
+                thread.Start(parameters);//передача параметра в поток
+                thread.IsBackground = true;
+            }
+
+
+            void func(object parameters)
+            {
+                object[] parameter = (object[])parameters;
+                string str = parameter[0] as string;
+                ConsoleColor textColor = (ConsoleColor)parameter[1];
+                bool needClear = (bool)parameter[2];
+                int speed = (int)parameter[3];
+                string teller = parameter[4] as string;
+
+                if (needClear)
                 {
-                    // Ignore letters
-                    continue;
+                    Console.Clear();
+
                 }
-            } while (key.Key != ConsoleKey.Enter);
+
+                if (teller != null)
+                {
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+                    Console.Write("\n   ");
+                    Console.Write(teller);
+                    Console.Write("\n   ");
+                }
+
+                Console.ForegroundColor = textColor;
+
+                if (str.Length < 106)
+                {
+                    Console.Write("\n   ");
+                    foreach (char letter in str)
+                    {
+                        Console.Write(letter);
+                        Thread.Sleep(speed);
+                    }
+                }
+                else
+                {
+                    int lines = (int)Math.Ceiling((double)str.Length / 106);
+                    Console.Write("\n   ");
+                    for (int i = 0; i < lines; i++)
+                    {
+                        
+                        for (int j = 0 + (i * 106); j < (i + 1) * 106 && j < str.Length; j++)
+                        {
+                            Console.Write(str[j]);
+                            Thread.Sleep(speed);
+                        }
+                        if ((i + 1) * 106 < str.Length)
+                        {
+                            if (Char.IsLetter(str[(i + 1) * 106]) && Char.IsLetter(str[((i + 1) * 106) - 1]))
+                                Console.Write("-\n   ");
+                            else
+                                Console.Write("\n   ");
+                        }
+                    }
+                }
+
+                if (needClear)
+                {
+                    Console.ReadKey(true);
+
+                }
+            }
+
+
         }
+
+
         static void Main(string[] args)
         {
 
@@ -50,17 +118,21 @@ namespace consoleTextRPG
             Slayer slayer = new Slayer("Убийца", 90, 30, 0, 1, 0, baseSlayerWeapon);
             Archer archer = new Archer("Лучник", 80, 20, 1, 1, 0, baseArcherWeapon);
 
+            SlowWrite("'Название'");
+            SlowWrite("Введите имя персонажа: ");
+            string nickName = Console.ReadLine();
+
+            Welcome(nickName);
 
 
-            //Welcome();
-
-
-            //int chosenClass = PlayerPick(warrior, sorcerer, slayer, archer);
-            int chosenClass = 1;
+            int chosenClass = PlayerPick(warrior, sorcerer, slayer, archer);
+            //int chosenClass = 1;
             PlayerClass player = PlayerClassFactory.CreateInstance(chosenClass);
             player.Inventory.AppendItem(healingPotion);
             player.Inventory.AppendItem(manaPotion);
 
+
+            Hub.ToHub(ref player);
 
             //Shop.ToShop(player);
 
@@ -89,14 +161,27 @@ namespace consoleTextRPG
 
         }
 
-        static void Welcome()
+        static void Welcome(string nickName)
         {
+            
             Console.CursorVisible = false;
-            SlowWrite("Нажми любую клавишу чтобы начать...");
-            SlowWrite("Привет!");
-            SlowWrite("Это текстовая РПГ для моего обучения.");
-            SlowWrite("Для начала выбери класс персонажа:");
+            SlowWrite($"{nickName} родился и вырос в дереве под названием «». Жили они не особо богато, но на образование и обучение ремеслу хватало. К моменту завершения обучения {nickName} как раз достиг возраста, который позволял ему в большой город, который был в трех днях пути на юг. И уже там {nickName} мог бы применить свои новые навыки для заработка денег, ведь в семье у него ещё был маленький брат, которому скоро тоже нужно было начинать обучаться ремеслам, а деньги это то немногое, чем {nickName} мог отплатить своей семье за все, что она сделала для него.");
+            SlowWrite($"Шли недели и месяцы, {nickName} устроился в приличную мастерскую, все было довольно неплохо, до тех пор, пока в одно утро он не получил весточку из своей родной деревни. Развернув сверток, он увидел почерк матери, в котором говорилось, что его родной деревне угрожает опасность, и возможно, он единственный, кто может им помочь. ");
+            SlowWrite($"Не понимая, почему матушка выделила его среди прочих, {nickName} оповестил своего работодателя, что ему нужно спешно покинуть город и вернуться в родную деревню. Мастеровой, конечно, не очень хотел отпускать {nickName}, так как был самый сезон работ, и было очень много заказов. Даже начал грозить увольнением.");
+            SlowWrite($"«Выбор» Остаться работать(Но совесть замучает, и {nickName} все равно сбежит), или же Настоять на своем (По итогу мастеровой даст заднюю и сохранит за ним место, так как наш {nickName} рукастый)");
+            SlowWrite($"По приезду в деревню, {nickName} заметил, что деревня сильно изменился с его последнего визита сюда. Дома обветшали, заборы поломаны, люди вокруг сильно потеряли в лице. {nickName}  первым делом прибежал домой, дабы убедиться, что с его родными все в порядке. Он застал матушку, которая латала раны его отцу, и брата, который помогал ей. «Выбор» Кинуться обнимать родных или сначала выяснить причину, по которой мама вызвала именно его.");
+            SlowWrite($"Достав письмо, {nickName} решил узнать у матушки, чем же таким он отличается от других, что она назвала его последней надеждой деревни. ");
+            SlowWrite($"Матушка кивнула родным, попросив их покинуть комнату, дабы объясниться с сыном.");
+            SlowWrite($"{nickName}, знал ли ты, что когда-то я относилась к древнему роду «Придумать название»? Наш род отличался силой и интеллектом, которые особо ярко проявлялись в мужчинах. Но ты, {nickName}, особенный. Все потому, что при твоем рождении наши жрецы заметили в тебе силу, которая могла поменять баланс добра и зла.");
+            SlowWrite($"В связи с чем, мы с твоим отцом провели особый обряд, который частично запечатал твою силу. Но к великому счастью, со временем, как ты креп, печать слабела. И сейчас, тебе уже вполне по силам начать учиться тому, что знал мой клан. ");
+
+
+            /*            SlowWrite("Нажми любую клавишу чтобы начать...");
+                        SlowWrite("Привет!");
+                        SlowWrite("Это текстовая РПГ для моего обучения.");
+                        SlowWrite("Для начала выбери класс персонажа:");*/
         }
+
 
         static int PlayerPick(Warrior warrior, Sorcerer sorcerer, Slayer slayer, Archer archer)
         {
@@ -134,50 +219,14 @@ namespace consoleTextRPG
             return chosenClass;
         }
 
-        internal static void SlowWrite(string str, ConsoleColor textColor = ConsoleColor.Yellow, bool needClear = true, int speed = 14)
+
+        public static void SlowWrite(string str, ConsoleColor textColor = ConsoleColor.Yellow, bool needClear = true, int speed = 14, string teller = null)
         {
+            object[] parameters = { str, textColor, needClear, speed, teller };
+            writeThread t1 = new writeThread(parameters);
 
-            Console.ForegroundColor = textColor;
-
-            if (needClear)
-            {
-                Console.Clear();
-
-            }
-            if (str.Length < 106)
-            {
-                Console.Write("\n   ");
-                foreach (char letter in str)
-                {
-                    Console.Write(letter);
-                    Thread.Sleep(speed);
-                }
-            }
-            else
-            {
-                Console.Write("\n   ");
-                for (int i = 0; i < 106; i++)
-                {
-                    Console.Write(str[i]);
-                    Thread.Sleep(speed);
-                }
-                if (str[106] == ' ')
-                    Console.Write("\n   ");
-                else
-                    Console.Write("-\n   ");
-                for (int i = 106; i < str.Length; i++)
-                {
-                    Console.Write(str[i]);
-                    Thread.Sleep(speed);
-                }
-            }
-
-            if (needClear)
-            {
-                Console.ReadKey(true);
-
-            }
-
+            Console.ReadKey(true);
+            t1.thread.Abort();
         }
 
 
