@@ -302,6 +302,12 @@ namespace ConsoleFight
                 Console.ReadKey(true);
 
             }
+            if (player.HP > 0)
+            {
+                player.getGold(15);
+                SlowWrite($"Получено 15 золота.", needClear: true);
+            }
+                
             return player.HP;
         }
 

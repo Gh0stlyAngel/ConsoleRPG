@@ -19,3 +19,10 @@ C:\GitProjects\ConsoleRPG\obj\Debug\consoleTextRPG.csproj.AssemblyReference.cach
 C:\GitProjects\ConsoleRPG\obj\Debug\consoleTextRPG.csproj.CoreCompileInputs.cache
 C:\GitProjects\ConsoleRPG\obj\Debug\consoleTextRPG.exe
 C:\GitProjects\ConsoleRPG\obj\Debug\consoleTextRPG.pdb
+C:\GitProjects\ConsoleRPG\ConsoleRPG\bin\Debug\consoleTextRPG.exe.config
+C:\GitProjects\ConsoleRPG\ConsoleRPG\bin\Debug\consoleTextRPG.exe
+C:\GitProjects\ConsoleRPG\ConsoleRPG\bin\Debug\consoleTextRPG.pdb
+C:\GitProjects\ConsoleRPG\ConsoleRPG\obj\Debug\consoleTextRPG.csproj.AssemblyReference.cache
+C:\GitProjects\ConsoleRPG\ConsoleRPG\obj\Debug\consoleTextRPG.csproj.CoreCompileInputs.cache
+C:\GitProjects\ConsoleRPG\ConsoleRPG\obj\Debug\consoleTextRPG.exe
+C:\GitProjects\ConsoleRPG\ConsoleRPG\obj\Debug\consoleTextRPG.pdb

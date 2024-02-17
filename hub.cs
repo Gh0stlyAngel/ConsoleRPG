@@ -4,13 +4,55 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using consoleTextRPG;
+using ConsoleFight;
+using static ConsoleFight.Fight;
 using static consoleTextRPG.Program;
+using ConsoleShop;
 
 namespace ConsoleHub
 {
     internal class Hub
     {
         internal static void ToHub(ref PlayerClass player)
+        {
+            ConsoleKey[] twoActions = new ConsoleKey[] { ConsoleKey.D1, ConsoleKey.D2 };
+            //HubStart(player);
+            bool inHub = true;
+            int wins = 0;
+            while (inHub)
+            {
+                Console.Clear();
+                SlowWrite("1. toShop", needClear: false);
+                SlowWrite("2. toFight", needClear: false);
+                ConsoleKey playerAction = GetPlayerAction(twoActions);
+                switch (playerAction)
+                {
+                    case ConsoleKey.D1:
+                        Shop.ToShop(player);
+                        break;
+                    case ConsoleKey.D2:
+                        StartFight(ref player);
+                        if (player.HP <= 0)
+                            inHub = false;
+                        else
+                            wins++;
+                        break;
+                    default: break;
+                }
+                
+
+            }
+            while (true)
+            {
+
+                Console.Clear();
+                Console.WriteLine($"Класс: {player.Name}\nПобед {wins}");
+                Console.ReadKey(true);
+
+            }
+        }
+
+        internal static void HubStart(PlayerClass player)
         {
             SlowWrite($"...");
             SlowWrite($"{player.Name}, узнав о том, что его родной деревне угрожает опасность, незамедлительно отправился на помощь.");

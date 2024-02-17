@@ -26,11 +26,11 @@ namespace consoleTextRPG
         {
             public Thread thread;
 
-            public writeThread(object[] parameters) //Конструктор получает имя функции и номер до кторого ведется счет
+            public writeThread(object[] parameters) //Конструктор
             {
 
                 thread = new Thread(func);
-                thread.Start(parameters);//передача параметра в поток
+                thread.Start(parameters); //передача параметра в поток
                 thread.IsBackground = true;
             }
 
@@ -117,12 +117,13 @@ namespace consoleTextRPG
             Sorcerer sorcerer = new Sorcerer("Маг", 60, 70, 1, 1, 0, baseSorcererWeapon);
             Slayer slayer = new Slayer("Убийца", 90, 30, 0, 1, 0, baseSlayerWeapon);
             Archer archer = new Archer("Лучник", 80, 20, 1, 1, 0, baseArcherWeapon);
-
+            Console.CursorVisible = false;
             SlowWrite("'Название'");
-            SlowWrite("Введите имя персонажа: ");
+            Console.Clear();
+            SlowWrite("Введите имя персонажа: ", needClear: false);
             string nickName = Console.ReadLine();
-
-            Welcome(nickName);
+            
+            //Welcome(nickName);
 
 
             int chosenClass = PlayerPick(warrior, sorcerer, slayer, archer);
@@ -225,20 +226,35 @@ namespace consoleTextRPG
             object[] parameters = { str, textColor, needClear, speed, teller };
             writeThread t1 = new writeThread(parameters);
 
-            Console.ReadKey(true);
-            t1.thread.Abort();
+            if (needClear)
+            {
+                Console.ReadKey(true);
+
+                t1.thread.Abort();
+
+
+            }
+            else
+            {
+                while (t1.thread.IsAlive)
+                {
+                    Thread.Sleep(0);
+                } 
+                
+            }
+
         }
 
 
         static void ShowClassList(Warrior warrior, Sorcerer sorcerer, Slayer slayer, Archer archer)
         {
             Console.Clear();
-            SlowWrite($"1. {warrior.Name}", ConsoleColor.Red, false);
-            SlowWrite($"2. {sorcerer.Name}", ConsoleColor.Blue, false);
-            SlowWrite($"3. {slayer.Name}", ConsoleColor.DarkRed, false);
-            SlowWrite($"4. {archer.Name}", ConsoleColor.Green, false);
+            SlowWrite($"1. {warrior.Name}", ConsoleColor.Red, false, speed: 1);
+            SlowWrite($"2. {sorcerer.Name}", ConsoleColor.Blue, false, speed: 1);
+            SlowWrite($"3. {slayer.Name}", ConsoleColor.DarkRed, false, speed: 1);
+            SlowWrite($"4. {archer.Name}", ConsoleColor.Green, false, speed: 1);
             Console.WriteLine();
-            SlowWrite("Нажми соответствующую цифру для получения подробной информации о классе.", needClear: false);
+            SlowWrite("Нажми соответствующую цифру для получения подробной информации о классе.", needClear: false, speed: 1);
         }
 
         static bool ChoisingClass(Warrior warrior, Sorcerer sorcerer, Slayer slayer, Archer archer, ConsoleKeyInfo pressedKey, ref int chosenClass)
@@ -250,19 +266,19 @@ namespace consoleTextRPG
             {
                 case ConsoleKey.D1:
                     warrior.ShowStats();
-                    SlowWrite(text, needClear: false, speed: 1);
+                    SlowWrite(text, needClear: false, speed: 0);
                     break;
                 case ConsoleKey.D2:
                     sorcerer.ShowStats();
-                    SlowWrite(text, needClear: false, speed: 1);
+                    SlowWrite(text, needClear: false, speed: 0);
                     break;
                 case ConsoleKey.D3:
                     slayer.ShowStats();
-                    SlowWrite(text, needClear: false, speed: 1);
+                    SlowWrite(text, needClear: false, speed: 0);
                     break;
                 case ConsoleKey.D4:
                     archer.ShowStats();
-                    SlowWrite(text, needClear: false, speed: 1);
+                    SlowWrite(text, needClear: false, speed: 0);
                     break;
                 default:
                     Console.Clear();
@@ -495,6 +511,11 @@ namespace consoleTextRPG
                 }
                 else
                     return false;
+            }
+
+            public void getGold(int goldToGet)
+            {
+                Gold += goldToGet;
             }
 
 

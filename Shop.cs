@@ -77,7 +77,6 @@ namespace ConsoleShop
                     case ConsoleKey.D3:
                         leave = true;
                         SlowWrite("Вы уходите.");
-                        Console.ReadKey();
 
                         break;
 
