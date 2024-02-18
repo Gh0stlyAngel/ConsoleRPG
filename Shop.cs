@@ -18,7 +18,7 @@ namespace ConsoleShop
             Console.Clear();
             SlowWrite("1. Посмотреть ассортимент", needClear: false);
             SlowWrite("2. Покинуть магазин", needClear: false);
-            ConsoleKey[] actions = { ConsoleKey.D1, ConsoleKey.D2 };
+            List<ConsoleKey> actions = new List<ConsoleKey> { ConsoleKey.D1, ConsoleKey.D2 };
             ConsoleKey playerAction = GetPlayerAction(actions);
 
             switch (playerAction)
@@ -59,7 +59,7 @@ namespace ConsoleShop
                 Console.SetCursorPosition(65, 1);
                 Console.Write($"Монет: {player.Gold}");
 
-                ConsoleKey[] actions = { ConsoleKey.D1, ConsoleKey.D2, ConsoleKey.D3 };
+                List<ConsoleKey> actions = new List<ConsoleKey> { ConsoleKey.D1, ConsoleKey.D2, ConsoleKey.D3 };
                 ConsoleKey playerAction = GetPlayerAction(actions);
                 bool ableToPay;
 

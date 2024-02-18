@@ -15,16 +15,41 @@ namespace ConsoleHub
     {
         internal static void ToHub(ref PlayerClass player)
         {
-            ConsoleKey[] twoActions = new ConsoleKey[] { ConsoleKey.D1, ConsoleKey.D2 };
+            List<ConsoleKey> actions = new List<ConsoleKey> { ConsoleKey.D1, ConsoleKey.D2 };
             //HubStart(player);
             bool inHub = true;
             int wins = 0;
+
+
             while (inHub)
             {
+                ConsoleColor actionColor;
                 Console.Clear();
-                SlowWrite("1. toShop", needClear: false);
-                SlowWrite("2. toFight", needClear: false);
-                ConsoleKey playerAction = GetPlayerAction(twoActions);
+                SlowWrite("1. toShop", needClear: false, speed:1);
+                SlowWrite("2. toFight", needClear: false, speed: 1);
+
+
+                if (player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").AmountOfItems > 0)
+                {
+                    actions.Add(ConsoleKey.D3);
+                    SlowWrite("3. useHealingPotion", needClear: false, speed: 1);
+                }
+                else
+                    SlowWrite("3. useHealingPotion", textColor: ConsoleColor.DarkYellow, needClear: false, speed: 1);
+
+
+                if (player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").AmountOfItems > 0)
+                {
+                    actions.Add(ConsoleKey.D4);
+                    SlowWrite("4. useManaPotion", needClear: false, speed: 1);
+                }
+                else
+                    SlowWrite("4. useManaPotion", textColor: ConsoleColor.DarkYellow, needClear: false, speed: 1);
+
+
+                SlowWrite("C. ShowStats", needClear: false, speed: 1);
+                ConsoleKey playerAction = GetPlayerAction(actions, true);
+                
                 switch (playerAction)
                 {
                     case ConsoleKey.D1:
@@ -36,6 +61,22 @@ namespace ConsoleHub
                             inHub = false;
                         else
                             wins++;
+                        break;
+                    case ConsoleKey.D3:
+                        HealingPotion healingPotion = (HealingPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").RemoveItem();
+                        player.RestoreHP(healingPotion.RestoreValue);
+                        SlowWrite($"{player.Name} использует зелье лечения. Восстановлено {healingPotion.RestoreValue} здоровья.", speed: 1);
+
+                        break;
+                    case ConsoleKey.D4:
+                        ManaPotion manaPotion = (ManaPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").RemoveItem();
+                        player.RestoreMP(manaPotion.RestoreValue);
+                        SlowWrite( $"{player.Name} использует зелье маны. Восстановлено {manaPotion.RestoreValue} маны.", speed: 1);
+                        break;
+
+                    case ConsoleKey.C:
+                        player.ShowStats();
+                        Console.ReadKey(true);
                         break;
                     default: break;
                 }

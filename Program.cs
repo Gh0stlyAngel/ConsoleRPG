@@ -105,18 +105,16 @@ namespace consoleTextRPG
         static void Main(string[] args)
         {
 
-            Weapon baseWarriorWeapon = new Weapon("Стандартный меч", 10);
-            Weapon baseSorcererWeapon = new Weapon("Стандартный посох", 14);
-            Weapon baseSlayerWeapon = new Weapon("Стандартный кинжал", 13);
-            Weapon baseArcherWeapon = new Weapon("Стандартный лук", 12);
-
             HealingPotion healingPotion = new HealingPotion();
             ManaPotion manaPotion = new ManaPotion();
 
-            Warrior warrior = new Warrior("Воин", 120, 20, 0, 1, 0, baseWarriorWeapon);
-            Sorcerer sorcerer = new Sorcerer("Маг", 60, 70, 1, 1, 0, baseSorcererWeapon);
-            Slayer slayer = new Slayer("Убийца", 90, 30, 0, 1, 0, baseSlayerWeapon);
-            Archer archer = new Archer("Лучник", 80, 20, 1, 1, 0, baseArcherWeapon);
+
+
+
+            PlayerClass warrior = PlayerClassFactory.CreateInstance(1);
+            PlayerClass sorcerer = PlayerClassFactory.CreateInstance(2);
+            PlayerClass slayer = PlayerClassFactory.CreateInstance(3);
+            PlayerClass archer = PlayerClassFactory.CreateInstance(4);
             Console.CursorVisible = false;
             SlowWrite("'Название'");
             Console.Clear();
@@ -131,6 +129,8 @@ namespace consoleTextRPG
             PlayerClass player = PlayerClassFactory.CreateInstance(chosenClass);
             player.Inventory.AppendItem(healingPotion);
             player.Inventory.AppendItem(manaPotion);
+
+
 
 
             Hub.ToHub(ref player);
@@ -184,7 +184,7 @@ namespace consoleTextRPG
         }
 
 
-        static int PlayerPick(Warrior warrior, Sorcerer sorcerer, Slayer slayer, Archer archer)
+        static int PlayerPick(PlayerClass warrior, PlayerClass sorcerer, PlayerClass slayer, PlayerClass archer)
         {
             ShowClassList(warrior, sorcerer, slayer, archer);
 
@@ -246,7 +246,7 @@ namespace consoleTextRPG
         }
 
 
-        static void ShowClassList(Warrior warrior, Sorcerer sorcerer, Slayer slayer, Archer archer)
+        static void ShowClassList(PlayerClass warrior, PlayerClass sorcerer, PlayerClass slayer, PlayerClass archer)
         {
             Console.Clear();
             SlowWrite($"1. {warrior.Name}", ConsoleColor.Red, false, speed: 1);
@@ -257,7 +257,7 @@ namespace consoleTextRPG
             SlowWrite("Нажми соответствующую цифру для получения подробной информации о классе.", needClear: false, speed: 1);
         }
 
-        static bool ChoisingClass(Warrior warrior, Sorcerer sorcerer, Slayer slayer, Archer archer, ConsoleKeyInfo pressedKey, ref int chosenClass)
+        static bool ChoisingClass(PlayerClass warrior, PlayerClass sorcerer, PlayerClass slayer, PlayerClass archer, ConsoleKeyInfo pressedKey, ref int chosenClass)
         {
 
             string text = "\n   Нажмите Enter для выбора класса или любую другую клавишу чтобы вернуться к списку классов.";
@@ -265,19 +265,19 @@ namespace consoleTextRPG
             switch (pressedKey.Key)
             {
                 case ConsoleKey.D1:
-                    warrior.ShowStats();
+                    warrior.ShowStats(false);
                     SlowWrite(text, needClear: false, speed: 0);
                     break;
                 case ConsoleKey.D2:
-                    sorcerer.ShowStats();
+                    sorcerer.ShowStats(false);
                     SlowWrite(text, needClear: false, speed: 0);
                     break;
                 case ConsoleKey.D3:
-                    slayer.ShowStats();
+                    slayer.ShowStats(false);
                     SlowWrite(text, needClear: false, speed: 0);
                     break;
                 case ConsoleKey.D4:
-                    archer.ShowStats();
+                    archer.ShowStats(false);
                     SlowWrite(text, needClear: false, speed: 0);
                     break;
                 default:
@@ -329,77 +329,7 @@ namespace consoleTextRPG
 
         }
 
-        internal abstract class BaseClass
-        {
 
-            public string Name { get; private set; }
-            public int HP { get; private set; }
-            public int MP { get; private set; }
-            public int AtcRange { get; private set; }
-            public int Level { get; private set; }
-            public int EXP { get; private set; }
-
-            public int MaxHP { get; private set; }
-
-            public int MaxMP { get; private set; }
-
-            public Weapon Weapon { get; private set; }
-
-            public BaseClass(string name, int hp, int mp, int atcRange, int level, int exp, Weapon weapon)
-            {
-                Name = name;
-                HP = hp;
-                MP = mp;
-                AtcRange = atcRange;
-                Level = level;
-                EXP = exp;
-                Weapon = weapon;
-                MaxHP = HP;
-                MaxMP = MP;
-            }
-
-            public virtual void ShowStats()
-            {
-                Console.Clear();
-                SlowWrite($"{Name}\n", ConsoleColor.Yellow, false, speed: 0);
-                SlowWrite($"Здоровье: {HP}", ConsoleColor.Yellow, false, speed: 0);
-                SlowWrite($"Мана: {MP}", ConsoleColor.Yellow, false, speed: 0);
-                if (AtcRange < 1)
-                    SlowWrite("Ближний бой", ConsoleColor.Yellow, false, speed: 0);
-                else
-                    SlowWrite("Дальний бой", ConsoleColor.Yellow, false, speed: 0);
-
-                Console.WriteLine();
-                SlowWrite($"Снаряжение: {Weapon.Name}  Урон: {Weapon.Damage}", ConsoleColor.Yellow, false, speed: 0);
-
-                Console.WriteLine();
-
-
-
-            }
-
-            public void GainExp(int amountEXP)
-            {
-                EXP += amountEXP;
-                while (EXP >= 10)
-                {
-                    EXP -= 10;
-                    LevelUp();
-                }
-            }
-            private void LevelUp()
-            {
-                Level += 1;
-                HP += 5;
-            }
-
-            public void GetDamage(int dealtDamage)
-            {
-                HP -= dealtDamage;
-            }
-
-
-        }
         internal class PlayerClass
         {
 
@@ -436,7 +366,7 @@ namespace consoleTextRPG
 
             }
 
-            public virtual void ShowStats()
+            public virtual void ShowStats(bool showPotions = true)
             {
                 Console.Clear();
                 SlowWrite($"{Name}\n", ConsoleColor.Yellow, false, speed: 0);
@@ -458,6 +388,13 @@ namespace consoleTextRPG
                 SlowWrite(PassiveAbility.Name, needClear: false, speed: 0);
                 SlowWrite(PassiveAbility.Description, needClear: false, speed: 0);
                 Console.WriteLine();
+
+                if (showPotions)
+                {
+                    Inventory.ShowItems();
+                    DrawBar(3, 20, HP, MaxHP, ConsoleColor.Green);
+                    DrawBar(3, 22, MP, MaxMP, ConsoleColor.Blue);
+                }
 
 
 
@@ -521,132 +458,6 @@ namespace consoleTextRPG
 
         }
 
-        internal class Warrior : BaseClass
-        {
-            public WarriorActiveAbility ActiveAbility { get; private set; }
-
-            public WarriorPassiveAbility PassiveAbility { get; private set; }
-            public Warrior(string name, int hp, int mp, int atcRange, int level, int exp, Weapon weapon) : base(name, hp, mp, atcRange, level, exp, weapon)
-            {
-                ActiveAbility = new WarriorActiveAbility("Изнуряющий удар", $"Воин наносит 15 урона противнику, уменьшая наносимый им урон на 30% на 2 хода. Нанесение урона изнуренному противнику оглушает его.");
-                PassiveAbility = new WarriorPassiveAbility("Нарастающая ярость", "Течение битвы ожесточает воина, увеличивая наносимый им урон на 1 за ход.");
-            }
-
-            public override void ShowStats()
-            {
-                base.ShowStats();
-                SlowWrite(ActiveAbility.Name, needClear: false, speed: 0);
-                SlowWrite(ActiveAbility.Description, needClear: false, speed: 0);
-                Console.WriteLine();
-                SlowWrite(PassiveAbility.Name, needClear: false, speed: 0);
-                SlowWrite(PassiveAbility.Description, needClear: false, speed: 0);
-                Console.WriteLine();
-            }
-
-        }
-
-        internal class Sorcerer : BaseClass
-        {
-            public SorcererActiveAbility ActiveAbility { get; private set; }
-
-            public SorcererPassiveAbility PassiveAbility { get; private set; }
-
-            public Sorcerer(string name, int hp, int mp, int atcRange, int level, int exp, Weapon weapon) : base(name, hp, mp, atcRange, level, exp, weapon)
-            {
-
-                ActiveAbility = new SorcererActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит 18 урона и замораживает цель на 1 ход.");
-                PassiveAbility = new SorcererPassiveAbility("Благословение богов", "Боги направляют руку мага, что может значительно усилить его заклинания.");
-
-            }
-            public override void ShowStats()
-            {
-                base.ShowStats();
-                SlowWrite(ActiveAbility.Name, needClear: false, speed: 0);
-                SlowWrite(ActiveAbility.Description, needClear: false, speed: 0);
-                Console.WriteLine();
-                SlowWrite(PassiveAbility.Name, needClear: false, speed: 0);
-                SlowWrite(PassiveAbility.Description, needClear: false, speed: 0);
-                Console.WriteLine();
-            }
-        }
-
-        internal class Slayer : BaseClass
-        {
-            public SlayerActiveAbility ActiveAbility { get; private set; }
-
-            public SlayerPassiveAbility PassiveAbility { get; private set; }
-            public Slayer(string name, int hp, int mp, int atcRange, int level, int exp, Weapon weapon) : base(name, hp, mp, atcRange, level, exp, weapon)
-            {
-
-                ActiveAbility = new SlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком (18 урона). Умение может мгновенно убить противника, если его здоровье ниже 30%.");
-                PassiveAbility = new SlayerPassiveAbility("Ловкость", "Ловкость убийцы позволяет ему уклоняться от ударов противника с вероятностью 15%.");
-
-            }
-            public override void ShowStats()
-            {
-                base.ShowStats();
-                SlowWrite(ActiveAbility.Name, needClear: false, speed: 0);
-                SlowWrite(ActiveAbility.Description, needClear: false, speed: 0);
-                Console.WriteLine();
-                SlowWrite(PassiveAbility.Name, needClear: false, speed: 0);
-                SlowWrite(PassiveAbility.Description, needClear: false, speed: 0);
-                Console.WriteLine();
-            }
-        }
-
-        internal class Archer : BaseClass
-        {
-            public ArcherActiveAbility ActiveAbility { get; private set; }
-
-            public ArcherPassiveAbility PassiveAbility { get; private set; }
-            public Archer(string name, int hp, int mp, int atcRange, int level, int exp, Weapon weapon) : base(name, hp, mp, atcRange, level, exp, weapon)
-            {
-
-                ActiveAbility = new ArcherActiveAbility("Отступление", "Лучник разрывает дистанцию с противником на 1, нанося 8 урона.");
-                PassiveAbility = new ArcherPassiveAbility("Меткий глаз", "Меткость лучника позволяет ему наносить дополнительные 3 урона удаленным целям, а также почти никогда не промахиваться.");
-
-            }
-            public override void ShowStats()
-            {
-                base.ShowStats();
-                SlowWrite(ActiveAbility.Name, needClear: false, speed: 0);
-                SlowWrite(ActiveAbility.Description, needClear: false, speed: 0);
-                Console.WriteLine();
-                SlowWrite(PassiveAbility.Name, needClear: false, speed: 0);
-                SlowWrite(PassiveAbility.Description, needClear: false, speed: 0);
-                Console.WriteLine();
-            }
-        }
-
-        internal class ClassFactory
-        {
-            public static BaseClass CreateInstance(int value)
-            {
-                if (value == 1)
-                {
-                    Weapon weapon1 = new Weapon("Стандартный меч", 10);
-                    return new Warrior("Воин", 120, 20, 0, 1, 0, weapon1);
-                }
-                else if (value == 2)
-                {
-                    Weapon weapon2 = new Weapon("Стандартный посох", 15);
-                    return new Sorcerer("Маг", 70, 60, 1, 1, 0, weapon2);
-                }
-                else if (value == 3)
-                {
-                    Weapon weapon3 = new Weapon("Стандартный кинжал", 15);
-                    return new Slayer("Убийца", 90, 30, 0, 1, 0, weapon3);
-                }
-                else if (value == 4)
-                {
-                    Weapon weapon4 = new Weapon("Стандартный лук", 12);
-                    return new Archer("Лучник", 80, 20, 2, 1, 0, weapon4);
-                }
-                else { throw new ArgumentException("Неверный класс"); }
-
-            }
-
-        }
         internal class PlayerClassFactory
         {
             public static PlayerClass CreateInstance(int value)
@@ -677,7 +488,7 @@ namespace consoleTextRPG
                 }
                 else if (value == 4)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Отступление", "Лучник разрывает дистанцию с противником на 1, нанося 8 урона.", 8, 6);
+                    ActiveAbility = new PlayerActiveAbility("Отступление", "Лучник разрывает дистанцию с противником на 1, нанося 8 урона и обездвиживая его на 1 ход", 8, 9);
                     PassiveAbility = new PlayerPassiveAbility("Меткий глаз", "Меткость лучника позволяет ему наносить дополнительные 3 урона удаленным целям, а также почти никогда не промахиваться.");
                     weapon = new Weapon("Стандартный лук", 12);
                     return new PlayerClass("Лучник", 80, 20, 2, 1, 0, weapon, ActiveAbility, PassiveAbility);
@@ -734,125 +545,31 @@ namespace consoleTextRPG
         }
 
 
-        internal class BaseAbility
-        {
-            public string Name { get; set; }
-            public string Description { get; set; }
-
-            public BaseAbility(string name, string description)
-            {
-                Name = name;
-                Description = description;
-            }
-        }
-
-        internal class BaseActiveAbility : BaseAbility
-        {
-            public BaseActiveAbility(string name, string description) : base(name, description)
-            {
-
-            }
-        }
-
-        internal class BasePassiveAbility : BaseAbility
-        {
-            public BasePassiveAbility(string name, string description) : base(name, description)
-            {
-
-            }
-        }
-
-        internal class WarriorActiveAbility : BaseActiveAbility
-        {
-            public WarriorActiveAbility(string name, string description) : base(name, description)
-            {
-
-            }
-        }
-
-        internal class WarriorPassiveAbility : BasePassiveAbility
-        {
-            public WarriorPassiveAbility(string name, string description) : base(name, description)
-            {
-
-            }
-        }
-
-        internal class SorcererActiveAbility : BaseActiveAbility
-        {
-            public SorcererActiveAbility(string name, string description) : base(name, description)
-            {
-
-            }
-        }
-
-        internal class SorcererPassiveAbility : BasePassiveAbility
-        {
-            public SorcererPassiveAbility(string name, string description) : base(name, description)
-            {
-
-            }
-        }
-
-        internal class SlayerActiveAbility : BaseActiveAbility
-        {
-            public SlayerActiveAbility(string name, string description) : base(name, description)
-            {
-
-            }
-        }
-
-        internal class SlayerPassiveAbility : BasePassiveAbility
-        {
-            public SlayerPassiveAbility(string name, string description) : base(name, description)
-            {
-
-            }
-        }
-
-        internal class ArcherActiveAbility : BaseActiveAbility
-        {
-            public ArcherActiveAbility(string name, string description) : base(name, description)
-            {
-
-            }
-        }
-
-        internal class ArcherPassiveAbility : BasePassiveAbility
-        {
-            public ArcherPassiveAbility(string name, string description) : base(name, description)
-            {
-
-            }
-        }
-
-
         internal class Inventory
         {
 
             public List<Item> playerItems = new List<Item>() { };
 
-            public void ShowItems()
+            public void ShowItems(bool inFight = false)
             {
-                if (playerItems == null)
-                {
-                    Console.WriteLine("Инвентарь пуст");
-                }
+
+                int yPos;
+                if (inFight)
+                    yPos = 2;
                 else
+                    yPos = 25;
+                foreach (Item item in playerItems)
                 {
-                    int yPos = 2;
-                    foreach (Item item in playerItems)
-                    {
-                        Console.SetCursorPosition(3, yPos);
-                        if (item.GetType() == typeof(HealingPotion))
-                            Console.ForegroundColor = ConsoleColor.Green;
-                        else if (item.GetType() == typeof(ManaPotion))
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.Write($"{item.Name}: {item.AmountOfItems}\n");
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        yPos++;
-                    }
+                    Console.SetCursorPosition(3, yPos);
+                    if (item.GetType() == typeof(HealingPotion))
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    else if (item.GetType() == typeof(ManaPotion))
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.Write($"{item.Name}: {item.AmountOfItems}\n");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    yPos++;
                 }
+                
             }
 
             internal void AppendItem(Item item)
