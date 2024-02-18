@@ -15,7 +15,6 @@ namespace ConsoleHub
     {
         internal static void ToHub(ref PlayerClass player)
         {
-            List<ConsoleKey> actions = new List<ConsoleKey> { ConsoleKey.D1, ConsoleKey.D2 };
             //HubStart(player);
             bool inHub = true;
             int wins = 0;
@@ -23,31 +22,32 @@ namespace ConsoleHub
 
             while (inHub)
             {
+                List<ConsoleKey> actions = new List<ConsoleKey> { ConsoleKey.D1, ConsoleKey.D2 };
                 ConsoleColor actionColor;
                 Console.Clear();
-                SlowWrite("1. toShop", needClear: false, speed:1);
-                SlowWrite("2. toFight", needClear: false, speed: 1);
+                SlowWrite("1. toShop", needClear: false, speed:0);
+                SlowWrite("2. toFight", needClear: false, speed: 0);
 
 
                 if (player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").AmountOfItems > 0)
                 {
                     actions.Add(ConsoleKey.D3);
-                    SlowWrite("3. useHealingPotion", needClear: false, speed: 1);
+                    SlowWrite("3. useHealingPotion", needClear: false, speed: 0);
                 }
                 else
-                    SlowWrite("3. useHealingPotion", textColor: ConsoleColor.DarkYellow, needClear: false, speed: 1);
+                    SlowWrite("3. useHealingPotion", textColor: ConsoleColor.DarkYellow, needClear: false, speed: 0);
 
 
                 if (player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").AmountOfItems > 0)
                 {
                     actions.Add(ConsoleKey.D4);
-                    SlowWrite("4. useManaPotion", needClear: false, speed: 1);
+                    SlowWrite("4. useManaPotion", needClear: false, speed: 0);
                 }
                 else
-                    SlowWrite("4. useManaPotion", textColor: ConsoleColor.DarkYellow, needClear: false, speed: 1);
+                    SlowWrite("4. useManaPotion", textColor: ConsoleColor.DarkYellow, needClear: false, speed: 0);
 
 
-                SlowWrite("C. ShowStats", needClear: false, speed: 1);
+                SlowWrite("C. ShowStats", needClear: false, speed: 0);
                 ConsoleKey playerAction = GetPlayerAction(actions, true);
                 
                 switch (playerAction)
@@ -95,9 +95,6 @@ namespace ConsoleHub
 
         internal static void HubStart(PlayerClass player)
         {
-            SlowWrite($"...");
-            SlowWrite($"{player.Name}, узнав о том, что его родной деревне угрожает опасность, незамедлительно отправился на помощь.");
-            SlowWrite($"На третьи сутки пути он наконец прибывает на место.");
             SlowWrite($"Первым делом {player.Name} решает навестить старосту деревни, чтобы узнать подробности.");
             SlowWrite($"Однако староста нашёл его раньше...");
             SlowWrite($"{player.Name}!", teller: "Староста");

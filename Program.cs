@@ -109,14 +109,12 @@ namespace consoleTextRPG
             ManaPotion manaPotion = new ManaPotion();
 
 
-
-
             PlayerClass warrior = PlayerClassFactory.CreateInstance(1);
             PlayerClass sorcerer = PlayerClassFactory.CreateInstance(2);
             PlayerClass slayer = PlayerClassFactory.CreateInstance(3);
             PlayerClass archer = PlayerClassFactory.CreateInstance(4);
             Console.CursorVisible = false;
-            SlowWrite("'Название'");
+            SlowWrite("ConsoleTextRPG");
             Console.Clear();
             SlowWrite("Введите имя персонажа: ", needClear: false);
             string nickName = Console.ReadLine();
@@ -129,8 +127,6 @@ namespace consoleTextRPG
             PlayerClass player = PlayerClassFactory.CreateInstance(chosenClass);
             player.Inventory.AppendItem(healingPotion);
             player.Inventory.AppendItem(manaPotion);
-
-
 
 
             Hub.ToHub(ref player);
@@ -157,9 +153,6 @@ namespace consoleTextRPG
             SlowWrite("Продолжение следует...");
 
             Console.ReadKey(true);
-
-
-
         }
 
         static void Welcome(string nickName)
@@ -476,14 +469,14 @@ namespace consoleTextRPG
                 {
                     ActiveAbility = new PlayerActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит 18 урона и замораживает цель на 1 ход.", 18, 15);
                     PassiveAbility = new PlayerPassiveAbility("Благословение богов", "Боги направляют руку мага, что может значительно усилить его заклинания.");
-                    weapon = new Weapon("Стандартный посох", 14);
-                    return new PlayerClass("Маг", 60, 70, 1, 1, 0, weapon, ActiveAbility, PassiveAbility);
+                    weapon = new Weapon("Стандартный посох", 15);
+                    return new PlayerClass("Маг", 65, 75, 1, 1, 0, weapon, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 3)
                 {
-                    ActiveAbility = new PlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком (18 урона). Умение может мгновенно убить противника, если его здоровье ниже 30%.", 18, 14);
+                    ActiveAbility = new PlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком (18 урона). Умение может мгновенно убить противника, если его здоровье ниже 30%.", 23, 11);
                     PassiveAbility = new PlayerPassiveAbility("Ловкость", "Ловкость убийцы позволяет ему уклоняться от ударов противника с вероятностью 15%.");
-                    weapon = new Weapon("Стандартный кинжал", 13);
+                    weapon = new Weapon("Стандартный кинжал", 17);
                     return new PlayerClass("Убийца", 90, 30, 0, 1, 0, weapon, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 4)
@@ -631,6 +624,31 @@ namespace consoleTextRPG
                 Name = "Зелье маны";
                 RestoreValue = 10;
             }
+        }
+
+
+        internal class Story
+        {
+            public bool helpYourHome = false;
+
+            public bool firstShopVisit = false;
+
+            public bool[] sealMainQuest = { false, false };
+
+            public bool[] headmanPersonalQuest = { false, false };
+
+            public bool[] traderQuest = { false, false };
+
+            public bool[] friendQuest = { false, false };
+
+            public bool[] headmanMainQuest = { false, false };
+
+            public bool[] tampleQuest = { false, false };
+
+            public bool[] blacksmithMainQuest = { false, false };
+
+            public bool[] herbalistMainQuest = { false, false };
+
         }
     }
 }

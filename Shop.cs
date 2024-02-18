@@ -93,10 +93,10 @@ namespace ConsoleShop
             if (ableToPay)
             {
                 player.Inventory.playerItems.Find(item => item.Name == itemName).AddItem();
-                SlowWrite($"Куплено {itemName}");
+                SlowWrite($"Куплено {itemName}.");
             }
             else
-                SlowWrite("Недостаточно монет для покупки");
+                SlowWrite("Недостаточно монет для покупки.");
         }
     }
 
