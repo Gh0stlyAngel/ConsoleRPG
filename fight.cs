@@ -446,10 +446,12 @@ namespace ConsoleFight
             Console.Write($"4. Использовать зелье маны");
         }
 
-        internal static ConsoleKey GetPlayerAction(List<ConsoleKey> actions, bool showStats = false)
+        internal static ConsoleKey GetPlayerAction(List<ConsoleKey> actions, bool showStats = true, bool showJournal = true)
         {
             if (showStats)
                 actions.Add(ConsoleKey.C);
+            if (showJournal)
+                actions.Add(ConsoleKey.J);
             bool inArray = false;
             ConsoleKey playerAction;
 
@@ -1033,7 +1035,7 @@ namespace ConsoleFight
             Console.Write($"4. Использовать зелье маны");
         }
 
-        internal static ConsoleKey GetPlayerAction(List<ConsoleKey> actions, bool showStats = false)
+        internal static ConsoleKey GetPlayerAction(List<ConsoleKey> actions, bool showStats = true)
         {
             if (showStats)
                 actions.Add(ConsoleKey.C);

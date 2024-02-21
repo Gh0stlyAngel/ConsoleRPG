@@ -15,7 +15,7 @@ namespace ConsoleHub
     {
         internal static void ToHub(ref PlayerClass player)
         {
-            //HubStart(player);
+            HubStart(player);
             bool inHub = true;
             int wins = 0;
 

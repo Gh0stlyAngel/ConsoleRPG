@@ -81,13 +81,14 @@ namespace consoleTextRPG
                             Console.Write(str[j]);
                             Thread.Sleep(speed);
                         }
-                        if ((i + 1) * 106 < str.Length)
-                        {
-                            if (Char.IsLetter(str[(i + 1) * 106]) && Char.IsLetter(str[((i + 1) * 106) - 1]))
-                                Console.Write("-\n   ");
-                            else
-                                Console.Write("\n   ");
-                        }
+                        Console.Write("\n   ");
+                        /*                        if ((i + 1) * 106 < str.Length)
+                                                {
+                                                    if (Char.IsLetter(str[(i + 1) * 106]) && Char.IsLetter(str[((i + 1) * 106) - 1]))
+                                                        Console.Write("-\n   ");
+                                                    else
+                                                        Console.Write("\n   ");
+                                                }*/
                     }
                 }
 
@@ -109,22 +110,32 @@ namespace consoleTextRPG
             ManaPotion manaPotion = new ManaPotion();
 
 
-            PlayerClass warrior = PlayerClassFactory.CreateInstance(1);
-            PlayerClass sorcerer = PlayerClassFactory.CreateInstance(2);
-            PlayerClass slayer = PlayerClassFactory.CreateInstance(3);
-            PlayerClass archer = PlayerClassFactory.CreateInstance(4);
+
+
+            Story story = new Story();
+
+            foreach (string[] arg in story.sealMainQuest.Keys)
+            {
+                Console.WriteLine(arg);
+            }
+            Console.ReadKey();
             Console.CursorVisible = false;
             SlowWrite("ConsoleTextRPG");
             Console.Clear();
             SlowWrite("Введите имя персонажа: ", needClear: false);
             string nickName = Console.ReadLine();
-            
-            //Welcome(nickName);
+
+            PlayerClass warrior = PlayerClassFactory.CreateInstance(1, nickName);
+            PlayerClass sorcerer = PlayerClassFactory.CreateInstance(2, nickName);
+            PlayerClass slayer = PlayerClassFactory.CreateInstance(3, nickName);
+            PlayerClass archer = PlayerClassFactory.CreateInstance(4, nickName);
+
+            Welcome(nickName);
 
 
             int chosenClass = PlayerPick(warrior, sorcerer, slayer, archer);
             //int chosenClass = 1;
-            PlayerClass player = PlayerClassFactory.CreateInstance(chosenClass);
+            PlayerClass player = PlayerClassFactory.CreateInstance(chosenClass, nickName);
             player.Inventory.AppendItem(healingPotion);
             player.Inventory.AppendItem(manaPotion);
 
@@ -196,7 +207,6 @@ namespace consoleTextRPG
                 case 1:
                     SlowWrite("Выбран Воин!");
                     break;
-
                 case 2:
                     SlowWrite("Выбран Маг!");
                     break;
@@ -327,6 +337,8 @@ namespace consoleTextRPG
         {
 
             public string Name { get; private set; }
+
+            public string NickName { get; private set; }
             public int HP { get; private set; }
             public int MP { get; private set; }
             public int AtcRange { get; private set; }
@@ -341,9 +353,10 @@ namespace consoleTextRPG
             public PlayerPassiveAbility PassiveAbility { get; private set; }
 
             public Inventory Inventory { get; private set; }
-            public PlayerClass(string name, int hp, int mp, int atcRange, int level, int exp, Weapon weapon, PlayerActiveAbility activeAbility, PlayerPassiveAbility passiveAbility)
+            public PlayerClass(string name, string nickName, int hp, int mp, int atcRange, int level, int exp, Weapon weapon, PlayerActiveAbility activeAbility, PlayerPassiveAbility passiveAbility)
             {
                 Name = name;
+                NickName = nickName;
                 HP = hp;
                 MP = mp;
                 AtcRange = atcRange;
@@ -453,7 +466,7 @@ namespace consoleTextRPG
 
         internal class PlayerClassFactory
         {
-            public static PlayerClass CreateInstance(int value)
+            public static PlayerClass CreateInstance(int value, string nickName)
             {
                 PlayerActiveAbility ActiveAbility;
                 PlayerPassiveAbility PassiveAbility;
@@ -463,28 +476,28 @@ namespace consoleTextRPG
                     ActiveAbility = new PlayerActiveAbility("Изнуряющий удар", $"Воин наносит 15 урона противнику, уменьшая наносимый им урон на 30% на 2 хода. Нанесение урона изнуренному противнику оглушает его.", 15, 6);
                     PassiveAbility = new PlayerPassiveAbility("Нарастающая ярость", "Течение битвы ожесточает воина, увеличивая наносимый им урон на 1 за ход.");
                     weapon = new Weapon("Стандартный меч", 10);
-                    return new PlayerClass("Воин", 120, 20, 0, 1, 0, weapon, ActiveAbility, PassiveAbility);
+                    return new PlayerClass("Воин", nickName, 120, 20, 0, 1, 0, weapon, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 2)
                 {
                     ActiveAbility = new PlayerActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит 18 урона и замораживает цель на 1 ход.", 18, 15);
                     PassiveAbility = new PlayerPassiveAbility("Благословение богов", "Боги направляют руку мага, что может значительно усилить его заклинания.");
                     weapon = new Weapon("Стандартный посох", 15);
-                    return new PlayerClass("Маг", 65, 75, 1, 1, 0, weapon, ActiveAbility, PassiveAbility);
+                    return new PlayerClass("Маг", nickName, 65, 75, 1, 1, 1, weapon, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 3)
                 {
                     ActiveAbility = new PlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком (18 урона). Умение может мгновенно убить противника, если его здоровье ниже 30%.", 23, 11);
                     PassiveAbility = new PlayerPassiveAbility("Ловкость", "Ловкость убийцы позволяет ему уклоняться от ударов противника с вероятностью 15%.");
                     weapon = new Weapon("Стандартный кинжал", 17);
-                    return new PlayerClass("Убийца", 90, 30, 0, 1, 0, weapon, ActiveAbility, PassiveAbility);
+                    return new PlayerClass("Убийца", nickName, 90, 30, 0, 1, 0, weapon, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 4)
                 {
                     ActiveAbility = new PlayerActiveAbility("Отступление", "Лучник разрывает дистанцию с противником на 1, нанося 8 урона и обездвиживая его на 1 ход", 8, 9);
                     PassiveAbility = new PlayerPassiveAbility("Меткий глаз", "Меткость лучника позволяет ему наносить дополнительные 3 урона удаленным целям, а также почти никогда не промахиваться.");
                     weapon = new Weapon("Стандартный лук", 12);
-                    return new PlayerClass("Лучник", 80, 20, 2, 1, 0, weapon, ActiveAbility, PassiveAbility);
+                    return new PlayerClass("Лучник", nickName, 80, 20, 2, 1, 0, weapon, ActiveAbility, PassiveAbility);
                 }
                 else { throw new ArgumentException("Неверный класс"); }
 
@@ -629,25 +642,43 @@ namespace consoleTextRPG
 
         internal class Story
         {
+
             public bool helpYourHome = false;
 
             public bool firstShopVisit = false;
 
-            public bool[] sealMainQuest = { false, false };
+            public Dictionary<string[], bool[]> sealMainQuest = new Dictionary<string[], bool[]>();
+      
 
-            public bool[] headmanPersonalQuest = { false, false };
+            public Dictionary<string[], bool[]> headmanPersonalQuest = new Dictionary<string[], bool[]>();
+            
 
-            public bool[] traderQuest = { false, false };
+            public Dictionary<string[], bool[]> traderQuest = new Dictionary<string[], bool[]>();
+   
 
-            public bool[] friendQuest = { false, false };
+            public Dictionary<string[], bool[]> friendQuest = new Dictionary<string[], bool[]>();
+   
 
-            public bool[] headmanMainQuest = { false, false };
+            public Dictionary<string[], bool[]> headmanMainQuest = new Dictionary<string[], bool[]>();
+        
 
-            public bool[] tampleQuest = { false, false };
+            public Dictionary<string[], bool[]> tampleQuest = new Dictionary<string[], bool[]>();
+   
 
-            public bool[] blacksmithMainQuest = { false, false };
+            public Dictionary<string[], bool[]> blacksmithMainQuest = new Dictionary<string[], bool[]>();
+           
 
-            public bool[] herbalistMainQuest = { false, false };
+            public Dictionary<string[], bool[]> herbalistMainQuest = new Dictionary<string[], bool[]>();
+          
+
+            public Story()
+            {
+                string[] nameAndDesc;
+                bool[] startAndResult = { false, false };
+
+                nameAndDesc = new string[] { "Прогрессия ослабления печати посредством нахождения предмета", "предмет был спрятан, и его нужно найти. Предмет охраняется стражем, стражу нужно дать по голове." };
+                sealMainQuest.Add(nameAndDesc, startAndResult);
+            }
 
         }
     }
