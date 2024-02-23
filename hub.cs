@@ -13,7 +13,7 @@ namespace ConsoleHub
 {
     internal class Hub
     {
-        internal static void ToHub(ref PlayerClass player)
+        internal static void ToHub(ref PlayerClass player, ref Story story)
         {
             HubStart(player);
             bool inHub = true;
@@ -48,6 +48,7 @@ namespace ConsoleHub
 
 
                 SlowWrite("C. ShowStats", needClear: false, speed: 0);
+                SlowWrite("J. ShowJournal", needClear: false, speed: 0);
                 ConsoleKey playerAction = GetPlayerAction(actions, true);
                 
                 switch (playerAction)
@@ -77,6 +78,10 @@ namespace ConsoleHub
                     case ConsoleKey.C:
                         player.ShowStats();
                         Console.ReadKey(true);
+                        break;
+
+                    case ConsoleKey.J:
+                        story.ShowJournal();
                         break;
                     default: break;
                 }

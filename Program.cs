@@ -130,7 +130,7 @@ namespace consoleTextRPG
             PlayerClass slayer = PlayerClassFactory.CreateInstance(3, nickName);
             PlayerClass archer = PlayerClassFactory.CreateInstance(4, nickName);
 
-            Welcome(nickName);
+            //Welcome(nickName);
 
 
             int chosenClass = PlayerPick(warrior, sorcerer, slayer, archer);
@@ -140,7 +140,15 @@ namespace consoleTextRPG
             player.Inventory.AppendItem(manaPotion);
 
 
-            Hub.ToHub(ref player);
+            //story.headmanMainQuest.First().Value[1] = true;
+
+            foreach (var arg in story.Quests)
+            {
+                arg.First().Value[0] = true;
+            }
+                
+
+            Hub.ToHub(ref player, ref story);
 
             //Shop.ToShop(player);
 
@@ -642,6 +650,7 @@ namespace consoleTextRPG
 
         internal class Story
         {
+            public List<Dictionary<string[], bool[]>> Quests = new List<Dictionary<string[], bool[]>>();
 
             public bool helpYourHome = false;
 
@@ -662,13 +671,14 @@ namespace consoleTextRPG
             public Dictionary<string[], bool[]> headmanMainQuest = new Dictionary<string[], bool[]>();
         
 
-            public Dictionary<string[], bool[]> tampleQuest = new Dictionary<string[], bool[]>();
+            public Dictionary<string[], bool[]> templeQuest = new Dictionary<string[], bool[]>();
    
 
             public Dictionary<string[], bool[]> blacksmithMainQuest = new Dictionary<string[], bool[]>();
            
 
             public Dictionary<string[], bool[]> herbalistMainQuest = new Dictionary<string[], bool[]>();
+
           
 
             public Story()
@@ -678,9 +688,159 @@ namespace consoleTextRPG
 
                 nameAndDesc = new string[] { "Прогрессия ослабления печати посредством нахождения предмета", "предмет был спрятан, и его нужно найти. Предмет охраняется стражем, стражу нужно дать по голове." };
                 sealMainQuest.Add(nameAndDesc, startAndResult);
+                Quests.Add(sealMainQuest);
+
+                nameAndDesc = new string[] { "Личная просьба старосты", "Помнишь, я тебе рассказывал о пропаже вещей, в которых были замешаны эти культисты? В один из таких налетов у меня пропала фамильная реликвия, которая осталась у меня от покойной жены. Прошу, найди эту реликвию, она очень важна для меня. " };
+                startAndResult = new bool[] { false, false };
+                headmanPersonalQuest.Add(nameAndDesc, startAndResult);
+                Quests.Add(headmanPersonalQuest);
+
+                nameAndDesc = new string[] { "Помощь торговцу", "@Описание@" };
+                startAndResult = new bool[] { false, false };
+                traderQuest.Add(nameAndDesc, startAndResult);
+                Quests.Add(traderQuest);
+
+                nameAndDesc = new string[] { "Помощь старому другу", "@Описание@" };
+                startAndResult = new bool[] { false, false };
+                friendQuest.Add(nameAndDesc, startAndResult);
+                Quests.Add(friendQuest);
+
+                nameAndDesc = new string[] { "Спасение жителей деревни", "Какое-то время назад у нас начали пропадать сначала скот, и мелкое имущество, но однажды утром, мы не досчитались нескольких наших жителей. Я подозреваю, что в этом замешаны культисты, которые недавно объявились в наших краях. Прошу тебя, проникни в лагерь этих культистов и спаси наших людей!" };
+                startAndResult = new bool[] { false, false };
+                headmanMainQuest.Add(nameAndDesc, startAndResult);
+                Quests.Add(headmanMainQuest);
+
+                nameAndDesc = new string[] { "Помощь местной церкви", "@Описание@" };
+                startAndResult = new bool[] { false, false };
+                templeQuest.Add(nameAndDesc, startAndResult);
+                Quests.Add(templeQuest);
+
+                nameAndDesc = new string[] { "blacksmithMainQuest", "@Описание@" };
+                startAndResult = new bool[] { false, false };
+                blacksmithMainQuest.Add(nameAndDesc, startAndResult);
+                Quests.Add(blacksmithMainQuest);
+
+                nameAndDesc = new string[] { "herbalistMainQuest", "@Описание@" };
+                startAndResult = new bool[] { false, false };
+                herbalistMainQuest.Add(nameAndDesc, startAndResult);
+                Quests.Add(herbalistMainQuest);
+
             }
 
+            public void ShowJournal()
+            {
+                bool inJournal = true;
+                while (inJournal)
+                {
+                    List<Dictionary<string[], bool[]>> activeQuests = new List<Dictionary<string[], bool[]>>();
+                    Console.Clear();
+
+                    int integer = 0;
+                    foreach (var quest in Quests)
+                    {
+
+                        foreach (var value in quest.Values)
+                        {
+                            if (value[0] && !value[1])  //if queest started and not completed
+                            {
+                                integer++;
+                                foreach (var key in quest.Keys)
+                                {
+                                    SlowWrite($"{integer}. {key[0]}", needClear: false, speed: 0);
+                                    activeQuests.Add(quest);
+                                }
+                            }
+                        }
+                    }
+                    List<ConsoleKey> actions = NumberOfActions(integer);
+                    ConsoleKey playerAction = GetPlayerAction(actions, false, false, true);
+                    Console.Clear();
+                    int chosenQuest;
+                    switch (playerAction)
+                    {
+                        case ConsoleKey.D1:
+                            chosenQuest = 1;
+                            break;
+                        case ConsoleKey.D2:
+                            chosenQuest = 2;
+                            break;
+                        case ConsoleKey.D3:
+                            chosenQuest = 3;
+                            break;
+                        case ConsoleKey.D4:
+                            chosenQuest = 4;
+                            break;
+                        case ConsoleKey.D5:
+                            chosenQuest = 5;
+                            break;
+                        case ConsoleKey.D6:
+                            chosenQuest = 6;
+                            break;
+                        case ConsoleKey.D7:
+                            chosenQuest = 7;
+                            break;
+                        case ConsoleKey.D8:
+                            chosenQuest = 8;
+                            break;
+                        case ConsoleKey.D9:
+                            chosenQuest = 9;
+                            break;
+                        default: 
+                            chosenQuest = 0;
+                            inJournal = false;
+                            break;
+                    }
+                    try
+                    {
+                        foreach (var nameAndDesc in activeQuests[chosenQuest - 1].Keys)
+                        {
+                            SlowWrite($"{nameAndDesc[0]}", speed: 0, needClear: false);
+                            Console.WriteLine();
+                            SlowWrite($"{nameAndDesc[1]}", speed: 0, needClear: false);
+                            Console.ReadKey();
+                        }
+                    }
+                    catch 
+                    {
+                        continue;
+                    }
+                    
+                }
+            }
+                
+
         }
+        enum intActions
+        {
+            one = 1, two, three, four, five, six, seven, eight, nine
+        }
+        static internal List<ConsoleKey> NumberOfActions (int numberOfActions)
+        {
+            List<ConsoleKey> actions = new List<ConsoleKey>();
+            ConsoleKey action;
+
+            for (int i = 1; i < numberOfActions + 1; i++)
+            {
+                switch(i)
+                {
+                    case (int)intActions.one: action = ConsoleKey.D1; break;
+                    case (int)intActions.two: action = ConsoleKey.D2; break;
+                    case (int)intActions.three: action = ConsoleKey.D3; break;
+                    case (int)intActions.four: action = ConsoleKey.D4; break;
+                    case (int)intActions.five: action = ConsoleKey.D5; break;
+                    case (int)intActions.six: action = ConsoleKey.D6; break;
+                    case (int)intActions.seven: action = ConsoleKey.D7; break;
+                    case (int)intActions.eight: action = ConsoleKey.D8; break;
+                    case (int)intActions.nine: action = ConsoleKey.D9; break;
+                    default: action = ConsoleKey.End; break;
+
+                }
+                actions.Add(action);
+            }
+
+            return actions;
+        }
+        
     }
 }
 

@@ -446,7 +446,7 @@ namespace ConsoleFight
             Console.Write($"4. Использовать зелье маны");
         }
 
-        internal static ConsoleKey GetPlayerAction(List<ConsoleKey> actions, bool showStats = true, bool showJournal = true)
+        internal static ConsoleKey GetPlayerAction(List<ConsoleKey> actions, bool showStats = true, bool showJournal = true, bool ableToBreak = false)
         {
             if (showStats)
                 actions.Add(ConsoleKey.C);
@@ -455,16 +455,44 @@ namespace ConsoleFight
             bool inArray = false;
             ConsoleKey playerAction;
 
-            do
+            if (ableToBreak)
             {
-                playerAction = Console.ReadKey(true).Key;
-                foreach (var action in actions)
+                int numberOfActions = actions.Count;
+                List<char> unavilableActions = new List<char>();
+                for (int i = numberOfActions; i < 10; i++)
                 {
-                    if (action == playerAction)
-                        inArray = true;
+                    unavilableActions.Add(((char)i));
                 }
+                bool validAction = true;
+                do
+                {
+                    ConsoleKeyInfo playerActionInfo = Console.ReadKey(true);
+                    playerAction = playerActionInfo.Key;
+                    char playerActionChar = playerActionInfo.KeyChar;
+                    
+                    
+                    foreach (var action in unavilableActions)
+                    {
+                        if (playerActionChar == action)
+                            validAction = false;
+                    }
+                }
+                while (!validAction);
             }
-            while (!inArray);
+            else
+            {
+                do
+                {
+                    playerAction = Console.ReadKey(true).Key;
+                    foreach (var action in actions)
+                    {
+                        if (action == playerAction)
+                            inArray = true;
+                    }
+                }
+                while (!inArray);
+            }
+            
             
             return playerAction;
         }
