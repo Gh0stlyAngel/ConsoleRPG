@@ -100,8 +100,8 @@ namespace ConsoleHub
 
         internal static void HubStart(PlayerClass player)
         {
-            SlowWrite($"Первым делом {player.Name} решает навестить старосту деревни, чтобы узнать подробности.");
-            SlowWrite($"Однако староста нашёл его раньше...");
+/*            SlowWrite($"Первым делом {player.Name} решает навестить старосту деревни, чтобы узнать подробности.");
+            SlowWrite($"Однако староста нашёл его раньше...");*/
             SlowWrite($"{player.Name}!", teller: "Староста");
             SlowWrite($"Наконец ты прибыл..", teller: "Староста");
             SlowWrite($"Здравствуй, рад тебя видеть. Рассказывай, что случилось.", teller: player.Name);
@@ -114,7 +114,8 @@ namespace ConsoleHub
             SlowWrite($"Но для начала мне нужно подготовиться. У вас есть где достать зелья?", teller: player.Name);
             SlowWrite($"Конечно. Загляни к торговцу, скажи что от меня, он даст тебе парочку.", teller: "Староста");
             SlowWrite($"Отлично, отправлюсь прямо сейчас.", teller: player.Name);
-            SlowWrite($"Дай знать, когда выяснишь что-нибудь. И.. Береги себя!", teller: "Староста");
+            Console.Clear();
+            SlowWrite($"Дай знать, когда выяснишь что-нибудь. И.. Береги себя!", teller: "Староста", needClear: false);
         }
     }
 }

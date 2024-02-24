@@ -109,16 +109,8 @@ namespace consoleTextRPG
             HealingPotion healingPotion = new HealingPotion();
             ManaPotion manaPotion = new ManaPotion();
 
-
-
-
             Story story = new Story();
 
-            foreach (string[] arg in story.sealMainQuest.Keys)
-            {
-                Console.WriteLine(arg);
-            }
-            Console.ReadKey();
             Console.CursorVisible = false;
             SlowWrite("ConsoleTextRPG");
             Console.Clear();
@@ -139,14 +131,13 @@ namespace consoleTextRPG
             player.Inventory.AppendItem(healingPotion);
             player.Inventory.AppendItem(manaPotion);
 
-
-            //story.headmanMainQuest.First().Value[1] = true;
-
             foreach (var arg in story.Quests)
             {
                 arg.First().Value[0] = true;
             }
-                
+
+            HubMap.GoToHub(player, story);
+
 
             Hub.ToHub(ref player, ref story);
 
