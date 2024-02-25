@@ -23,7 +23,7 @@ namespace ConsoleFight
 
     internal class Fight
     {
-        internal static int StartFight(ref PlayerClass player)
+        internal static int StartFight(ref PlayerClass player, BaseEnemy baseEnemy)
         {
 
             ConsoleKey[] actions = { ConsoleKey.D1, ConsoleKey.D2, ConsoleKey.D3, ConsoleKey.D4 };
@@ -34,7 +34,6 @@ namespace ConsoleFight
             Queue<string> logQueue = new Queue<string>();
 
             Random rnd = new Random();
-            BaseEnemy baseEnemy = new BaseEnemy("Базовый противник", 120, 10, 1);
 
             int distance = 0;
 
@@ -704,7 +703,7 @@ namespace ConsoleFight
             Queue<string> logQueue = new Queue<string>();
 
             Random rnd = new Random();
-            BaseEnemy baseEnemy = new BaseEnemy("Базовый противник", 120, 10, 1);
+            BaseEnemy baseEnemy = new BaseEnemy("Страж Артефакта", 80, 9, 0);
 
             int distance;
 
@@ -814,11 +813,6 @@ namespace ConsoleFight
                 DrawGUI(6, 13, 6, 15, player, distance, baseEnemy);
                 Console.ReadKey(true);
 
-            }
-            if (player.HP > 0)
-            {
-                player.getGold(15);
-                SlowWrite($"Получено 15 золота.", needClear: true);
             }
 
             return player.HP;

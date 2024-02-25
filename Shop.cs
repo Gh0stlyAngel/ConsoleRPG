@@ -6,38 +6,80 @@ using System.Threading.Tasks;
 using consoleTextRPG;
 using static consoleTextRPG.Program;
 using static ConsoleFight.Fight;
+using ConsoleHub;
 
 namespace ConsoleShop
 {
     internal class Shop
     {
 
-        internal static void ToShop(PlayerClass player)
+        internal static void ToShop(ref PlayerClass player, ref Story story)
         {
             SlowWrite("Вы прибыли в лавку торговца.");
             Console.Clear();
-            SlowWrite("1. Посмотреть ассортимент", needClear: false);
-            SlowWrite("2. Покинуть магазин", needClear: false);
-            List<ConsoleKey> actions = new List<ConsoleKey> { ConsoleKey.D1, ConsoleKey.D2 };
-            ConsoleKey playerAction = GetPlayerAction(actions);
-
-            switch (playerAction)
+            if (!story.FirstShopVisit && story.FirstVisitHeadman)
             {
-                
-                case ConsoleKey.D1:
-                    OpenShop(player);
-
-                    break;
-
-                case ConsoleKey.D2:
-                    SlowWrite("Вы уходите.");
-
-                    break;
-
-                default:
-                    break;
+                Hub.ShopGetPotions(ref player, ref story);
             }
+            else
+            {
+                List<ConsoleKey> actions;
+                if ((story.TraderQuest.First().Value[0] && !story.TraderQuest.First().Value[1]) || story.TraderQuest.First().Value[2])
+                {
+                    SlowWrite("1. Посмотреть ассортимент", needClear: false);
+                    SlowWrite("2. Покинуть магазин", needClear: false);
+                    actions = new List<ConsoleKey> { ConsoleKey.D1, ConsoleKey.D2 };
+                    ConsoleKey playerAction = GetPlayerAction(actions);
 
+
+
+                    switch (playerAction)
+                    {
+
+                        case ConsoleKey.D1:
+                            OpenShop(player);
+
+                            break;
+
+                        case ConsoleKey.D2:
+                            SlowWrite("Вы уходите.");
+
+                            break;
+
+                        default: break;
+                    }
+                }
+                else
+                {
+                    SlowWrite("1. Посмотреть ассортимент", needClear: false);
+                    SlowWrite("2. Спросить про запасы", needClear: false);
+                    SlowWrite("3. Покинуть магазин", needClear: false);
+                    actions = NumberOfActions(3);
+                    ConsoleKey playerAction = GetPlayerAction(actions);
+
+
+
+                    switch (playerAction)
+                    {
+
+                        case ConsoleKey.D1:
+                            OpenShop(player);
+
+                            break;
+                        case ConsoleKey.D2:
+                            Hub.ShopQuest(player, ref story);
+                            break;
+
+                        case ConsoleKey.D3:
+                            SlowWrite("Вы уходите.");
+                            break;
+
+                        default: break;
+                    }
+                }
+
+            }
+            
         }
 
         internal static void OpenShop(PlayerClass player)
@@ -61,7 +103,6 @@ namespace ConsoleShop
 
                 List<ConsoleKey> actions = new List<ConsoleKey> { ConsoleKey.D1, ConsoleKey.D2, ConsoleKey.D3 };
                 ConsoleKey playerAction = GetPlayerAction(actions);
-                bool ableToPay;
 
                 switch (playerAction)
                 {

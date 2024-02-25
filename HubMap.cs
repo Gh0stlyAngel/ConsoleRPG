@@ -10,12 +10,13 @@ using ConsoleShop;
 using consoleTextRPG;
 using ConsoleHub;
 using static consoleTextRPG.Program;
+using System.Security.Policy;
 
 namespace consoleTextRPG
 {
     internal class HubMap
     {
-        internal static void GoToHub(PlayerClass player, Story story, int playerPosX = 43, int playerPosY = 18)
+        internal static void GoToHub(ref PlayerClass player, ref Story story, string nickName = null, int playerPosX = 43, int playerPosY = 18)
         {
             Console.Clear();
             Console.CursorVisible = false;
@@ -39,8 +40,11 @@ namespace consoleTextRPG
 
             Console.SetCursorPosition(88, 3);
             Console.Write("→ ← ↑ ↓ - Управление");
-            Console.SetCursorPosition(88, 4);
-            Console.Write("C - Персонаж");
+            if (story.FirstVillageVisit)
+            {
+                Console.SetCursorPosition(88, 4);
+                Console.Write("C - Персонаж");
+            }
             Console.SetCursorPosition(88, 5);
             Console.Write("J - Журнал");
 
@@ -93,11 +97,14 @@ namespace consoleTextRPG
                         gotEvent = true;
                         break;
                     case ConsoleKey.C:
-                        player.ShowStats();
-                        Console.ReadKey(true);
-                        previousPosition[0] = playerPosX;
-                        previousPosition[1] = playerPosY;
-                        gotEvent = true;
+                        if (story.FirstVillageVisit)
+                        {
+                            player.ShowStats();
+                            Console.ReadKey(true);
+                            previousPosition[0] = playerPosX;
+                            previousPosition[1] = playerPosY;
+                            gotEvent = true;
+                        }
                         break;
                     default:
 
@@ -109,10 +116,15 @@ namespace consoleTextRPG
                 }
             }
             int[] coordinates = { playerPosX, playerPosY };
-            bool goOut = MoveTo(player, coordinates);
+            bool goOut = MoveTo(ref player, ref story, coordinates, nickName);
 
-            if (!goOut)
-                GoToHub(player, story, previousPosition[0], previousPosition[1]);
+            if (!goOut && story.SpawnNearHome)
+            {
+                story.SpawnNearHome = false;
+                GoToHub(ref player, ref story, playerPosX: 43, playerPosY: 18);
+            }
+            else if (!goOut)
+                GoToHub(ref player, ref story, playerPosX: previousPosition[0], playerPosY: previousPosition[1]);
 
         }
 
@@ -151,7 +163,7 @@ namespace consoleTextRPG
             }
         }
 
-        internal static bool MoveTo(PlayerClass player, int[] coordinates)
+        internal static bool MoveTo(ref PlayerClass player, ref Story story, int[] coordinates, string nickName = null)
         {
             bool goOut = false;
             HubEvenst hubEvenst = new HubEvenst();
@@ -174,29 +186,31 @@ namespace consoleTextRPG
             switch (way)
             {
                 case (int)Events.Trader:
-                    HubEvenst.ToTraderHouse(player);
+                    HubEvenst.ToTraderHouse(ref player, ref story);
                     break;
                 case (int)Events.Herbalist:
-                    HubEvenst.ToHerbalistHouse(player);
+                    HubEvenst.ToHerbalistHouse(ref player, ref story);
                     break;
                 case (int)Events.Friend:
-                    HubEvenst.ToFriendHouse(player);
+                    HubEvenst.ToFriendHouse(ref player, ref story);
                     break;
                 case (int)Events.Manufactory:
-                    HubEvenst.ToManufactory(player);
+                    HubEvenst.ToManufactory(ref player, ref story);
                     break;
                 case (int)Events.Temple:
-                    HubEvenst.ToTemple(player);
+                    HubEvenst.ToTemple(ref player, ref story);
                     break;
                 case (int)Events.Home:
-                    HubEvenst.ToHome(player);
+                    HubEvenst.ToHome(ref player, ref story, nickName);
                     break;
                 case (int)Events.Headman:
-                    HubEvenst.ToHeadmanHouse(player);
+                    HubEvenst.ToHeadmanHouse(ref player, ref story);
                     break;
                 case (int)Events.Outside:
                     goOut = true;
-                    HubEvenst.ToOutside(player);
+                    HubEvenst.ToOutside(ref player, ref story);
+                    if (!story.FirstVillageVisit || story.ArtefactCollected)
+                        goOut = false;
                     break;
                 default: break;
             }
@@ -221,6 +235,10 @@ namespace consoleTextRPG
         public Dictionary<int[][], Events> EventsDictionary = new Dictionary<int[][], Events>();
 
         public static string EmptyHome = "Вы постучали в дверь, но никто не ответил. Наверное, дома никого нет.";
+
+        public static string VisitHome = "Это подождет, нужно посетить родных.";
+
+        public static string CollectArtefact = "Нет времени, в первую очередь - артефакт!";
 
         public HubEvenst()
         {
@@ -282,51 +300,108 @@ namespace consoleTextRPG
             EventsDictionary.Add(outside, Events.Outside);
         }
 
-        internal static void ToTraderHouse(PlayerClass player)
+        internal static void ToTraderHouse(ref PlayerClass player, ref Story story)
         {
-            Shop.ToShop(player);
+            if (!story.FirstVillageVisit)
+                SlowWrite(VisitHome);
+            else if (!story.ArtefactCollected)
+                SlowWrite(CollectArtefact);
+            else
+                Shop.ToShop(ref player, ref story);
         }
-        internal static void ToHerbalistHouse(PlayerClass player)
+        internal static void ToHerbalistHouse(ref PlayerClass player, ref Story story)
         {
-            Console.Clear();
-            Console.WriteLine(EmptyHome);
-            Console.ReadKey(true);
+            if (!story.FirstVillageVisit)
+                SlowWrite(VisitHome);
+            else if (!story.ArtefactCollected)
+                SlowWrite(CollectArtefact);
+            else
+                SlowWrite(EmptyHome);
         }
-        internal static void ToFriendHouse(PlayerClass player)
+        internal static void ToFriendHouse(ref PlayerClass player, ref Story story)
         {
-            Console.Clear();
-            Console.WriteLine(EmptyHome);
-            Console.ReadKey(true);
+            if (!story.FirstVillageVisit)
+                SlowWrite(VisitHome);
+            else if (!story.ArtefactCollected)
+                SlowWrite(CollectArtefact);
+            else
+                SlowWrite(EmptyHome);
         }
-        internal static void ToManufactory(PlayerClass player)
+        internal static void ToManufactory(ref PlayerClass player, ref Story story)
         {
-            Console.Clear();
-            Console.WriteLine(EmptyHome);
-            Console.ReadKey(true);
+            if (!story.FirstVillageVisit)
+                SlowWrite(VisitHome);
+            else if (!story.ArtefactCollected)
+                SlowWrite(CollectArtefact);
+            else
+                SlowWrite(EmptyHome);
         }
-        internal static void ToTemple(PlayerClass player)
+        internal static void ToTemple(ref PlayerClass player, ref Story story)
         {
-            Console.Clear();
-            Console.WriteLine(EmptyHome);
-            Console.ReadKey(true);
+            if (!story.FirstVillageVisit)
+                SlowWrite(VisitHome);
+            else if (!story.ArtefactCollected)
+                SlowWrite(CollectArtefact);
+            else
+                SlowWrite(EmptyHome);
         }
-        internal static void ToHome(PlayerClass player)
+        internal static void ToHome(ref PlayerClass player, ref Story story, string nickName = null)
         {
-            Console.Clear();
-            Console.WriteLine("ToHome");
-            Console.ReadKey(true);
+            if (!story.FirstVillageVisit)
+            {
+                Hub.ComeToHome(ref player, nickName);
+                story.FirstVillageVisit = true;
+            }
+            else if (!story.ArtefactCollected)
+                SlowWrite(CollectArtefact);
+            else if (!story.FirstVisitHeadman)
+                SlowWrite("Тебе стоило бы посетить старосту, он тебя ждет.", teller: "Мама");
+            else
+                SlowWrite("ToHome");
         }
-        internal static void ToHeadmanHouse(PlayerClass player)
+        internal static void ToHeadmanHouse(ref PlayerClass player, ref Story story)
         {
-            Console.Clear();
-            Hub.HubStart(player);
-            Console.ReadKey(true);
+            if (!story.FirstVillageVisit)
+                SlowWrite(VisitHome);
+            else if (!story.ArtefactCollected)
+                SlowWrite(CollectArtefact);
+            else if (!story.FirstVisitHeadman)
+            {
+                Console.Clear();
+                story.FirstVisitHeadman = true;
+                Hub.ToHeadman(ref player);
+            }
+            else if (story.FirstVisitHeadman && !story.FirstShopVisit)
+            {
+                SlowWrite($"Загляни к торговцу, скажи что от меня, он выдаст тебе несколько зелий, на всякий случай. А после жду тебя тут.", teller: "Староста");
+            }
+            else if (story.FirstVisitHeadman && story.FirstShopVisit)
+            {
+                Hub.HeadmanMainQuest(ref player, ref story);
+            }
+            else
+            {
+                SlowWrite("toHeadman");
+            }
+
         }
-        internal static void ToOutside(PlayerClass player)
+        internal static void ToOutside(ref PlayerClass player, ref Story story)
         {
-            Console.Clear();
-            Console.WriteLine("ToOutside");
-            Console.ReadKey(true);
+            if (!story.FirstVillageVisit)
+                SlowWrite(VisitHome);
+            else if (!story.ArtefactCollected)
+            {
+                Hub.ToCave(ref player);
+                story.ArtefactCollected = true;
+                story.SpawnNearHome = true;
+            }
+            else
+            {
+                Console.Clear();
+                Console.WriteLine("ToOutside");
+                Console.ReadKey(true);
+            }
+
         }
 
 

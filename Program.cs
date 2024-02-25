@@ -14,6 +14,7 @@ using static ConsoleFight.Fight;
 using ConsoleHub;
 using ConsoleShop;
 using System.Runtime.InteropServices;
+using System.Runtime.ExceptionServices;
 
 
 
@@ -117,48 +118,22 @@ namespace consoleTextRPG
             SlowWrite("Введите имя персонажа: ", needClear: false);
             string nickName = Console.ReadLine();
 
-            PlayerClass warrior = PlayerClassFactory.CreateInstance(1, nickName);
-            PlayerClass sorcerer = PlayerClassFactory.CreateInstance(2, nickName);
-            PlayerClass slayer = PlayerClassFactory.CreateInstance(3, nickName);
-            PlayerClass archer = PlayerClassFactory.CreateInstance(4, nickName);
+            Welcome(nickName);
 
-            //Welcome(nickName);
-
-
-            int chosenClass = PlayerPick(warrior, sorcerer, slayer, archer);
-            //int chosenClass = 1;
+            int chosenClass = 1;
             PlayerClass player = PlayerClassFactory.CreateInstance(chosenClass, nickName);
             player.Inventory.AppendItem(healingPotion);
             player.Inventory.AppendItem(manaPotion);
 
-            foreach (var arg in story.Quests)
+/*            foreach (var arg in story.Quests)
             {
                 arg.First().Value[0] = true;
-            }
+            }*/
 
-            HubMap.GoToHub(player, story);
-
-
-            Hub.ToHub(ref player, ref story);
-
-            //Shop.ToShop(player);
-
-
-
-            Fight.StartFight(ref player);
-
-
-
-            if (player.HP <= 0)
-            {
-                Console.WriteLine("GameOVER");
-                Console.ReadKey();
-            }
-            else
-            {
-                Console.WriteLine("YouWIN");
-                Console.ReadKey();
-            }
+            
+            
+            HubMap.GoToHub(ref player, ref story, nickName);
+            
 
             SlowWrite("Продолжение следует...");
 
@@ -173,12 +148,7 @@ namespace consoleTextRPG
             SlowWrite($"Шли недели и месяцы, {nickName} устроился в приличную мастерскую, все было довольно неплохо, до тех пор, пока в одно утро он не получил весточку из своей родной деревни. Развернув сверток, он увидел почерк матери, в котором говорилось, что его родной деревне угрожает опасность, и возможно, он единственный, кто может им помочь. ");
             SlowWrite($"Не понимая, почему матушка выделила его среди прочих, {nickName} оповестил своего работодателя, что ему нужно спешно покинуть город и вернуться в родную деревню. Мастеровой, конечно, не очень хотел отпускать {nickName}, так как был самый сезон работ, и было очень много заказов. Даже начал грозить увольнением.");
             SlowWrite($"«Выбор» Остаться работать(Но совесть замучает, и {nickName} все равно сбежит), или же Настоять на своем (По итогу мастеровой даст заднюю и сохранит за ним место, так как наш {nickName} рукастый)");
-            SlowWrite($"По приезду в деревню, {nickName} заметил, что деревня сильно изменился с его последнего визита сюда. Дома обветшали, заборы поломаны, люди вокруг сильно потеряли в лице. {nickName}  первым делом прибежал домой, дабы убедиться, что с его родными все в порядке. Он застал матушку, которая латала раны его отцу, и брата, который помогал ей. «Выбор» Кинуться обнимать родных или сначала выяснить причину, по которой мама вызвала именно его.");
-            SlowWrite($"Достав письмо, {nickName} решил узнать у матушки, чем же таким он отличается от других, что она назвала его последней надеждой деревни. ");
-            SlowWrite($"Матушка кивнула родным, попросив их покинуть комнату, дабы объясниться с сыном.");
-            SlowWrite($"{nickName}, знал ли ты, что когда-то я относилась к древнему роду «Придумать название»? Наш род отличался силой и интеллектом, которые особо ярко проявлялись в мужчинах. Но ты, {nickName}, особенный. Все потому, что при твоем рождении наши жрецы заметили в тебе силу, которая могла поменять баланс добра и зла.");
-            SlowWrite($"В связи с чем, мы с твоим отцом провели особый обряд, который частично запечатал твою силу. Но к великому счастью, со временем, как ты креп, печать слабела. И сейчас, тебе уже вполне по силам начать учиться тому, что знал мой клан. ");
-
+            SlowWrite($"По приезду в деревню, {nickName} заметил, что деревня сильно изменился с его последнего визита сюда. Дома обветшали, заборы поломаны, люди вокруг сильно потеряли в лице...");
 
             /*            SlowWrite("Нажми любую клавишу чтобы начать...");
                         SlowWrite("Привет!");
@@ -187,7 +157,7 @@ namespace consoleTextRPG
         }
 
 
-        static int PlayerPick(PlayerClass warrior, PlayerClass sorcerer, PlayerClass slayer, PlayerClass archer)
+        internal static int PlayerPick(PlayerClass warrior, PlayerClass sorcerer, PlayerClass slayer, PlayerClass archer)
         {
             ShowClassList(warrior, sorcerer, slayer, archer);
 
@@ -256,7 +226,7 @@ namespace consoleTextRPG
             SlowWrite($"3. {slayer.Name}", ConsoleColor.DarkRed, false, speed: 1);
             SlowWrite($"4. {archer.Name}", ConsoleColor.Green, false, speed: 1);
             Console.WriteLine();
-            SlowWrite("Нажми соответствующую цифру для получения подробной информации о классе.", needClear: false, speed: 1);
+            SlowWrite("Нажми соответствующую цифру для получения подробной информации о классе.", needClear: false, speed: 0);
         }
 
         static bool ChoisingClass(PlayerClass warrior, PlayerClass sorcerer, PlayerClass slayer, PlayerClass archer, ConsoleKeyInfo pressedKey, ref int chosenClass)
@@ -643,78 +613,85 @@ namespace consoleTextRPG
         {
             public List<Dictionary<string[], bool[]>> Quests = new List<Dictionary<string[], bool[]>>();
 
-            public bool helpYourHome = false;
+            public bool HelpYourHome = false;
 
-            public bool firstShopVisit = false;
+            public bool FirstShopVisit = false;
 
-            public Dictionary<string[], bool[]> sealMainQuest = new Dictionary<string[], bool[]>();
+            public bool FirstVillageVisit = false;
+
+            public bool ArtefactCollected = false;
+
+            public bool FirstVisitHeadman = false;
+
+            public Dictionary<string[], bool[]> SealMainQuest = new Dictionary<string[], bool[]>();
       
 
-            public Dictionary<string[], bool[]> headmanPersonalQuest = new Dictionary<string[], bool[]>();
+            public Dictionary<string[], bool[]> HeadmanPersonalQuest = new Dictionary<string[], bool[]>();
             
 
-            public Dictionary<string[], bool[]> traderQuest = new Dictionary<string[], bool[]>();
+            public Dictionary<string[], bool[]> TraderQuest = new Dictionary<string[], bool[]>();
    
 
-            public Dictionary<string[], bool[]> friendQuest = new Dictionary<string[], bool[]>();
+            public Dictionary<string[], bool[]> FriendQuest = new Dictionary<string[], bool[]>();
    
 
-            public Dictionary<string[], bool[]> headmanMainQuest = new Dictionary<string[], bool[]>();
+            public Dictionary<string[], bool[]> HeadmanMainQuest = new Dictionary<string[], bool[]>();
         
 
-            public Dictionary<string[], bool[]> templeQuest = new Dictionary<string[], bool[]>();
+            public Dictionary<string[], bool[]> TempleQuest = new Dictionary<string[], bool[]>();
    
 
-            public Dictionary<string[], bool[]> blacksmithMainQuest = new Dictionary<string[], bool[]>();
+            public Dictionary<string[], bool[]> BlacksmithMainQuest = new Dictionary<string[], bool[]>();
            
 
-            public Dictionary<string[], bool[]> herbalistMainQuest = new Dictionary<string[], bool[]>();
+            public Dictionary<string[], bool[]> HerbalistMainQuest = new Dictionary<string[], bool[]>();
+
+            public bool SpawnNearHome = false;
 
           
 
             public Story()
             {
                 string[] nameAndDesc;
-                bool[] startAndResult = { false, false };
+                bool[] startResultPassed = { false, false, false };
 
                 nameAndDesc = new string[] { "Прогрессия ослабления печати посредством нахождения предмета", "предмет был спрятан, и его нужно найти. Предмет охраняется стражем, стражу нужно дать по голове." };
-                sealMainQuest.Add(nameAndDesc, startAndResult);
-                Quests.Add(sealMainQuest);
+                SealMainQuest.Add(nameAndDesc, startResultPassed);
+                Quests.Add(SealMainQuest);
 
                 nameAndDesc = new string[] { "Личная просьба старосты", "Помнишь, я тебе рассказывал о пропаже вещей, в которых были замешаны эти культисты? В один из таких налетов у меня пропала фамильная реликвия, которая осталась у меня от покойной жены. Прошу, найди эту реликвию, она очень важна для меня. " };
-                startAndResult = new bool[] { false, false };
-                headmanPersonalQuest.Add(nameAndDesc, startAndResult);
-                Quests.Add(headmanPersonalQuest);
+                startResultPassed = new bool[] { false, false, false };
+                HeadmanPersonalQuest.Add(nameAndDesc, startResultPassed);
+                Quests.Add(HeadmanPersonalQuest);
 
-                nameAndDesc = new string[] { "Помощь торговцу", "@Описание@" };
-                startAndResult = new bool[] { false, false };
-                traderQuest.Add(nameAndDesc, startAndResult);
-                Quests.Add(traderQuest);
-
+                nameAndDesc = new string[] { "Помощь торговцу", "Изучить обломки обозов около моста, недалеко от деревни." };
+                startResultPassed = new bool[] { false, false, false };
+                TraderQuest.Add(nameAndDesc, startResultPassed);
+                Quests.Add(TraderQuest);
                 nameAndDesc = new string[] { "Помощь старому другу", "@Описание@" };
-                startAndResult = new bool[] { false, false };
-                friendQuest.Add(nameAndDesc, startAndResult);
-                Quests.Add(friendQuest);
+                startResultPassed = new bool[] { false, false, false };
+                FriendQuest.Add(nameAndDesc, startResultPassed);
+                Quests.Add(FriendQuest);
 
                 nameAndDesc = new string[] { "Спасение жителей деревни", "Какое-то время назад у нас начали пропадать сначала скот, и мелкое имущество, но однажды утром, мы не досчитались нескольких наших жителей. Я подозреваю, что в этом замешаны культисты, которые недавно объявились в наших краях. Прошу тебя, проникни в лагерь этих культистов и спаси наших людей!" };
-                startAndResult = new bool[] { false, false };
-                headmanMainQuest.Add(nameAndDesc, startAndResult);
-                Quests.Add(headmanMainQuest);
+                startResultPassed = new bool[] { false, false, false };
+                HeadmanMainQuest.Add(nameAndDesc, startResultPassed);
+                Quests.Add(HeadmanMainQuest);
 
                 nameAndDesc = new string[] { "Помощь местной церкви", "@Описание@" };
-                startAndResult = new bool[] { false, false };
-                templeQuest.Add(nameAndDesc, startAndResult);
-                Quests.Add(templeQuest);
+                startResultPassed = new bool[] { false, false, false };
+                TempleQuest.Add(nameAndDesc, startResultPassed);
+                Quests.Add(TempleQuest);
 
                 nameAndDesc = new string[] { "blacksmithMainQuest", "@Описание@" };
-                startAndResult = new bool[] { false, false };
-                blacksmithMainQuest.Add(nameAndDesc, startAndResult);
-                Quests.Add(blacksmithMainQuest);
+                startResultPassed = new bool[] { false, false, false };
+                BlacksmithMainQuest.Add(nameAndDesc, startResultPassed);
+                Quests.Add(BlacksmithMainQuest);
 
                 nameAndDesc = new string[] { "herbalistMainQuest", "@Описание@" };
-                startAndResult = new bool[] { false, false };
-                herbalistMainQuest.Add(nameAndDesc, startAndResult);
-                Quests.Add(herbalistMainQuest);
+                startResultPassed = new bool[] { false, false, false };
+                HerbalistMainQuest.Add(nameAndDesc, startResultPassed);
+                Quests.Add(HerbalistMainQuest);
 
             }
 
@@ -732,7 +709,7 @@ namespace consoleTextRPG
 
                         foreach (var value in quest.Values)
                         {
-                            if (value[0] && !value[1])  //if queest started and not completed
+                            if (value[0] && !value[2])  //if queest started and not passed
                             {
                                 integer++;
                                 foreach (var key in quest.Keys)
@@ -831,6 +808,7 @@ namespace consoleTextRPG
 
             return actions;
         }
+
         
     }
 }
