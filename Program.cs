@@ -118,7 +118,7 @@ namespace consoleTextRPG
             SlowWrite("Введите имя персонажа: ", needClear: false);
             string nickName = Console.ReadLine();
 
-            Welcome(nickName);
+            Welcome(nickName, ref story);
 
             int chosenClass = 1;
             PlayerClass player = PlayerClassFactory.CreateInstance(chosenClass, nickName);
@@ -140,7 +140,7 @@ namespace consoleTextRPG
             Console.ReadKey(true);
         }
 
-        static void Welcome(string nickName)
+        static void Welcome(string nickName, ref Story story)
         {
             
             Console.CursorVisible = false;
@@ -149,6 +149,8 @@ namespace consoleTextRPG
             SlowWrite($"Не понимая, почему матушка выделила его среди прочих, {nickName} оповестил своего работодателя, что ему нужно спешно покинуть город и вернуться в родную деревню. Мастеровой, конечно, не очень хотел отпускать {nickName}, так как был самый сезон работ, и было очень много заказов. Даже начал грозить увольнением.");
             SlowWrite($"«Выбор» Остаться работать(Но совесть замучает, и {nickName} все равно сбежит), или же Настоять на своем (По итогу мастеровой даст заднюю и сохранит за ним место, так как наш {nickName} рукастый)");
             SlowWrite($"По приезду в деревню, {nickName} заметил, что деревня сильно изменился с его последнего визита сюда. Дома обветшали, заборы поломаны, люди вокруг сильно потеряли в лице...");
+            story.FirstVisitHomeQuest.StartQuest();
+            SlowWrite("Новая запись в журнале.");
 
             /*            SlowWrite("Нажми любую клавишу чтобы начать...");
                         SlowWrite("Привет!");
@@ -611,7 +613,7 @@ namespace consoleTextRPG
 
         internal class Story
         {
-            public List<Dictionary<string[], bool[]>> Quests = new List<Dictionary<string[], bool[]>>();
+            public List<Quest> Quests = new List<Quest>();
 
             public bool HelpYourHome = false;
 
@@ -623,74 +625,78 @@ namespace consoleTextRPG
 
             public bool FirstVisitHeadman = false;
 
-            public Dictionary<string[], bool[]> SealMainQuest = new Dictionary<string[], bool[]>();
-      
 
-            public Dictionary<string[], bool[]> HeadmanPersonalQuest = new Dictionary<string[], bool[]>();
-            
+            public Quest FirstVisitHomeQuest;
 
-            public Dictionary<string[], bool[]> TraderQuest = new Dictionary<string[], bool[]>();
+
+            public Quest SealMainQuest;
+
+
+            public Quest HeadmanPersonalQuest;
+
+
+            public Quest TraderQuest;
    
 
-            public Dictionary<string[], bool[]> FriendQuest = new Dictionary<string[], bool[]>();
+            public Quest FriendQuest;
    
 
-            public Dictionary<string[], bool[]> HeadmanMainQuest = new Dictionary<string[], bool[]>();
+            public Quest HeadmanMainQuest;
         
 
-            public Dictionary<string[], bool[]> TempleQuest = new Dictionary<string[], bool[]>();
+            public Quest TempleQuest;
    
 
-            public Dictionary<string[], bool[]> BlacksmithMainQuest = new Dictionary<string[], bool[]>();
+            public Quest BlacksmithMainQuest;
            
 
-            public Dictionary<string[], bool[]> HerbalistMainQuest = new Dictionary<string[], bool[]>();
+            public Quest HerbalistMainQuest;
 
             public bool SpawnNearHome = false;
 
-          
 
             public Story()
             {
-                string[] nameAndDesc;
-                bool[] startResultPassed = { false, false, false };
 
-                nameAndDesc = new string[] { "Прогрессия ослабления печати посредством нахождения предмета", "предмет был спрятан, и его нужно найти. Предмет охраняется стражем, стражу нужно дать по голове." };
-                SealMainQuest.Add(nameAndDesc, startResultPassed);
+                string[] descriptions;
+
+                descriptions = new string[] {"FirstVisitHomeQuest description" };
+                FirstVisitHomeQuest = new Quest("FirstVisitHomeQuest", descriptions);
+
+                descriptions = new string[] { "FirstVisitHomeQuest description" };
+                FirstVisitHomeQuest = new Quest("FirstVisitHomeQuest", descriptions);
+                Quests.Add(FirstVisitHomeQuest);
+
+                descriptions = new string[] { "предмет был спрятан, и его нужно найти. Предмет охраняется стражем, стражу нужно дать по голове." };
+                SealMainQuest = new Quest("Прогрессия ослабления печати посредством нахождения предмета", descriptions);
                 Quests.Add(SealMainQuest);
 
-                nameAndDesc = new string[] { "Личная просьба старосты", "Помнишь, я тебе рассказывал о пропаже вещей, в которых были замешаны эти культисты? В один из таких налетов у меня пропала фамильная реликвия, которая осталась у меня от покойной жены. Прошу, найди эту реликвию, она очень важна для меня. " };
-                startResultPassed = new bool[] { false, false, false };
-                HeadmanPersonalQuest.Add(nameAndDesc, startResultPassed);
+                descriptions = new string[] { "Помнишь, я тебе рассказывал о пропаже вещей, в которых были замешаны эти культисты? В один из таких налетов у меня пропала фамильная реликвия, которая осталась у меня от покойной жены. Прошу, найди эту реликвию, она очень важна для меня. " };
+                HeadmanPersonalQuest = new Quest("Личная просьба старосты", descriptions);
                 Quests.Add(HeadmanPersonalQuest);
 
-                nameAndDesc = new string[] { "Помощь торговцу", "Изучить обломки обозов около моста, недалеко от деревни." };
-                startResultPassed = new bool[] { false, false, false };
-                TraderQuest.Add(nameAndDesc, startResultPassed);
+                descriptions = new string[] { "Изучить обломки обозов около моста, недалеко от деревни." };
+                TraderQuest = new Quest("Помощь торговцу", descriptions);
                 Quests.Add(TraderQuest);
-                nameAndDesc = new string[] { "Помощь старому другу", "@Описание@" };
-                startResultPassed = new bool[] { false, false, false };
-                FriendQuest.Add(nameAndDesc, startResultPassed);
+
+                descriptions = new string[] { "@Описание@" };
+                FriendQuest = new Quest("Помощь старому другу", descriptions);
                 Quests.Add(FriendQuest);
 
-                nameAndDesc = new string[] { "Спасение жителей деревни", "Какое-то время назад у нас начали пропадать сначала скот, и мелкое имущество, но однажды утром, мы не досчитались нескольких наших жителей. Я подозреваю, что в этом замешаны культисты, которые недавно объявились в наших краях. Прошу тебя, проникни в лагерь этих культистов и спаси наших людей!" };
-                startResultPassed = new bool[] { false, false, false };
-                HeadmanMainQuest.Add(nameAndDesc, startResultPassed);
+                descriptions = new string[] { "Какое-то время назад у нас начали пропадать сначала скот, и мелкое имущество, но однажды утром, мы не досчитались нескольких наших жителей. Я подозреваю, что в этом замешаны культисты, которые недавно объявились в наших краях. Прошу тебя, проникни в лагерь этих культистов и спаси наших людей!" };
+                HeadmanMainQuest = new Quest("Спасение жителей деревни", descriptions);
                 Quests.Add(HeadmanMainQuest);
 
-                nameAndDesc = new string[] { "Помощь местной церкви", "@Описание@" };
-                startResultPassed = new bool[] { false, false, false };
-                TempleQuest.Add(nameAndDesc, startResultPassed);
+                descriptions = new string[] { "@Описание@" };
+                TempleQuest = new Quest("Помощь местной церкви", descriptions);
                 Quests.Add(TempleQuest);
 
-                nameAndDesc = new string[] { "blacksmithMainQuest", "@Описание@" };
-                startResultPassed = new bool[] { false, false, false };
-                BlacksmithMainQuest.Add(nameAndDesc, startResultPassed);
+                descriptions = new string[] { "@Описание@" };
+                BlacksmithMainQuest = new Quest("blacksmithMainQuest", descriptions);
                 Quests.Add(BlacksmithMainQuest);
 
-                nameAndDesc = new string[] { "herbalistMainQuest", "@Описание@" };
-                startResultPassed = new bool[] { false, false, false };
-                HerbalistMainQuest.Add(nameAndDesc, startResultPassed);
+                descriptions = new string[] { "@Описание@" };
+                HerbalistMainQuest = new Quest("herbalistMainQuest", descriptions);
                 Quests.Add(HerbalistMainQuest);
 
             }
@@ -700,25 +706,19 @@ namespace consoleTextRPG
                 bool inJournal = true;
                 while (inJournal)
                 {
-                    List<Dictionary<string[], bool[]>> activeQuests = new List<Dictionary<string[], bool[]>>();
+                    List<Quest> activeQuests = new List<Quest>();
                     Console.Clear();
 
                     int integer = 0;
-                    foreach (var quest in Quests)
+                    foreach (Quest quest in Quests)
                     {
 
-                        foreach (var value in quest.Values)
-                        {
-                            if (value[0] && !value[2])  //if queest started and not passed
+                            if (quest.QuestStarted && !quest.QuestPassed)  //if queest started and not passed
                             {
                                 integer++;
-                                foreach (var key in quest.Keys)
-                                {
-                                    SlowWrite($"{integer}. {key[0]}", needClear: false, speed: 0);
-                                    activeQuests.Add(quest);
-                                }
+                                SlowWrite($"{integer}. {quest.Name}", needClear: false, speed: 0);
+                                activeQuests.Add(quest);
                             }
-                        }
                     }
                     List<ConsoleKey> actions = NumberOfActions(integer);
                     ConsoleKey playerAction = GetPlayerAction(actions, false, false, true);
@@ -760,13 +760,13 @@ namespace consoleTextRPG
                     }
                     try
                     {
-                        foreach (var nameAndDesc in activeQuests[chosenQuest - 1].Keys)
-                        {
-                            SlowWrite($"{nameAndDesc[0]}", speed: 0, needClear: false);
-                            Console.WriteLine();
-                            SlowWrite($"{nameAndDesc[1]}", speed: 0, needClear: false);
-                            Console.ReadKey();
-                        }
+                        string questName = activeQuests[chosenQuest - 1].Name;
+                        string questDescription = activeQuests[chosenQuest - 1].Descriptions[activeQuests[chosenQuest - 1].DescriptionCounter];
+                        
+                        SlowWrite($"{questName}", speed: 0, needClear: false);
+                        Console.WriteLine();
+                        SlowWrite($"{questDescription}", speed: 0, needClear: false);
+                        Console.ReadKey(true);
                     }
                     catch 
                     {
@@ -777,6 +777,53 @@ namespace consoleTextRPG
             }
                 
 
+        }
+
+        public class Quest
+        {
+            public string[] Descriptions { get; private set; }
+            public string Name { get; private set; }
+            public bool QuestStarted { get; private set; }
+            public bool QuestCompleted { get; private set; }
+            public bool QuestPassed { get; private set; }
+            public int DescriptionCounter { get; private set; }
+
+            public Quest(string name, string[] descriptions)
+            {
+                Name = name;
+                QuestStarted = false;
+                QuestCompleted = false;
+                QuestPassed = false;
+                Descriptions = descriptions;
+                DescriptionCounter = 0;
+            }
+
+            public void NextDescription()
+            {
+                if (DescriptionCounter < Descriptions.Length - 1)
+                {
+                    DescriptionCounter++;
+                }
+                
+            }
+
+            public void StartQuest()
+            {
+                SlowWrite($"Задание \"{Name}\" принято.");
+                QuestStarted = true;
+            }
+
+            public void CompleteQuest()
+            {
+                SlowWrite($"Подзадача \"{Name}\" выполнена.");
+                QuestCompleted = true;
+            }
+
+            public void PassQuest()
+            {
+                SlowWrite($"Задание \"{Name}\" выполнено.");
+                QuestPassed = true;
+            }
         }
         enum intActions
         {

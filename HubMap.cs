@@ -121,10 +121,10 @@ namespace consoleTextRPG
             if (!goOut && story.SpawnNearHome)
             {
                 story.SpawnNearHome = false;
-                GoToHub(ref player, ref story, playerPosX: 43, playerPosY: 18);
+                GoToHub(ref player, ref story, nickName: player.NickName, playerPosX: 43, playerPosY: 18);
             }
             else if (!goOut)
-                GoToHub(ref player, ref story, playerPosX: previousPosition[0], playerPosY: previousPosition[1]);
+                GoToHub(ref player, ref story, nickName: player.NickName, playerPosX: previousPosition[0], playerPosY: previousPosition[1]);
 
         }
 
@@ -230,7 +230,11 @@ namespace consoleTextRPG
         Outside
     }
 
-    internal class HubEvenst
+    abstract class MapEvents
+    {
+
+    }
+    internal class HubEvenst: MapEvents
     {
         public Dictionary<int[][], Events> EventsDictionary = new Dictionary<int[][], Events>();
 
@@ -349,7 +353,7 @@ namespace consoleTextRPG
         {
             if (!story.FirstVillageVisit)
             {
-                Hub.ComeToHome(ref player, nickName);
+                Hub.ComeToHome(ref player, nickName, ref story);
                 story.FirstVillageVisit = true;
             }
             else if (!story.ArtefactCollected)
@@ -391,7 +395,7 @@ namespace consoleTextRPG
                 SlowWrite(VisitHome);
             else if (!story.ArtefactCollected)
             {
-                Hub.ToCave(ref player);
+                Hub.ToCave(ref player, ref story);
                 story.ArtefactCollected = true;
                 story.SpawnNearHome = true;
             }

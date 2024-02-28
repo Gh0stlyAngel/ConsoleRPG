@@ -24,7 +24,7 @@ namespace ConsoleShop
             else
             {
                 List<ConsoleKey> actions;
-                if ((story.TraderQuest.First().Value[0] && !story.TraderQuest.First().Value[1]) || story.TraderQuest.First().Value[2])
+                if ((story.TraderQuest.QuestStarted && !story.TraderQuest.QuestCompleted) || story.TraderQuest.QuestPassed || !story.FirstVisitHeadman)
                 {
                     SlowWrite("1. Посмотреть ассортимент", needClear: false);
                     SlowWrite("2. Покинуть магазин", needClear: false);

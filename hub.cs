@@ -129,11 +129,10 @@ namespace ConsoleHub
             SlowWrite($"Прошу тебя, проникни в их лагерь и спаси наших людей!", teller: "Староста");
             SlowWrite($"Постараюсь вернуть их к рассвету.", teller: player.NickName);
             SlowWrite($"Рассчитываю на тебя. Береги себя!", teller: "Староста");
-            story.HeadmanMainQuest.First().Value[0] = true;
-            SlowWrite("Новая запись в журнале.");
+            story.HeadmanMainQuest.StartQuest();
         }
 
-        internal static void ComeToHome(ref PlayerClass player, string nickName)
+        internal static void ComeToHome(ref PlayerClass player, string nickName, ref Story story)
         {
             SlowWrite($"{player.NickName} первым делом прибежал домой, дабы убедиться, что с его родными все в порядке. Он застал матушку, которая латала раны его отцу, и брата, который помогал ей. «Выбор» Кинуться обнимать родных или сначала выяснить причину, по которой мама вызвала именно его.");
             SlowWrite($"Достав письмо, {player.NickName} решил узнать у матушки, чем же таким он отличается от других, что она назвала его последней надеждой деревни. ");
@@ -158,9 +157,14 @@ namespace ConsoleHub
             SlowWrite("Сын, теперь, когда ты узнал о своем происхождении, и своих запечатанных силах, тебе нужно узнать ещё одну вещь. Чтобы полностью снять печать, тебе придется собрать артефакт, при помощи которого твои силы и были запечатаны.");
             SlowWrite("Одну часть артефакта мы хранили дома, в секретном месте, а вот вторую его часть мы унесли в пещеру недалеко от деревни и оставили стража охранять место хранения артефакта. Так как ты являешься нашим сыном, то страж должен тебя без проблем пропустить.");
             SlowWrite("Отправляйся немедленно, а мы пока займемся подготовкой первой части артефакта. Нельзя терять ни минуты.");
+            
+            story.FirstVisitHomeQuest.PassQuest();
+
+            story.SealMainQuest.StartQuest();
+
         }
 
-        internal static void ToCave(ref PlayerClass player)
+        internal static void ToCave(ref PlayerClass player, ref Story story)
         {
             SlowWrite("...");
             SlowWrite($"По пришествии в пещеру, которую указали родители, {player.NickName} замечает в дальней части существо, которое охраняло какой-то пьедестал.");
@@ -187,6 +191,7 @@ namespace ConsoleHub
             SlowWrite($"...");
             SlowWrite($"Проведя ритуал, родители подошли к {player.NickName} и поинтересовались его самочувствием. И хотели узнать, ощутил ли он изменения в своем организме.");
             SlowWrite($"{player.NickName} ощутил изменения сразу. {player.Name} начал чувствовать себя сильнее..");
+            story.SealMainQuest.PassQuest();
         }
 
         internal static void ShopQuest(PlayerClass player, ref Story story)
@@ -195,8 +200,7 @@ namespace ConsoleHub
             SlowWrite("Мне поставляли припасы из города торговые караваны, но с недавних пор окрестные территории обходят десятой дорогой после..", teller: "Торговец");
             SlowWrite("Не буду томить и перейду сразу к делу.", teller: "Торговец");
             SlowWrite("Слышал я, что обломки обозов находили около моста, недалеко от деревни. Не мог бы ты проверить, может там осталось что ценное? А я тебе скидку на товары сделаю, если справишься.", teller: "Торговец");
-            story.TraderQuest.First().Value[0] = true;
-            SlowWrite("Новая запись в журнале.");
+            story.TraderQuest.StartQuest();
             SlowWrite("Буду иметь в виду. До встречи!", teller: player.NickName);
             SlowWrite("Вы уходите.");
         }
