@@ -106,6 +106,8 @@ namespace consoleTextRPG
 
         static void Main(string[] args)
         {
+            HubEvents hubEvents = new HubEvents();
+            BridgeFirstEvents bridgeFirstEvents = new BridgeFirstEvents();
 
             HealingPotion healingPotion = new HealingPotion();
             ManaPotion manaPotion = new ManaPotion();
@@ -118,21 +120,29 @@ namespace consoleTextRPG
             SlowWrite("Введите имя персонажа: ", needClear: false);
             string nickName = Console.ReadLine();
 
-            Welcome(nickName, ref story);
+            //Welcome(nickName, ref story);
 
             int chosenClass = 1;
             PlayerClass player = PlayerClassFactory.CreateInstance(chosenClass, nickName);
             player.Inventory.AppendItem(healingPotion);
             player.Inventory.AppendItem(manaPotion);
 
-/*            foreach (var arg in story.Quests)
-            {
-                arg.First().Value[0] = true;
-            }*/
+            Map bridgeFirst = new Map(bridgeFirstEvents);
 
-            
-            
-            HubMap.GoToHub(ref player, ref story, nickName);
+            Maps.GoToMap(ref player, ref story, bridgeFirst, bridgeFirst.PlayerPosX, bridgeFirst.PlayerPosY);
+
+            /*            foreach (var arg in story.Quests)
+                        {
+                            arg.First().Value[0] = true;
+                        }*/
+
+
+
+
+            Map hub = new Map(hubEvents);
+
+
+            //HubMap.GoToHub(ref player, ref story, nickName);
             
 
             SlowWrite("Продолжение следует...");

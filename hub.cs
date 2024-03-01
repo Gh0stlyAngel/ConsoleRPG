@@ -13,7 +13,7 @@ namespace ConsoleHub
 {
     internal class Hub
     {
-        internal static void ToHub(ref PlayerClass player, ref Story story)
+        /*internal static void ToHub(ref PlayerClass player, ref Story story)
         {
             ToHeadman(ref player);
             bool inHub = true;
@@ -97,7 +97,7 @@ namespace ConsoleHub
                 Console.ReadKey(true);
 
             }
-        }
+        }*/
 
         internal static void ToHeadman(ref PlayerClass player)
         {

@@ -1,7 +1,11 @@
-﻿using System;
+﻿using ConsoleHub;
+using ConsoleShop;
+using Microsoft.SqlServer.Server;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static consoleTextRPG.Program;
 
@@ -9,19 +13,16 @@ namespace consoleTextRPG
 {
     internal class Maps
     {
-        internal static void GoToMap(ref PlayerClass player, ref Story story, string mapString, string nickName = null, int playerPosX = 43, int playerPosY = 18)
+        internal static void GoToMap(ref PlayerClass player, ref Story story, Map map, int playerPosX, int playerPosY, string nickName = null)
         {
             Console.Clear();
             Console.CursorVisible = false;
             Console.ForegroundColor = ConsoleColor.Yellow;
             string[] separator = { "\r\n" };
-            mapString = "####################################################################################\r\n#                                                                                  #\r\n#     Лавка          Дом травницы      Дом друга        Мастерская                 #\r\n#     ######           ########        #########        ##########                 #\r\n#     #    \\           #      #        #       #        #        #                 #\r\n#     #    /           ####\\/##        ####\\/###        ####\\/####                 #\r\n#     ######                                                                       #\r\n#                                                                                  #\r\n#                                                                                  |\r\n#                                                                                  |\r\n#                                                                                  |\r\n#                                                                                  #\r\n#                                                                                  #\r\n#       I                                                                          #\r\n#    ---I---                                                                       #\r\n#       I                                                                          #\r\n#       I                                                                          #\r\n#       I                                                                          #\r\n#     ########/\\##                                                                 #\r\n#     #          #                                                                 #\r\n#     #          #                 #######/\\#           ########/\\##               #\r\n#     #   Храм   #                 #        #           #          #               #\r\n#     #          #                 #        #           #          #               #\r\n#     #          #                 ##########           ############               #\r\n#     ############                 Родной дом           Дом старосты               #\r\n#                                                                                  #\r\n####################################################################################";
+            
+            string[] mapArray = map.MapString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
-            string[] map = mapString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
-
-            //Console.WriteLine(mapString);
-
-            foreach (string mapItem in map)
+            foreach (string mapItem in mapArray)
             {
                 Console.WriteLine(mapItem);
             }
@@ -53,7 +54,7 @@ namespace consoleTextRPG
                 {
                     case ConsoleKey.LeftArrow:
 
-                        newPos = DrawNewPlayerPos(map, playerPosX, playerPosY, playerPosX - 1, playerPosY);
+                        newPos = DrawNewPlayerPos(mapArray, playerPosX, playerPosY, playerPosX - 1, playerPosY, map);
                         previousPosition[0] = playerPosX;
                         previousPosition[1] = playerPosY;
                         playerPosX = newPos[0];
@@ -61,7 +62,7 @@ namespace consoleTextRPG
 
                         break;
                     case ConsoleKey.UpArrow:
-                        newPos = DrawNewPlayerPos(map, playerPosX, playerPosY, playerPosX, playerPosY - 1);
+                        newPos = DrawNewPlayerPos(mapArray, playerPosX, playerPosY, playerPosX, playerPosY - 1, map);
                         previousPosition[0] = playerPosX;
                         previousPosition[1] = playerPosY;
                         playerPosX = newPos[0];
@@ -69,7 +70,7 @@ namespace consoleTextRPG
 
                         break;
                     case ConsoleKey.RightArrow:
-                        newPos = DrawNewPlayerPos(map, playerPosX, playerPosY, playerPosX + 1, playerPosY);
+                        newPos = DrawNewPlayerPos(mapArray, playerPosX, playerPosY, playerPosX + 1, playerPosY, map);
                         previousPosition[0] = playerPosX;
                         previousPosition[1] = playerPosY;
                         playerPosX = newPos[0];
@@ -77,7 +78,7 @@ namespace consoleTextRPG
 
                         break;
                     case ConsoleKey.DownArrow:
-                        newPos = DrawNewPlayerPos(map, playerPosX, playerPosY, playerPosX, playerPosY + 1);
+                        newPos = DrawNewPlayerPos(mapArray, playerPosX, playerPosY, playerPosX, playerPosY + 1, map);
                         previousPosition[0] = playerPosX;
                         previousPosition[1] = playerPosY;
                         playerPosX = newPos[0];
@@ -99,47 +100,49 @@ namespace consoleTextRPG
                             gotEvent = true;
                         }
                         break;
-                    default:
 
-                        break;
+                    default: break;
                 }
-                if (map[playerPosY][playerPosX] == '/' || map[playerPosY][playerPosX] == '\\' || map[playerPosY][playerPosX] == '|')
+                bool gotTrigger = map.Events.Triggered(mapArray[playerPosY][playerPosX]);
+                if (gotTrigger)
                 {
                     gotEvent = true;
                 }
             }
             int[] coordinates = { playerPosX, playerPosY };
-            bool goOut = MoveTo(ref player, ref story, coordinates, nickName);
+            bool goOut = MoveTo(ref player, ref story, map, coordinates, nickName);
 
-            if (!goOut && story.SpawnNearHome)
+            if (!goOut && map.SpawnOnStartPosition)
             {
-                story.SpawnNearHome = false;
-                GoToMap(ref player, ref story, mapString, nickName: player.NickName, playerPosX: 43, playerPosY: 18);
+                map.SpawnOnStartPosition = false;
+                GoToMap(ref player, ref story, map, nickName: player.NickName, playerPosX: map.PlayerPosX, playerPosY: map.PlayerPosY);
             }
             else if (!goOut)
-                GoToMap(ref player, ref story, mapString, nickName: player.NickName, playerPosX: previousPosition[0], playerPosY: previousPosition[1]);
+                GoToMap(ref player, ref story, map, nickName: player.NickName, playerPosX: previousPosition[0], playerPosY: previousPosition[1]);
 
         }
 
-        internal static int[] DrawNewPlayerPos(string[] map, int oldX, int oldY, int newX, int newY)
+        internal static int[] DrawNewPlayerPos(string[] mapString, int oldX, int oldY, int newX, int newY, Map map)
         {
+            bool gotTrigger = map.Events.Triggered(mapString[newY][newX]);
             int[] nextXY;
-            if (map[newY][newX] == '#')
+            if (mapString[newY][newX] == '#')
             {
                 nextXY = new int[] { oldX, oldY };
                 return nextXY;
             }
-            else if (map[newY][newX] == ' ')
+            else if (mapString[newY][newX] == ' ')
             {
                 nextXY = new int[] { newX, newY };
                 Console.SetCursorPosition(oldX, oldY);
-                Console.Write(map[oldY][oldX]);
+                Console.Write(mapString[oldY][oldX]);
                 Console.SetCursorPosition(newX, newY);
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 Console.Write("@");
                 return nextXY;
             }
-            else if (map[newY][newX] == '/' || map[newY][newX] == '\\' || map[newY][newX] == '|')
+            
+            else if (gotTrigger)
             {
                 nextXY = new int[] { newX, newY };
                 return nextXY;
@@ -148,7 +151,7 @@ namespace consoleTextRPG
             {
                 nextXY = new int[] { newX, newY };
                 Console.SetCursorPosition(oldX, oldY);
-                Console.Write(map[oldY][oldX]);
+                Console.Write(mapString[oldY][oldX]);
                 Console.SetCursorPosition(newX, newY);
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
                 Console.Write("@");
@@ -156,58 +159,107 @@ namespace consoleTextRPG
             }
         }
 
-        internal static bool MoveTo(ref PlayerClass player, ref Story story, int[] coordinates, string nickName = null)
+        internal static bool MoveTo(ref PlayerClass player, ref Story story, Map map, int[] coordinates, string nickName = null)
         {
             bool goOut = false;
-            HubEvenst hubEvenst = new HubEvenst();
             int way = 0;
 
-            foreach (var pair in hubEvenst.EventsDictionary)
+            foreach (var pair in map.Events.EventsDictionary)
             {
                 foreach (int[] coord in pair.Key)
                 {
                     if (coord[0] == coordinates[0] && coord[1] == coordinates[1])
                     {
                         way = (int)pair.Value;
-                        break;
+                        goto Way;
                     }
-                    if (way != 0)
-                        break;
                 }
             }
-
-            switch (way)
-            {
-                case (int)Events.Trader:
-                    HubEvenst.ToTraderHouse(ref player, ref story);
-                    break;
-                case (int)Events.Herbalist:
-                    HubEvenst.ToHerbalistHouse(ref player, ref story);
-                    break;
-                case (int)Events.Friend:
-                    HubEvenst.ToFriendHouse(ref player, ref story);
-                    break;
-                case (int)Events.Manufactory:
-                    HubEvenst.ToManufactory(ref player, ref story);
-                    break;
-                case (int)Events.Temple:
-                    HubEvenst.ToTemple(ref player, ref story);
-                    break;
-                case (int)Events.Home:
-                    HubEvenst.ToHome(ref player, ref story, nickName);
-                    break;
-                case (int)Events.Headman:
-                    HubEvenst.ToHeadmanHouse(ref player, ref story);
-                    break;
-                case (int)Events.Outside:
-                    goOut = true;
-                    HubEvenst.ToOutside(ref player, ref story);
-                    if (!story.FirstVillageVisit || story.ArtefactCollected)
-                        goOut = false;
-                    break;
-                default: break;
-            }
+        Way:
+            map.Events.StartEvent(ref player, ref story, player.NickName, way);
             return goOut;
         }
     }
+
+    class Map
+    {
+        public string MapString { get; private set; }
+
+        public int PlayerPosX { get; private set; }
+
+        public int PlayerPosY { get; private set; }
+
+        public MapEvents Events { get; private set; }
+
+        public bool SpawnOnStartPosition { get; set; }
+
+        public char[] Triggers { get; protected set; }
+
+        public Map(MapEvents events)
+        {
+            Events = events;
+            PlayerPosX = events.PlayerPosX;
+            PlayerPosY = events.PlayerPosY;
+            MapString = events.MapString;
+            SpawnOnStartPosition = events.SpawnOnStartPosition;
+            Triggers = events.Triggers;
+        }
+    }
+
+
+    abstract class MapEvents
+    {
+        public Dictionary<int[][], EventName> EventsDictionary = new Dictionary<int[][], EventName>();
+
+        public string MapString { get; protected set; }
+
+        public int PlayerPosX { get; protected set; }
+
+        public int PlayerPosY { get; protected set; }
+
+        public bool SpawnOnStartPosition { get; set; }
+
+        public char[] Triggers { get; protected set; }
+
+
+
+        internal virtual bool StartEvent(ref PlayerClass player, ref Story story, string nickName, int way)
+        {
+            return false;
+        }
+
+        public bool Triggered(char symbol)
+        {
+            bool isTriggered = false;
+            foreach (char trigger in Triggers)
+            {
+                if (trigger == symbol)
+                {
+                    isTriggered = true;
+                    break;
+                }
+            }
+            return isTriggered;
+        }
+    }
+
+    enum EventName
+    {
+        Trader = 1,
+        Herbalist,
+        Friend,
+        Manufactory,
+        Temple,
+        Home,
+        Headman,
+        Outside,
+
+        OutsideBridge,
+        Convoy,
+        BridgeCamp,
+        OutsideCamp
+    }
+
+    
 }
+

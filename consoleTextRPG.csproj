@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BridgeMap.cs" />
     <Compile Include="fight.cs" />
     <Compile Include="hub.cs" />
     <Compile Include="HubMap.cs" />

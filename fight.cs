@@ -783,7 +783,11 @@ namespace ConsoleFight
 
                         int enemyDealtDamage;
                         int EnemyChanceToMiss = rnd.Next(0, 101);
-                        if (bash >= 95)
+                        if (player.HP <= baseEnemy.Damage)
+                        {
+                            WriteLogs(logQueue, $"{baseEnemy.Name} промахивается атакой.");
+                        }
+                        else if (bash >= 95)
                         {
                             enemyDealtDamage = (baseEnemy.Damage + bashDamage);
                             if (EnemyChanceToMiss < PlayerEvadeChance)
