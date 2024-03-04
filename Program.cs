@@ -120,7 +120,7 @@ namespace consoleTextRPG
             SlowWrite("Введите имя персонажа: ", needClear: false);
             string nickName = Console.ReadLine();
 
-            //Welcome(nickName, ref story);
+            Hub.Welcome(nickName, ref story);
 
             int chosenClass = 1;
             PlayerClass player = PlayerClassFactory.CreateInstance(chosenClass, nickName);
@@ -129,45 +129,30 @@ namespace consoleTextRPG
 
             Map bridgeFirst = new Map(bridgeFirstEvents);
 
-            Maps.GoToMap(ref player, ref story, bridgeFirst, bridgeFirst.PlayerPosX, bridgeFirst.PlayerPosY);
-
-            /*            foreach (var arg in story.Quests)
-                        {
-                            arg.First().Value[0] = true;
-                        }*/
-
-
+            Maps.GoToMap(ref player, ref story, ref bridgeFirst, bridgeFirst.PlayerPosX, bridgeFirst.PlayerPosY);
 
 
             Map hub = new Map(hubEvents);
 
-
-            //HubMap.GoToHub(ref player, ref story, nickName);
+            Maps.GoToMap(ref player, ref story, ref hub, hub.PlayerPosX, hub.PlayerPosY);
             
 
             SlowWrite("Продолжение следует...");
 
-            Console.ReadKey(true);
-        }
 
-        static void Welcome(string nickName, ref Story story)
-        {
+
             
-            Console.CursorVisible = false;
-            SlowWrite($"{nickName} родился и вырос в дереве под названием «». Жили они не особо богато, но на образование и обучение ремеслу хватало. К моменту завершения обучения {nickName} как раз достиг возраста, который позволял ему в большой город, который был в трех днях пути на юг. И уже там {nickName} мог бы применить свои новые навыки для заработка денег, ведь в семье у него ещё был маленький брат, которому скоро тоже нужно было начинать обучаться ремеслам, а деньги это то немногое, чем {nickName} мог отплатить своей семье за все, что она сделала для него.");
-            SlowWrite($"Шли недели и месяцы, {nickName} устроился в приличную мастерскую, все было довольно неплохо, до тех пор, пока в одно утро он не получил весточку из своей родной деревни. Развернув сверток, он увидел почерк матери, в котором говорилось, что его родной деревне угрожает опасность, и возможно, он единственный, кто может им помочь. ");
-            SlowWrite($"Не понимая, почему матушка выделила его среди прочих, {nickName} оповестил своего работодателя, что ему нужно спешно покинуть город и вернуться в родную деревню. Мастеровой, конечно, не очень хотел отпускать {nickName}, так как был самый сезон работ, и было очень много заказов. Даже начал грозить увольнением.");
-            SlowWrite($"«Выбор» Остаться работать(Но совесть замучает, и {nickName} все равно сбежит), или же Настоять на своем (По итогу мастеровой даст заднюю и сохранит за ним место, так как наш {nickName} рукастый)");
-            SlowWrite($"По приезду в деревню, {nickName} заметил, что деревня сильно изменился с его последнего визита сюда. Дома обветшали, заборы поломаны, люди вокруг сильно потеряли в лице...");
-            story.FirstVisitHomeQuest.StartQuest();
-            SlowWrite("Новая запись в журнале.");
-
-            /*            SlowWrite("Нажми любую клавишу чтобы начать...");
-                        SlowWrite("Привет!");
-                        SlowWrite("Это текстовая РПГ для моего обучения.");
-                        SlowWrite("Для начала выбери класс персонажа:");*/
         }
 
+        internal static void GameOver()
+        {
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("GameOver");
+                Console.ReadKey(true);
+            }
+        }
 
         internal static int PlayerPick(PlayerClass warrior, PlayerClass sorcerer, PlayerClass slayer, PlayerClass archer)
         {

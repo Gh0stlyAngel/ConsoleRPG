@@ -13,92 +13,23 @@ namespace ConsoleHub
 {
     internal class Hub
     {
-        /*internal static void ToHub(ref PlayerClass player, ref Story story)
+        internal static void Welcome(string nickName, ref Story story)
         {
-            ToHeadman(ref player);
-            bool inHub = true;
-            int wins = 0;
 
+            Console.CursorVisible = false;
+            SlowWrite($"{nickName} родился и вырос в дереве под названием «». Жили они не особо богато, но на образование и обучение ремеслу хватало. К моменту завершения обучения {nickName} как раз достиг возраста, который позволял ему в большой город, который был в трех днях пути на юг. И уже там {nickName} мог бы применить свои новые навыки для заработка денег, ведь в семье у него ещё был маленький брат, которому скоро тоже нужно было начинать обучаться ремеслам, а деньги это то немногое, чем {nickName} мог отплатить своей семье за все, что она сделала для него.");
+            SlowWrite($"Шли недели и месяцы, {nickName} устроился в приличную мастерскую, все было довольно неплохо, до тех пор, пока в одно утро он не получил весточку из своей родной деревни. Развернув сверток, он увидел почерк матери, в котором говорилось, что его родной деревне угрожает опасность, и возможно, он единственный, кто может им помочь. ");
+            SlowWrite($"Не понимая, почему матушка выделила его среди прочих, {nickName} оповестил своего работодателя, что ему нужно спешно покинуть город и вернуться в родную деревню. Мастеровой, конечно, не очень хотел отпускать {nickName}, так как был самый сезон работ, и было очень много заказов. Даже начал грозить увольнением.");
+            SlowWrite($"«Выбор» Остаться работать(Но совесть замучает, и {nickName} все равно сбежит), или же Настоять на своем (По итогу мастеровой даст заднюю и сохранит за ним место, так как наш {nickName} рукастый)");
+            SlowWrite($"По приезду в деревню, {nickName} заметил, что деревня сильно изменился с его последнего визита сюда. Дома обветшали, заборы поломаны, люди вокруг сильно потеряли в лице...");
+            story.FirstVisitHomeQuest.StartQuest();
+            SlowWrite("Новая запись в журнале.");
 
-            while (inHub)
-            {
-                List<ConsoleKey> actions = new List<ConsoleKey> { ConsoleKey.D1, ConsoleKey.D2 };
-                ConsoleColor actionColor;
-                Console.Clear();
-                SlowWrite("1. toShop", needClear: false, speed:0);
-                SlowWrite("2. toFight", needClear: false, speed: 0);
-
-
-                if (player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").AmountOfItems > 0)
-                {
-                    actions.Add(ConsoleKey.D3);
-                    SlowWrite("3. useHealingPotion", needClear: false, speed: 0);
-                }
-                else
-                    SlowWrite("3. useHealingPotion", textColor: ConsoleColor.DarkYellow, needClear: false, speed: 0);
-
-
-                if (player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").AmountOfItems > 0)
-                {
-                    actions.Add(ConsoleKey.D4);
-                    SlowWrite("4. useManaPotion", needClear: false, speed: 0);
-                }
-                else
-                    SlowWrite("4. useManaPotion", textColor: ConsoleColor.DarkYellow, needClear: false, speed: 0);
-
-
-                SlowWrite("C. ShowStats", needClear: false, speed: 0);
-                SlowWrite("J. ShowJournal", needClear: false, speed: 0);
-                ConsoleKey playerAction = GetPlayerAction(actions, true);
-                
-                switch (playerAction)
-                {
-                    case ConsoleKey.D1:
-                        Shop.ToShop(ref player, ref story);
-                        break;
-                    case ConsoleKey.D2:
-                        BaseEnemy baseEnemy = new BaseEnemy("Базовый противник", 50, 15, 2);
-                        StartFight(ref player, baseEnemy);
-                        if (player.HP <= 0)
-                            inHub = false;
-                        else
-                            wins++;
-                        break;
-                    case ConsoleKey.D3:
-                        HealingPotion healingPotion = (HealingPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").RemoveItem();
-                        player.RestoreHP(healingPotion.RestoreValue);
-                        SlowWrite($"{player.Name} использует зелье лечения. Восстановлено {healingPotion.RestoreValue} здоровья.", speed: 1);
-
-                        break;
-                    case ConsoleKey.D4:
-                        ManaPotion manaPotion = (ManaPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").RemoveItem();
-                        player.RestoreMP(manaPotion.RestoreValue);
-                        SlowWrite( $"{player.Name} использует зелье маны. Восстановлено {manaPotion.RestoreValue} маны.", speed: 1);
-                        break;
-
-                    case ConsoleKey.C:
-                        player.ShowStats();
-                        Console.ReadKey(true);
-                        break;
-
-                    case ConsoleKey.J:
-                        story.ShowJournal();
-                        break;
-                    default: break;
-                }
-                
-
-            }
-            while (true)
-            {
-
-                Console.Clear();
-                Console.WriteLine($"Класс: {player.Name}\nПобед {wins}");
-                Console.ReadKey(true);
-
-            }
-        }*/
-
+            /*            SlowWrite("Нажми любую клавишу чтобы начать...");
+                        SlowWrite("Привет!");
+                        SlowWrite("Это текстовая РПГ для моего обучения.");
+                        SlowWrite("Для начала выбери класс персонажа:");*/
+        }
         internal static void ToHeadman(ref PlayerClass player)
         {
 /*            SlowWrite($"Первым делом {player.Name} решает навестить старосту деревни, чтобы узнать подробности.");

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleFight;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -89,7 +90,7 @@ namespace consoleTextRPG
         {
             BridgeSecondEvents bridgeSecondEvents = new BridgeSecondEvents();
             Map bridgeSecond = new Map(bridgeSecondEvents);
-            Maps.GoToMap(ref player, ref story, bridgeSecond, bridgeSecond.PlayerPosX, bridgeSecond.PlayerPosY);
+            Maps.GoToMap(ref player, ref story, ref bridgeSecond, bridgeSecond.PlayerPosX, bridgeSecond.PlayerPosY);
         }
     }
 
@@ -135,9 +136,9 @@ namespace consoleTextRPG
 
             int[][] bridgeCamp = new int[][]
             {
+                new int[] { 55, 6 },
                 new int[] { 55, 7 },
-                new int[] { 55, 8 },
-                new int[] { 55, 9 }
+                new int[] { 55, 8 }
             };
             EventsDictionary.Add(bridgeCamp, EventName.BridgeCamp);
         }
@@ -166,7 +167,7 @@ namespace consoleTextRPG
         {
             BridgeThirdEvents bridgeThirdEvents = new BridgeThirdEvents();
             Map bridgeThird = new Map(bridgeThirdEvents);
-            Maps.GoToMap(ref player, ref story, bridgeThird, bridgeThird.PlayerPosX, bridgeThird.PlayerPosY);
+            Maps.GoToMap(ref player, ref story, ref bridgeThird, bridgeThird.PlayerPosX, bridgeThird.PlayerPosY);
         }
     }
 
@@ -193,7 +194,7 @@ namespace consoleTextRPG
                         "#       # #                          Полигон          #\r\n" +
                         "#      #   #                                          #\r\n" +
                         "#     #     #                       #         #       #\r\n" +
-                        "#    #       #                      #_________#       #\r\n" +
+                        "#    #       #                      #---------#       #\r\n" +
                         "#     ##\\_/##      #  #             #         #       #\r\n" +
                         "#                  #  #             # &  &  & #       #\r\n" +
                         "####################\\/#################################";
@@ -208,6 +209,22 @@ namespace consoleTextRPG
                 new int[]{ 21, 22 }
             };
             EventsDictionary.Add(outside, EventName.OutsideCamp);
+
+
+            int[] enemy1StartCoord = { 18, 18 };
+            int[] enemy1EndCoord = { 23, 18 };
+            MapEnemy mapEnemy1 = AddEnemy("Культист-мечник", 80, 12, 0, enemy1StartCoord, enemy1EndCoord, (int)Coordinate.X, ref Enemies);
+            Enemies.Add(mapEnemy1);
+
+
+        }
+
+        internal static MapEnemy AddEnemy(string enemyName, int enemyHP, int enemyDamage, int enemyAtcRange, int[] enemyStartCoord, int[] enemyEndCoord, int coordinate, ref List<MapEnemy> Enemies)
+        {
+            Fight.BaseEnemy enemy = new Fight.BaseEnemy(enemyName, enemyHP, enemyDamage, enemyAtcRange);
+            EnemyMovement enemy1Movement = new EnemyMovement(enemyStartCoord, enemyEndCoord, coordinate);
+            MapEnemy mapEnemy = new MapEnemy(enemy, enemy1Movement);
+            return mapEnemy;
         }
 
         internal override bool StartEvent(ref PlayerClass player, ref Story story, string nickName, int way)
@@ -219,7 +236,6 @@ namespace consoleTextRPG
                     goOut = true;
                     ToBridgeSecond(ref player, ref story);
                     break;
-
                 default: break;
 
             }
@@ -230,7 +246,7 @@ namespace consoleTextRPG
         {
             BridgeSecondEvents bridgeSecondEvents = new BridgeSecondEvents();
             Map bridgeSecond = new Map(bridgeSecondEvents);
-            Maps.GoToMap(ref player, ref story, bridgeSecond, 54, 7);
+            Maps.GoToMap(ref player, ref story, ref bridgeSecond, 54, 7);
         }
 
     }

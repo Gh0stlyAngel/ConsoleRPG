@@ -1,4 +1,5 @@
-﻿using ConsoleHub;
+﻿using ConsoleFight;
+using ConsoleHub;
 using ConsoleShop;
 using Microsoft.SqlServer.Server;
 using System;
@@ -13,7 +14,7 @@ namespace consoleTextRPG
 {
     internal class Maps
     {
-        internal static void GoToMap(ref PlayerClass player, ref Story story, Map map, int playerPosX, int playerPosY, string nickName = null)
+        internal static void GoToMap(ref PlayerClass player, ref Story story, ref Map map, int playerPosX, int playerPosY, string nickName = null)
         {
             Console.Clear();
             Console.CursorVisible = false;
@@ -32,6 +33,10 @@ namespace consoleTextRPG
             Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write("@");
 
+            map.Events.DrawEnemies(mapArray);
+
+
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.SetCursorPosition(88, 3);
             Console.Write("→ ← ↑ ↓ - Управление");
             if (story.FirstVillageVisit)
@@ -103,10 +108,29 @@ namespace consoleTextRPG
 
                     default: break;
                 }
+                map.Events.DrawEnemies(mapArray);
                 bool gotTrigger = map.Events.Triggered(mapArray[playerPosY][playerPosX]);
                 if (gotTrigger)
                 {
                     gotEvent = true;
+                }
+                foreach (MapEnemy enemy in map.Enemies)
+                {
+                    int enemyX = enemy.EnemyMovement.CurrentCoordinates[0];
+                    int enemyY = enemy.EnemyMovement.CurrentCoordinates[1];
+                    if (enemyX == playerPosX && enemyY == playerPosY)
+                    {
+                        Fight.StartFight(ref player, enemy.BaseEnemy);
+                        if (player.HP > 0)
+                        {
+                            map.Enemies.Remove(enemy);
+                        }
+                        else
+                        {
+                            GameOver();
+                        }
+                        GoToMap(ref player, ref story, ref map, nickName: player.NickName, playerPosX: playerPosX, playerPosY: playerPosY);
+                    }
                 }
             }
             int[] coordinates = { playerPosX, playerPosY };
@@ -115,10 +139,10 @@ namespace consoleTextRPG
             if (!goOut && map.SpawnOnStartPosition)
             {
                 map.SpawnOnStartPosition = false;
-                GoToMap(ref player, ref story, map, nickName: player.NickName, playerPosX: map.PlayerPosX, playerPosY: map.PlayerPosY);
+                GoToMap(ref player, ref story, ref map, nickName: player.NickName, playerPosX: map.PlayerPosX, playerPosY: map.PlayerPosY);
             }
             else if (!goOut)
-                GoToMap(ref player, ref story, map, nickName: player.NickName, playerPosX: previousPosition[0], playerPosY: previousPosition[1]);
+                GoToMap(ref player, ref story, ref map, nickName: player.NickName, playerPosX: previousPosition[0], playerPosY: previousPosition[1]);
 
         }
 
@@ -159,16 +183,16 @@ namespace consoleTextRPG
             }
         }
 
-        internal static bool MoveTo(ref PlayerClass player, ref Story story, Map map, int[] coordinates, string nickName = null)
+        internal static bool MoveTo(ref PlayerClass player, ref Story story, Map map, int[] playerCoordinates, string nickName = null)
         {
             bool goOut = false;
             int way = 0;
 
             foreach (var pair in map.Events.EventsDictionary)
             {
-                foreach (int[] coord in pair.Key)
+                foreach (int[] eventCoordinates in pair.Key)
                 {
-                    if (coord[0] == coordinates[0] && coord[1] == coordinates[1])
+                    if (eventCoordinates[0] == playerCoordinates[0] && eventCoordinates[1] == playerCoordinates[1])
                     {
                         way = (int)pair.Value;
                         goto Way;
@@ -195,6 +219,8 @@ namespace consoleTextRPG
 
         public char[] Triggers { get; protected set; }
 
+        public List<MapEnemy> Enemies = new List<MapEnemy>();
+
         public Map(MapEvents events)
         {
             Events = events;
@@ -203,6 +229,7 @@ namespace consoleTextRPG
             MapString = events.MapString;
             SpawnOnStartPosition = events.SpawnOnStartPosition;
             Triggers = events.Triggers;
+            Enemies = events.Enemies;
         }
     }
 
@@ -210,6 +237,8 @@ namespace consoleTextRPG
     abstract class MapEvents
     {
         public Dictionary<int[][], EventName> EventsDictionary = new Dictionary<int[][], EventName>();
+
+        public List<MapEnemy> Enemies = new List<MapEnemy>();
 
         public string MapString { get; protected set; }
 
@@ -241,6 +270,22 @@ namespace consoleTextRPG
             }
             return isTriggered;
         }
+
+        public void DrawEnemies(string[] mapArray)
+        {
+            foreach (MapEnemy enemy in Enemies)
+            {
+                int oldX = enemy.EnemyMovement.CurrentCoordinates[0];
+                int oldY = enemy.EnemyMovement.CurrentCoordinates[1];
+                Console.SetCursorPosition(oldX, oldY);
+                Console.Write(mapArray[oldY][oldX]);
+                enemy.EnemyMovement.Update();
+
+                Console.SetCursorPosition(enemy.EnemyMovement.CurrentCoordinates[0], enemy.EnemyMovement.CurrentCoordinates[1]);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write("%");
+            }
+        }
     }
 
     enum EventName
@@ -254,10 +299,89 @@ namespace consoleTextRPG
         Headman,
         Outside,
 
+        Combat,
+
         OutsideBridge,
         Convoy,
         BridgeCamp,
-        OutsideCamp
+        OutsideCamp,
+
+    }
+
+    class MapEnemy
+    {
+        public Fight.BaseEnemy BaseEnemy { get; protected set; }
+
+        public EnemyMovement EnemyMovement { get; protected set; }
+
+        public MapEnemy(Fight.BaseEnemy baseEnemy, EnemyMovement enemyMovement)
+        {
+            BaseEnemy = baseEnemy;
+            EnemyMovement = enemyMovement;
+
+        }
+    }
+
+    enum Coordinate
+    {
+        X, Y
+    }
+
+    class EnemyMovement
+    {
+        private int[] StartCoordinates;
+
+        public int[] CurrentCoordinates { get; protected set; }
+
+        public int[] EndCoordinates;
+
+        public int MoveCoordinate { get; private set; }
+
+        private bool ToStart = true;
+
+        public EnemyMovement(int[] startCoordinates, int[] endCoordinates, int moveCoordinate)
+        {
+            StartCoordinates = startCoordinates;
+            CurrentCoordinates = new int[] { startCoordinates[0], startCoordinates[1] };
+            EndCoordinates = endCoordinates;
+            MoveCoordinate = moveCoordinate;
+        }
+
+        public void Update()
+        {
+            if (CurrentCoordinates[0] == StartCoordinates[0] && CurrentCoordinates[1] == StartCoordinates[1])
+                ToStart = false;
+
+            else if (CurrentCoordinates[0] == EndCoordinates[0] && CurrentCoordinates[1] == EndCoordinates[1])
+                ToStart = true;
+
+            UpdateByCoordinate();
+
+
+        }
+
+        private void UpdateByCoordinate()
+        {
+            if (StartCoordinates[0] < EndCoordinates[0] && !ToStart)
+            {
+                CurrentCoordinates[0] = CurrentCoordinates[0] + 1;
+            }
+
+            else if (StartCoordinates[0] > EndCoordinates[0] && !ToStart)
+            {
+                CurrentCoordinates[0] = CurrentCoordinates[0] - 1;
+            }
+
+            else if (StartCoordinates[0] < EndCoordinates[0] && ToStart)
+            {
+                CurrentCoordinates[0] = CurrentCoordinates[0] - 1;
+            }
+
+            else if (StartCoordinates[0] > EndCoordinates[0] && ToStart)
+            {
+                CurrentCoordinates[0] = CurrentCoordinates[0] + 1;
+            }
+        }
     }
 
     
