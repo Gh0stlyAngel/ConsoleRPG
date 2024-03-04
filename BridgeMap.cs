@@ -90,7 +90,7 @@ namespace consoleTextRPG
         {
             BridgeSecondEvents bridgeSecondEvents = new BridgeSecondEvents();
             Map bridgeSecond = new Map(bridgeSecondEvents);
-            Maps.GoToMap(ref player, ref story, ref bridgeSecond, bridgeSecond.PlayerPosX, bridgeSecond.PlayerPosY);
+            Maps.GoToMap(ref player, ref story, ref MapList.BridgeSecond, MapList.BridgeSecond.PlayerPosX, MapList.BridgeSecond.PlayerPosY);
         }
     }
 
@@ -165,9 +165,7 @@ namespace consoleTextRPG
         }
         internal static void ToBridgeThird(ref PlayerClass player, ref Story story)
         {
-            BridgeThirdEvents bridgeThirdEvents = new BridgeThirdEvents();
-            Map bridgeThird = new Map(bridgeThirdEvents);
-            Maps.GoToMap(ref player, ref story, ref bridgeThird, bridgeThird.PlayerPosX, bridgeThird.PlayerPosY);
+            Maps.GoToMap(ref player, ref story, ref MapList.BridgeThird, MapList.BridgeThird.PlayerPosX, MapList.BridgeThird.PlayerPosY);
         }
     }
 
@@ -244,9 +242,7 @@ namespace consoleTextRPG
 
         internal static void ToBridgeSecond(ref PlayerClass player, ref Story story)
         {
-            BridgeSecondEvents bridgeSecondEvents = new BridgeSecondEvents();
-            Map bridgeSecond = new Map(bridgeSecondEvents);
-            Maps.GoToMap(ref player, ref story, ref bridgeSecond, 54, 7);
+            Maps.GoToMap(ref player, ref story, ref MapList.BridgeSecond, 54, 7);
         }
 
     }

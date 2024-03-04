@@ -14,6 +14,8 @@ namespace consoleTextRPG
 {
     internal class Maps
     {
+
+
         internal static void GoToMap(ref PlayerClass player, ref Story story, ref Map map, int playerPosX, int playerPosY, string nickName = null)
         {
             Console.Clear();
@@ -108,7 +110,6 @@ namespace consoleTextRPG
 
                     default: break;
                 }
-                map.Events.DrawEnemies(mapArray);
                 bool gotTrigger = map.Events.Triggered(mapArray[playerPosY][playerPosX]);
                 if (gotTrigger)
                 {
@@ -132,6 +133,10 @@ namespace consoleTextRPG
                         GoToMap(ref player, ref story, ref map, nickName: player.NickName, playerPosX: playerPosX, playerPosY: playerPosY);
                     }
                 }
+                CheckOnEnemy(ref player, ref story, playerPosX, playerPosY, ref map);
+                map.Events.DrawEnemies(mapArray);
+                CheckOnEnemy(ref player, ref story, playerPosX, playerPosY, ref map);
+
             }
             int[] coordinates = { playerPosX, playerPosY };
             bool goOut = MoveTo(ref player, ref story, map, coordinates, nickName);
@@ -144,6 +149,28 @@ namespace consoleTextRPG
             else if (!goOut)
                 GoToMap(ref player, ref story, ref map, nickName: player.NickName, playerPosX: previousPosition[0], playerPosY: previousPosition[1]);
 
+        }
+
+        internal static void CheckOnEnemy(ref PlayerClass player, ref Story story, int playerPosX, int playerPosY,ref Map map)
+        {
+            foreach (MapEnemy enemy in map.Enemies)
+            {
+                int enemyX = enemy.EnemyMovement.CurrentCoordinates[0];
+                int enemyY = enemy.EnemyMovement.CurrentCoordinates[1];
+                if (enemyX == playerPosX && enemyY == playerPosY)
+                {
+                    Fight.StartFight(ref player, enemy.BaseEnemy);
+                    if (player.HP > 0)
+                    {
+                        map.Enemies.Remove(enemy);
+                    }
+                    else
+                    {
+                        GameOver();
+                    }
+                    GoToMap(ref player, ref story, ref map, nickName: player.NickName, playerPosX: playerPosX, playerPosY: playerPosY);
+                }
+            }
         }
 
         internal static int[] DrawNewPlayerPos(string[] mapString, int oldX, int oldY, int newX, int newY, Map map)

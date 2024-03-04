@@ -22,6 +22,28 @@ namespace consoleTextRPG
 {
     public class Program
     {
+        internal class MapList
+        {
+            BridgeThirdEvents BridgeThirdEvents = new BridgeThirdEvents();
+            public static Map BridgeThird;
+
+            BridgeSecondEvents BridgeSecondEvents = new BridgeSecondEvents();
+            public static Map BridgeSecond;
+
+            BridgeFirstEvents BridgeFirstEvents = new BridgeFirstEvents();
+            public static Map BridgeFirst;
+
+            HubEvents HubEvents = new HubEvents();
+            public static Map Hub;
+
+            public MapList()
+            {
+                BridgeThird = new Map(BridgeThirdEvents);
+                BridgeSecond = new Map(BridgeSecondEvents);
+                BridgeFirst = new Map(BridgeFirstEvents);
+                Hub = new Map(HubEvents);
+            }
+        }
 
         class writeThread
         {
@@ -106,8 +128,14 @@ namespace consoleTextRPG
 
         static void Main(string[] args)
         {
-            HubEvents hubEvents = new HubEvents();
+            MapList Data = new MapList();
+
+
             BridgeFirstEvents bridgeFirstEvents = new BridgeFirstEvents();
+            Map bridgeFirst = new Map(bridgeFirstEvents);
+
+            BridgeSecondEvents bridgeSecondEvents = new BridgeSecondEvents();
+            Map bridgeSecond = new Map(bridgeSecondEvents);
 
             HealingPotion healingPotion = new HealingPotion();
             ManaPotion manaPotion = new ManaPotion();
@@ -127,14 +155,14 @@ namespace consoleTextRPG
             player.Inventory.AppendItem(healingPotion);
             player.Inventory.AppendItem(manaPotion);
 
-            Map bridgeFirst = new Map(bridgeFirstEvents);
+            
 
-            Maps.GoToMap(ref player, ref story, ref bridgeFirst, bridgeFirst.PlayerPosX, bridgeFirst.PlayerPosY);
+            Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
 
 
-            Map hub = new Map(hubEvents);
+            
 
-            Maps.GoToMap(ref player, ref story, ref hub, hub.PlayerPosX, hub.PlayerPosY);
+            Maps.GoToMap(ref player, ref story, ref MapList.Hub, MapList.Hub.PlayerPosX, MapList.Hub.PlayerPosY);
             
 
             SlowWrite("Продолжение следует...");
