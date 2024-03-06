@@ -88,8 +88,6 @@ namespace consoleTextRPG
 
         internal static void ToBridgeSecond(ref PlayerClass player, ref Story story)
         {
-            BridgeSecondEvents bridgeSecondEvents = new BridgeSecondEvents();
-            Map bridgeSecond = new Map(bridgeSecondEvents);
             Maps.GoToMap(ref player, ref story, ref MapList.BridgeSecond, MapList.BridgeSecond.PlayerPosX, MapList.BridgeSecond.PlayerPosY);
         }
     }

@@ -110,7 +110,7 @@ namespace consoleTextRPG
 
                     default: break;
                 }
-                bool gotTrigger = map.Events.Triggered(mapArray[playerPosY][playerPosX]);
+                bool gotTrigger = map.Events.Triggered(mapArray[playerPosY][playerPosX], playerPosX, playerPosY);
                 if (gotTrigger)
                 {
                     gotEvent = true;
@@ -134,8 +134,11 @@ namespace consoleTextRPG
                     }
                 }
                 CheckOnEnemy(ref player, ref story, playerPosX, playerPosY, ref map);
+                if (playerPosX != previousPosition[0] || playerPosY != previousPosition[1])
+                {
                 map.Events.DrawEnemies(mapArray);
                 CheckOnEnemy(ref player, ref story, playerPosX, playerPosY, ref map);
+                }
 
             }
             int[] coordinates = { playerPosX, playerPosY };
@@ -175,7 +178,7 @@ namespace consoleTextRPG
 
         internal static int[] DrawNewPlayerPos(string[] mapString, int oldX, int oldY, int newX, int newY, Map map)
         {
-            bool gotTrigger = map.Events.Triggered(mapString[newY][newX]);
+            bool gotTrigger = map.Events.Triggered(mapString[newY][newX], newX, newY);
             int[] nextXY;
             if (mapString[newY][newX] == '#')
             {
@@ -265,6 +268,8 @@ namespace consoleTextRPG
     {
         public Dictionary<int[][], EventName> EventsDictionary = new Dictionary<int[][], EventName>();
 
+        public Dictionary<int[][], EventName> InvisibleEventsDictionary = new Dictionary<int[][], EventName>();
+
         public List<MapEnemy> Enemies = new List<MapEnemy>();
 
         public string MapString { get; protected set; }
@@ -284,17 +289,36 @@ namespace consoleTextRPG
             return false;
         }
 
-        public bool Triggered(char symbol)
+        public bool Triggered(char symbol, int playerPositionX, int playerPositionY)
         {
             bool isTriggered = false;
-            foreach (char trigger in Triggers)
+
+            if (Triggers != null)
             {
-                if (trigger == symbol)
+                foreach (char trigger in Triggers)
                 {
-                    isTriggered = true;
-                    break;
+                    if (trigger == symbol)
+                    {
+                        isTriggered = true;
+                        return isTriggered;
+                    }
+                }  
+            }
+            if (InvisibleEventsDictionary != null)
+            {
+                foreach (int[][] trigger in InvisibleEventsDictionary.Keys)
+                {
+                    foreach (int[] triggerCoordinates in trigger)
+                    {
+                        if (playerPositionX == triggerCoordinates[0] && playerPositionY == triggerCoordinates[1])
+                        {
+                            isTriggered = true;
+                            return isTriggered;
+                        }
+                    }
                 }
             }
+
             return isTriggered;
         }
 
@@ -332,6 +356,18 @@ namespace consoleTextRPG
         Convoy,
         BridgeCamp,
         OutsideCamp,
+
+        MainCampFirst,
+        MainCampSecond,
+        MainCampThird,
+        MainCampFourth,
+        MainCampfifth,
+        OutsideMainCamp,
+        FreeVillagers,
+        ToSouthLadder,
+        ToNorthLadder,
+
+
 
     }
 
