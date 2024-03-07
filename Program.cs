@@ -24,6 +24,11 @@ namespace consoleTextRPG
     {
         internal class MapList
         {
+            HubEvents HubEvents = new HubEvents();
+            public static Map Hub;
+
+
+
             BridgeThirdEvents BridgeThirdEvents = new BridgeThirdEvents();
             public static Map BridgeThird;
 
@@ -33,15 +38,59 @@ namespace consoleTextRPG
             BridgeFirstEvents BridgeFirstEvents = new BridgeFirstEvents();
             public static Map BridgeFirst;
 
-            HubEvents HubEvents = new HubEvents();
-            public static Map Hub;
+
+
+            private static List<MapEnemy> EnemyList = new List<MapEnemy>();
+
+            MainCampFirstEvents MainCampFirstEvents = new MainCampFirstEvents();
+            public static Map MainCampFirst;
+
+            MainCampSecondEvents MainCampSecondEvents = new MainCampSecondEvents(EnemyList);
+            public static Map MainCampSecond;
+
+            MainCampThirdEvents MainCampThirdEvents = new MainCampThirdEvents(EnemyList);
+            public static Map MainCampThird;
+
+            MainCampFourthEvents MainCampFourthEvents = new MainCampFourthEvents(EnemyList);
+            public static Map MainCampFourth;
+
+            MainCampFifthEvents MainCampFifthEvents = new MainCampFifthEvents(EnemyList);
+            public static Map MainCampFifth;
 
             public MapList()
             {
+                Hub = new Map(HubEvents);
+
+
                 BridgeThird = new Map(BridgeThirdEvents);
                 BridgeSecond = new Map(BridgeSecondEvents);
                 BridgeFirst = new Map(BridgeFirstEvents);
-                Hub = new Map(HubEvents);
+
+
+                MainCampFirst = new Map(MainCampFirstEvents);
+                MainCampSecond = new Map(MainCampSecondEvents);
+                MainCampThird = new Map(MainCampThirdEvents);
+                MainCampFourth = new Map(MainCampFourthEvents);
+                MainCampFifth = new Map(MainCampFifthEvents);
+
+                int[] enemy1StartCoord = { 100, 9 };
+                int[] enemy1EndCoord = { 93, 9 };
+                MapEnemy mapEnemy1 = AddEnemy("Культист-мечник", 80, 12, 0, enemy1StartCoord, enemy1EndCoord, (int)Coordinate.X);
+                EnemyList.Add(mapEnemy1);
+
+                int[] enemy2StartCoord = { 100, 10 };
+                int[] enemy2EndCoord = { 93, 10 };
+                MapEnemy mapEnemy2 = AddEnemy("Культист-мечник", 80, 12, 0, enemy2StartCoord, enemy2EndCoord, (int)Coordinate.X);
+                EnemyList.Add(mapEnemy2);
+
+            }
+
+            internal static MapEnemy AddEnemy(string enemyName, int enemyHP, int enemyDamage, int enemyAtcRange, int[] enemyStartCoord, int[] enemyEndCoord, int coordinate)
+            {
+                Fight.BaseEnemy enemy = new Fight.BaseEnemy(enemyName, enemyHP, enemyDamage, enemyAtcRange);
+                EnemyMovement enemy1Movement = new EnemyMovement(enemyStartCoord, enemyEndCoord, coordinate);
+                MapEnemy mapEnemy = new MapEnemy(enemy, enemy1Movement);
+                return mapEnemy;
             }
         }
 
@@ -128,19 +177,11 @@ namespace consoleTextRPG
 
         static void Main(string[] args)
         {
-            Console.Clear();
-            Console.CursorVisible = false;
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            string[] separator = { "\r\n" };
-            string MapString = "#############################################################################################################################\r\n#                          ##                                                                                               #\r\n#                         ##                             ###############################################################    #\r\n#                        ##                              ############################################# |    ########## #    #\r\n#                       ##                               ################################################   ########## #    #\r\n#                     ##                                 #######    #########   #########               #   ########## #    #\r\n|                      ##                                #######    #       #   #       #               #   ########## #    #\r\n|                       ######                           #######    #       #   #       #               #       %      #    #\r\n|               ##           #########                   #######    #########   #########   #############              #    #\r\n#               # ##               ##########            #######                                    %                  #    #\r\n#               #  ##                       ##         #######                                      %                  #    #\r\n#               #   ####                         %                                          #############              #    #\r\n#               #      ###########                     #######                                          #              #    #\r\n#               #               ############             #######                                        ################    #\r\n#              ##                                        #######                                                       #    #\r\n#             ##                                         #######                                                       #    #\r\n#            ##                                          #######                                                       #    #\r\n#           ##                                           ####### #########             %              #########        #    #\r\n#          ##                                            ####### #       #                            #       #        #    #\r\n#         ##                                             ####### #       #           #####            #       #        #    #\r\n#        ##                                              ####### #########       %   #####   %        #########        #    #\r\n#       ##                                               #######                     #####                             #    #\r\n#     ###                                                ##########################################################    #    #\r\n#    ###                                                 ###################################################### |      #    #\r\n#  ###                                                   ###############################################################    #\r\n####                                                                                                                        #\r\n#                                                                                                                           #\r\n#############################################################################################################################";
-            string[] mapArray = MapString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (string mapItem in mapArray)
-            {
-                Console.WriteLine(mapItem);
-            }
 
-            Console.ReadKey();
+
+
+            Console.SetWindowSize(150, 31);
             MapList Data = new MapList();
 
 
@@ -168,7 +209,7 @@ namespace consoleTextRPG
             player.Inventory.AppendItem(healingPotion);
             player.Inventory.AppendItem(manaPotion);
 
-            
+            Maps.GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
 
             Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
 
@@ -662,6 +703,12 @@ namespace consoleTextRPG
             public bool FirstVisitHeadman = false;
 
 
+            public bool FreeVillagers = false;
+
+
+
+
+            
             public Quest FirstVisitHomeQuest;
 
 

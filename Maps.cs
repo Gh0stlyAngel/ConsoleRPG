@@ -39,21 +39,23 @@ namespace consoleTextRPG
 
 
             Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.SetCursorPosition(88, 3);
+            Console.SetCursorPosition(mapArray[0].Length + 2, 3);
             Console.Write("→ ← ↑ ↓ - Управление");
             if (story.FirstVillageVisit)
             {
-                Console.SetCursorPosition(88, 4);
+                Console.SetCursorPosition(mapArray[0].Length + 2, 4);
                 Console.Write("C - Персонаж");
             }
-            Console.SetCursorPosition(88, 5);
+            Console.SetCursorPosition(mapArray[0].Length + 2, 5);
             Console.Write("J - Журнал");
 
 
             int[] newPos;
             bool gotEvent = false;
+
             while (!gotEvent)
             {
+                bool moveEnemy = true;
                 ConsoleKey playerMove = Console.ReadKey(true).Key;
                 Console.ForegroundColor = ConsoleColor.Yellow;
 
@@ -96,6 +98,7 @@ namespace consoleTextRPG
                         previousPosition[0] = playerPosX;
                         previousPosition[1] = playerPosY;
                         gotEvent = true;
+                        moveEnemy = false;
                         break;
                     case ConsoleKey.C:
                         if (story.FirstVillageVisit)
@@ -105,15 +108,20 @@ namespace consoleTextRPG
                             previousPosition[0] = playerPosX;
                             previousPosition[1] = playerPosY;
                             gotEvent = true;
+                            moveEnemy = false;
                         }
                         break;
 
-                    default: break;
+                    default:
+                        moveEnemy = false;
+                        break;
                 }
+
                 bool gotTrigger = map.Events.Triggered(mapArray[playerPosY][playerPosX], playerPosX, playerPosY);
                 if (gotTrigger)
                 {
                     gotEvent = true;
+                    moveEnemy = false;
                 }
                 foreach (MapEnemy enemy in map.Enemies)
                 {
@@ -136,8 +144,9 @@ namespace consoleTextRPG
                 CheckOnEnemy(ref player, ref story, playerPosX, playerPosY, ref map);
                 if (playerPosX != previousPosition[0] || playerPosY != previousPosition[1])
                 {
-                map.Events.DrawEnemies(mapArray);
-                CheckOnEnemy(ref player, ref story, playerPosX, playerPosY, ref map);
+                    if (moveEnemy)
+                        map.Events.DrawEnemies(mapArray);
+                    CheckOnEnemy(ref player, ref story, playerPosX, playerPosY, ref map);
                 }
 
             }
@@ -158,21 +167,39 @@ namespace consoleTextRPG
         {
             foreach (MapEnemy enemy in map.Enemies)
             {
-                int enemyX = enemy.EnemyMovement.CurrentCoordinates[0];
-                int enemyY = enemy.EnemyMovement.CurrentCoordinates[1];
-                if (enemyX == playerPosX && enemyY == playerPosY)
+                int[][] enemyTriggerPositions = new int[][]
                 {
-                    Fight.StartFight(ref player, enemy.BaseEnemy);
-                    if (player.HP > 0)
+                    new int[] { enemy.EnemyMovement.CurrentCoordinates[0]-1, enemy.EnemyMovement.CurrentCoordinates[1]-1 },
+                    new int[] { enemy.EnemyMovement.CurrentCoordinates[0], enemy.EnemyMovement.CurrentCoordinates[1]-1 },
+                    new int[] { enemy.EnemyMovement.CurrentCoordinates[0]+1, enemy.EnemyMovement.CurrentCoordinates[1]-1 },
+
+                    new int[] { enemy.EnemyMovement.CurrentCoordinates[0]-1, enemy.EnemyMovement.CurrentCoordinates[1] },
+                    new int[] { enemy.EnemyMovement.CurrentCoordinates[0], enemy.EnemyMovement.CurrentCoordinates[1] },
+                    new int[] { enemy.EnemyMovement.CurrentCoordinates[0]+1, enemy.EnemyMovement.CurrentCoordinates[1] },
+
+                    new int[] { enemy.EnemyMovement.CurrentCoordinates[0]-1, enemy.EnemyMovement.CurrentCoordinates[1]+1 },
+                    new int[] { enemy.EnemyMovement.CurrentCoordinates[0], enemy.EnemyMovement.CurrentCoordinates[1]+1 },
+                    new int[] { enemy.EnemyMovement.CurrentCoordinates[0]+1, enemy.EnemyMovement.CurrentCoordinates[1]+1 },
+                };
+
+                foreach (var triggerPosition in enemyTriggerPositions)
+                {
+                    if (triggerPosition[0] == playerPosX && triggerPosition[1] == playerPosY)
                     {
-                        map.Enemies.Remove(enemy);
+                        Fight.StartFight(ref player, enemy.BaseEnemy);
+                        if (player.HP > 0)
+                        {
+                            map.Enemies.Remove(enemy);
+                        }
+                        else
+                        {
+                            GameOver();
+                        }
+                        GoToMap(ref player, ref story, ref map, nickName: player.NickName, playerPosX: playerPosX, playerPosY: playerPosY);
+
                     }
-                    else
-                    {
-                        GameOver();
-                    }
-                    GoToMap(ref player, ref story, ref map, nickName: player.NickName, playerPosX: playerPosX, playerPosY: playerPosY);
                 }
+
             }
         }
 
@@ -218,17 +245,35 @@ namespace consoleTextRPG
             bool goOut = false;
             int way = 0;
 
-            foreach (var pair in map.Events.EventsDictionary)
+            if (map.Events.EventsDictionary != null)
             {
-                foreach (int[] eventCoordinates in pair.Key)
+                foreach (var pair in map.Events.EventsDictionary)
                 {
-                    if (eventCoordinates[0] == playerCoordinates[0] && eventCoordinates[1] == playerCoordinates[1])
+                    foreach (int[] eventCoordinates in pair.Key)
                     {
-                        way = (int)pair.Value;
-                        goto Way;
+                        if (eventCoordinates[0] == playerCoordinates[0] && eventCoordinates[1] == playerCoordinates[1])
+                        {
+                            way = (int)pair.Value;
+                            goto Way;
+                        }
                     }
                 }
             }
+            if (map.Events.InvisibleEventsDictionary != null)
+            {
+                foreach (var pair in map.Events.InvisibleEventsDictionary)
+                {
+                    foreach (int[] eventCoordinates in pair.Key)
+                    {
+                        if (eventCoordinates[0] == playerCoordinates[0] && eventCoordinates[1] == playerCoordinates[1])
+                        {
+                            way = (int)pair.Value;
+                            goto Way;
+                        }
+                    }
+                }
+            }
+
         Way:
             map.Events.StartEvent(ref player, ref story, player.NickName, way);
             return goOut;

@@ -8,11 +8,11 @@ using static consoleTextRPG.Program;
 
 namespace consoleTextRPG
 {
-    internal class MainCampFirst : MapEvents
+    internal class MainCampFirstEvents : MapEvents
     {
-        public MainCampFirst()
+        public MainCampFirstEvents()
         {
-            MapString = "#############################################################################################################################\r\n#                          ##                                                                                               #\r\n#                         ##                             ###############################################################    #\r\n#                        ##                              ############################################# |               #    #\r\n#                       ##                               ################################################   ########## #    #\r\n#                     ##                                 #######    #########   #########               #   ########## #    #\r\n|                      ##                                #######    #       #   #       #               #   ########## #    #\r\n|                       ######                           #######    #       #   #       #               #   ####--#### #    #\r\n|               ##           #########                   #######    #########   #########   #############              #    #\r\n#               # ##               ##########            #######                                                       #    #\r\n#               #  ##                       ##         #######                                                         #    #\r\n#               #   ####                                                                    #############              #    #\r\n#               #      ###########                     #######                                          #              #    #\r\n#               #               ############             #######                                        ################    #\r\n#              ##                                        #######                                                       #    #\r\n#             ##                                         #######                                                       #    #\r\n#            ##                                          #######                                                       #    #\r\n#           ##                                           ####### #########                            #########        #    #\r\n#          ##                                            ####### #       #                            #       #        #    #\r\n#         ##                                             ####### #       #           #####            #       #        #    #\r\n#        ##                                              ####### #########           #####            #########        #    #\r\n#       ##                                               #######                     #####                             #    #\r\n#     ###                                                #########################################################     #    #\r\n#    ###                                                 ####################################################### |     #    #\r\n#  ###                                                   ###############################################################    #\r\n####                                                                                                                        #\r\n#                                                                                                                           #\r\n#############################################################################################################################";
+            MapString = "#############################################################################################################################\r\n#                          ##                                                                                               #\r\n#                         ##                             ###############################################################    #\r\n#                        ##                              #############################################  |              #    #\r\n#                       ##                               ################################################   ########## #    #\r\n#                     ##                                 #######    #########   #########               #   ########## #    #\r\n|                      ##                                #######    #       #   #       #               #   ########## #    #\r\n|                       ######                           #######    #       #   #       #               #   ####--#### #    #\r\n|               ##           #########                   #######    #########   #########   #############              #    #\r\n#               # ##               ##########            #######                                                       #    #\r\n#               #  ##                       ##         #######                                                         #    #\r\n#               #   ####                                                                    #############              #    #\r\n#               #      ###########                     #######                                          #              #    #\r\n#               #               ############             #######                                        ################    #\r\n#              ##                                        #######                                                       #    #\r\n#             ##                                         #######                                                       #    #\r\n#            ##                                          #######                                                       #    #\r\n#           ##                                           ####### #########                            #########        #    #\r\n#          ##                                            ####### #       #                            #       #        #    #\r\n#         ##                                             ####### #       #           #####            #       #        #    #\r\n#        ##                                              ####### #########           #####            #########        #    #\r\n#       ##                                               #######                     #####                             #    #\r\n#     ###                                                #########################################################     #    #\r\n#    ###                                                 ####################################################### |     #    #\r\n#  ###                                                   ###############################################################    #\r\n####                                                                                                                        #\r\n#                                                                                                                           #\r\n#############################################################################################################################";
             PlayerPosX = 1;
             PlayerPosY = 7;
             SpawnOnStartPosition = false;
@@ -70,7 +70,7 @@ namespace consoleTextRPG
 
         internal static void ToMainCampSecond(ref PlayerClass player, ref Story story)
         {
-            
+            Maps.GoToMap(ref player, ref story, ref MapList.MainCampSecond, MapList.MainCampSecond.PlayerPosX, MapList.MainCampSecond.PlayerPosY);
         }
 
         internal static void ToOutside(ref PlayerClass player, ref Story story)
@@ -81,13 +81,15 @@ namespace consoleTextRPG
     }
 
 
-    class MainCampSecond: MapEvents
+    class MainCampSecondEvents: MapEvents
     {
-        public MainCampSecond()
+        public MainCampSecondEvents(List<MapEnemy> enemies)
         {
-            MapString = "#############################################################################################################################\r\n#                          ##                                                                                               #\r\n#                         ##                             ###############################################################    #\r\n#                        ##                              ############################################# |               #    #\r\n#                       ##                               ################################################   ########## #    #\r\n#                     ##                                 #######    #########   #########               #   ########## #    #\r\n|                      ##                                #######    #       #   #       #               #   ########## #    #\r\n|                       ######                           #######    #       #   #       #               #   ####--#### #    #\r\n|               ##           #########                   #######    #########   #########   #############              #    #\r\n#               # ##               ##########            #######                                                       #    #\r\n#               #  ##                       ##         #######                                                         #    #\r\n#               #   ####                                                                    #############              #    #\r\n#               #      ###########                     #######                                          #              #    #\r\n#               #               ############             #######                                        ################    #\r\n#              ##                                        #######                                                       #    #\r\n#             ##                                         #######                                                       #    #\r\n#            ##                                          #######                                                       #    #\r\n#           ##                                           ####### #########                            #########        #    #\r\n#          ##                                            ####### #       #                            #       #        #    #\r\n#         ##                                             ####### #       #           #####            #       #        #    #\r\n#        ##                                              ####### #########           #####            #########        #    #\r\n#       ##                                               #######                     #####                             #    #\r\n#     ###                                                #########################################################     #    #\r\n#    ###                                                 ####################################################### |     #    #\r\n#  ###                                                   ###############################################################    #\r\n####                                                                                                                        #\r\n#                                                                                                                           #\r\n#############################################################################################################################";
+            Enemies = enemies;
+
+            MapString = "#############################################################################################################################\r\n#                          ##                                                                                               #\r\n#                         ##                             ###############################################################    #\r\n#                        ##                              #############################################  |              #    #\r\n#                       ##                               ################################################   ########## #    #\r\n#                     ##                                 #######    #########   #########               #   ########## #    #\r\n|                      ##                                #######    #       #   #       #               #   ########## #    #\r\n|                       ######                           #######    #       #   #       #               #   ####--#### #    #\r\n|               ##           #########                   #######    #########   #########   #############              #    #\r\n#               # ##               ##########            #######                                                       #    #\r\n#               #  ##                       ##         #######                                                         #    #\r\n#               #   ####                                                                    #############              #    #\r\n#               #      ###########                     #######                                          #              #    #\r\n#               #               ############             #######                                        ################    #\r\n#              ##                                        #######                                                       #    #\r\n#             ##                                         #######                                                       #    #\r\n#            ##                                          #######                                                       #    #\r\n#           ##                                           ####### #########                            #########        #    #\r\n#          ##                                            ####### #       #                            #       #        #    #\r\n#         ##                                             ####### #       #           #####            #       #        #    #\r\n#        ##                                              ####### #########           #####            #########        #    #\r\n#       ##                                               #######                     #####                             #    #\r\n#     ###                                                #########################################################     #    #\r\n#    ###                                                 ####################################################### |     #    #\r\n#  ###                                                   ###############################################################    #\r\n####                                                                                                                        #\r\n#                                                                                                                           #\r\n#############################################################################################################################";
             PlayerPosX = 12;
-            PlayerPosY = 6;
+            PlayerPosY = 7;
             SpawnOnStartPosition = false;
             Triggers = new char[] { '|', '-' };
 
@@ -107,7 +109,7 @@ namespace consoleTextRPG
 
             int[][] toNorthLadder = new[]
             {
-                new int[]{ 103, 3 }
+                new int[]{ 104, 3 }
             };
             EventsDictionary.Add(toNorthLadder, EventName.ToNorthLadder);
 
@@ -140,14 +142,10 @@ namespace consoleTextRPG
                     ToOutside(ref player, ref story);
                     break;
 
-                case (int)EventName.MainCampThird: 
-                    goOut = true;
-
-                    break;
-
-                case (int)EventName.MainCampFourth:
-                    goOut = true;
-
+                case (int)EventName.FreeVillagers:
+                    // if key in inventory
+                    story.FreeVillagers = true;
+                    // else find key
                     break;
 
                 default: break;
@@ -163,7 +161,8 @@ namespace consoleTextRPG
 
         internal static void SouthLadder(ref PlayerClass player, ref Story story)
         {
-           // MainCampThird
+            // MainCampThird
+            Maps.GoToMap(ref player, ref story, ref MapList.MainCampThird, MapList.MainCampThird.PlayerPosX, MapList.MainCampThird.PlayerPosY);
         }
         
         internal static void NorthLadder(ref PlayerClass player, ref Story story)
@@ -171,16 +170,24 @@ namespace consoleTextRPG
             // if FreeVillagers
             // MainCampFourth
             // else MainCampThird
+            if (story.FreeVillagers)
+                Maps.GoToMap(ref player, ref story, ref MapList.MainCampFourth, MapList.MainCampFourth.PlayerPosX, MapList.MainCampFourth.PlayerPosY);
+            else
+                Maps.GoToMap(ref player, ref story, ref MapList.MainCampThird, 103, 3);
+
+
         }
     }
 
-    class MainCampThird: MapEvents
+    class MainCampThirdEvents: MapEvents
     {
-        public MainCampThird()
+        public MainCampThirdEvents(List<MapEnemy> enemies)
         {
-            MapString = "#############################################################################################################################\r\n#                          ##                                                                                               #\r\n#                         ##                             ###############################################################    #\r\n#                        ##                              #                                              |              #    #\r\n#                       ##                               #     ##########################################   ########## #    #\r\n#                     ##                                 #     #    #########   #########               #   ########## #    #\r\n|                      ##                                #     #    #       #   #       #               #   ########## #    #\r\n|                       ######                           #     #    #       #   #       #               #   ####--#### #    #\r\n|               ##           #########                   #     #    #########   #########   #############        %     #    #\r\n#               # ##               ##########            #     #                                    %                  #    #\r\n#               #  ##                       ##         ###     #                                    %                  #    #\r\n#               #   ####                         %       #     #                            #############              #    #\r\n#               #      ###########                     ###     #                                        #              #    #\r\n#               #               ############             #     #                                        ################    #\r\n#              ##                                        #     #                                                       #    #\r\n#             ##                                         #     #                                                       #    #\r\n#            ##                                          #     #                                                       #    #\r\n#           ##                                           #     # #########             %              #########        #    #\r\n#          ##                                            #     # #       #                            #       #        #    #\r\n#         ##                                             #     # #       #           #####            #       #        #    #\r\n#        ##                                              #     # #########       %   #####   %        #########        #    #\r\n#       ##                                               #     #                     #####                             #    #\r\n#     ###                                                #     ###################################################     #    #\r\n#    ###                                                 #                                                       |     #    #\r\n#  ###                                                   ###############################################################    #\r\n####                                                                                                                        #\r\n#                                                                                                                           #\r\n#############################################################################################################################";
-            PlayerPosX = 12;
-            PlayerPosY = 6;
+            Enemies = enemies;
+
+            MapString = "#############################################################################################################################\r\n#                          ##                                                                                               #\r\n#                         ##                             ###############################################################    #\r\n#                        ##                              #                                              |              #    #\r\n#                       ##                               #     ##########################################   ########## #    #\r\n#                     ##                                 #     #    #########   #########               #   ########## #    #\r\n|                      ##                                #     #    #       #   #       #               #   ########## #    #\r\n|                       ######                           #     #    #       #   #       #               #   ####--#### #    #\r\n|               ##           #########                   #     #    #########   #########   #############              #    #\r\n#               # ##               ##########            #     #                                                       #    #\r\n#               #  ##                       ##         ###     #                                                       #    #\r\n#               #   ####                                 #     #                            #############              #    #\r\n#               #      ###########                     ###     #                                        #              #    #\r\n#               #               ############             #     #                                        ################    #\r\n#              ##                                        #     #                                                       #    #\r\n#             ##                                         #     #                                                       #    #\r\n#            ##                                          #     #                                                       #    #\r\n#           ##                                           #     # #########                            #########        #    #\r\n#          ##                                            #     # #       #                            #       #        #    #\r\n#         ##                                             #     # #       #           #####            #       #        #    #\r\n#        ##                                              #     # #########           #####            #########        #    #\r\n#       ##                                               #     #                     #####                             #    #\r\n#     ###                                                #     ###################################################     #    #\r\n#    ###                                                 #                                                       |     #    #\r\n#  ###                                                   ###############################################################    #\r\n####                                                                                                                        #\r\n#                                                                                                                           #\r\n#############################################################################################################################";
+            PlayerPosX = 112;
+            PlayerPosY = 23;
             SpawnOnStartPosition = false;
             Triggers = new char[] { '|', '-' };
 
@@ -192,7 +199,7 @@ namespace consoleTextRPG
 
             int[][] toNorthLadder = new[]
             {
-                new int[]{ 103, 3 }
+                new int[]{ 104, 3 }
             };
             EventsDictionary.Add(toNorthLadder, EventName.ToNorthLadder);
         }
@@ -202,8 +209,61 @@ namespace consoleTextRPG
             bool goOut = false;
             switch (way)
             {
-                case (int)EventName.MainCampSecond:
-                case (int)EventName.OutsideMainCamp:
+                case (int)EventName.ToSouthLadder:
+                    ToMainCampSecond(ref player, ref story, 114, 23);
+                    break;
+                case (int)EventName.ToNorthLadder:
+                    goOut = true;
+                    ToMainCampSecond(ref player, ref story, 105, 3);
+                    break;
+                default: break;
+
+            }
+            return goOut;
+        }
+
+        internal static void ToMainCampSecond(ref PlayerClass player, ref Story story, int mapPlayerX, int mapPlayerY)
+        {
+            Maps.GoToMap(ref player, ref story, ref MapList.MainCampSecond, mapPlayerX, mapPlayerY);
+        }
+    }
+
+    class MainCampFourthEvents: MapEvents
+    {
+        public MainCampFourthEvents(List<MapEnemy> enemies)
+        {
+            Enemies = enemies;
+
+            MapString = "#############################################################################################################################\r\n#                          ##                                                                                               #\r\n#                         ##                             ###############################################################    #\r\n#                        ##                              #                                              |              #    #\r\n#                       ##                               #     ##########################################   ########## #    #\r\n#                     ##                                 #     #    #########   #########               #   ########## #    #\r\n|                      ##                                #     #    #       #   #       #               #   ########## #    #\r\n|                       ######                           #     #    #       #   #       #               #   ####--#### #    #\r\n|               ##           #########                   #     #    #########   #########   #############              #    #\r\n#               # ##               ##########            #     #                                                       #    #\r\n#               #  ##                       ##         ###     #                                                       #    #\r\n#               #   ####                                 #     #                            #############              #    #\r\n#               #      ###########                     ###     #                                        #              #    #\r\n#               #               ############             #     #                                        ################    #\r\n#              ##                                        #     #                                                       #    #\r\n#             ##                                         #     #                                                       #    #\r\n#            ##                                          #     #                                                       #    #\r\n#           ##                                           #     # #########                            #########        #    #\r\n#          ##                                            #     # #       #                            #       #        #    #\r\n#         ##                                             #     # #       #           #####            #       #        #    #\r\n#        ##                                              #     # #########           #####            #########        #    #\r\n#       ##                                               #     #                     #####                             #    #\r\n#     ###                                                #     ###################################################     #    #\r\n#    ###                                                 #                                                       |     #    #\r\n#  ###                                                   ###############################################################    #\r\n####                                                                                                                        #\r\n#                                                                                                                           #\r\n#############################################################################################################################";
+            PlayerPosX = 103;
+            PlayerPosY = 3;
+            SpawnOnStartPosition = false;
+            Triggers = new char[] { '|' };
+
+
+            int[][] toSouthLadder = new[]
+{
+                new int[]{ 113, 23 }
+            };
+            EventsDictionary.Add(toSouthLadder, EventName.ToSouthLadder);
+
+            int[][] toNorthLadder = new[]
+            {
+                new int[]{ 104, 3 }
+            };
+            EventsDictionary.Add(toNorthLadder, EventName.ToNorthLadder);
+        }
+
+        internal override bool StartEvent(ref PlayerClass player, ref Story story, string nickName, int way)
+        {
+            bool goOut = false;
+            switch (way)
+            {
+                case (int)EventName.ToSouthLadder:
+                    goOut = true;
+
+                    break;
+                case (int)EventName.ToNorthLadder:
                     goOut = true;
                     ToMainCampSecond(ref player, ref story);
                     break;
@@ -215,7 +275,41 @@ namespace consoleTextRPG
 
         internal static void ToMainCampSecond(ref PlayerClass player, ref Story story)
         {
+            Maps.GoToMap(ref player, ref story, ref MapList.MainCampSecond, MapList.MainCampSecond.PlayerPosX, MapList.MainCampSecond.PlayerPosY);
 
+        }
+
+        internal static void ToMainCampFifth(ref PlayerClass player, ref Story story)
+        {
+            Maps.GoToMap(ref player, ref story, ref MapList.MainCampFifth, MapList.MainCampFifth.PlayerPosX, MapList.MainCampFifth.PlayerPosY);
+
+        }
+    }
+
+    class MainCampFifthEvents: MapEvents
+    {
+        public MainCampFifthEvents(List<MapEnemy> enemies)
+        {
+            Enemies = enemies;
+
+            MapString = "#############################################################################################################################\r\n#                          ##                                                                                               #\r\n#                         ##                             ###############################################################    #\r\n#                        ##                              #############################################  |              #    #\r\n#                       ##                               ################################################   ########## #    #\r\n#                     ##                                 #######    #########   #########               #   ########## #    #\r\n|                      ##                                #######    #       #   #       #               #   ########## #    #\r\n|                       ######                           #######    #       #   #       #               #   ####--#### #    #\r\n|               ##           #########                   #######    #########   #########   #############              #    #\r\n#               # ##               ##########            #######                                                       #    #\r\n#               #  ##                       ##         #######                                                         #    #\r\n#               #   ####                                                                    #############              #    #\r\n#               #      ###########                     #######                                          #              #    #\r\n#               #               ############             #######                                        ################    #\r\n#              ##                                        #######                                                       #    #\r\n#             ##                                         #######                                                       #    #\r\n#            ##                                          #######                                                       #    #\r\n#           ##                                           ####### #########                            #########        #    #\r\n#          ##                                            ####### #       #                            #       #        #    #\r\n#         ##                                             ####### #       #           #####            #       #        #    #\r\n#        ##                                              ####### #########           #####            #########        #    #\r\n#       ##                                               #######                     #####                             #    #\r\n#     ###                                                #########################################################     #    #\r\n#    ###                                                 ####################################################### |     #    #\r\n#  ###                                                   ###############################################################    #\r\n####                                                                                                                        #\r\n#                                                                                                                           #\r\n#############################################################################################################################";
+            PlayerPosX = 114;
+            PlayerPosY = 23;
+            SpawnOnStartPosition = false;
+            Triggers = new char[] { '|', '-' };
+
+
+            int[][] toSouthLadder = new[]
+{
+                new int[]{ 113, 23 }
+            };
+            EventsDictionary.Add(toSouthLadder, EventName.ToSouthLadder);
+
+            int[][] toNorthLadder = new[]
+            {
+                new int[]{ 104, 3 }
+            };
+            EventsDictionary.Add(toNorthLadder, EventName.ToNorthLadder);
         }
     }
 }
