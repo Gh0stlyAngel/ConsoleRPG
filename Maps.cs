@@ -123,7 +123,7 @@ namespace consoleTextRPG
                     gotEvent = true;
                     moveEnemy = false;
                 }
-                foreach (MapEnemy enemy in map.Enemies)
+                /*foreach (MapEnemy enemy in map.Enemies)
                 {
                     int enemyX = enemy.EnemyMovement.CurrentCoordinates[0];
                     int enemyY = enemy.EnemyMovement.CurrentCoordinates[1];
@@ -131,7 +131,7 @@ namespace consoleTextRPG
                     {
                         Fight.StartFight(ref player, enemy.BaseEnemy);
                         if (player.HP > 0)
-                        {
+                        {   
                             map.Enemies.Remove(enemy);
                         }
                         else
@@ -140,7 +140,7 @@ namespace consoleTextRPG
                         }
                         GoToMap(ref player, ref story, ref map, nickName: player.NickName, playerPosX: playerPosX, playerPosY: playerPosY);
                     }
-                }
+                }*/
                 CheckOnEnemy(ref player, ref story, playerPosX, playerPosY, ref map);
                 if (playerPosX != previousPosition[0] || playerPosY != previousPosition[1])
                 {
@@ -189,6 +189,10 @@ namespace consoleTextRPG
                         Fight.StartFight(ref player, enemy.BaseEnemy);
                         if (player.HP > 0)
                         {
+                            if (enemy.QuestItem != null)
+                            {
+                                player.Inventory.AppendItem(enemy.QuestItem);
+                            }
                             map.Enemies.Remove(enemy);
                         }
                         else
@@ -411,8 +415,8 @@ namespace consoleTextRPG
         FreeVillagers,
         ToSouthLadder,
         ToNorthLadder,
-
-
+        FindFriend,
+        FriendDecision,
 
     }
 
@@ -421,6 +425,8 @@ namespace consoleTextRPG
         public Fight.BaseEnemy BaseEnemy { get; protected set; }
 
         public EnemyMovement EnemyMovement { get; protected set; }
+
+        public Item QuestItem { get; set; }
 
         public MapEnemy(Fight.BaseEnemy baseEnemy, EnemyMovement enemyMovement)
         {

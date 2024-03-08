@@ -83,6 +83,13 @@ namespace consoleTextRPG
                 MapEnemy mapEnemy2 = AddEnemy("Культист-мечник", 80, 12, 0, enemy2StartCoord, enemy2EndCoord, (int)Coordinate.X);
                 EnemyList.Add(mapEnemy2);
 
+                int[] enemy3StartCoord = { 112, 8 };
+                int[] enemy3EndCoord = { 113, 8 };
+                MapEnemy mapEnemy3 = AddEnemy("Культист-мечник", 80, 12, 0, enemy3StartCoord, enemy3EndCoord, (int)Coordinate.X);
+                mapEnemy3.QuestItem = new QuestItem("Ключ от клетки");
+                EnemyList.Add(mapEnemy3);
+
+
             }
 
             internal static MapEnemy AddEnemy(string enemyName, int enemyHP, int enemyDamage, int enemyAtcRange, int[] enemyStartCoord, int[] enemyEndCoord, int coordinate)
@@ -154,13 +161,7 @@ namespace consoleTextRPG
                             Thread.Sleep(speed);
                         }
                         Console.Write("\n   ");
-                        /*                        if ((i + 1) * 106 < str.Length)
-                                                {
-                                                    if (Char.IsLetter(str[(i + 1) * 106]) && Char.IsLetter(str[((i + 1) * 106) - 1]))
-                                                        Console.Write("-\n   ");
-                                                    else
-                                                        Console.Write("\n   ");
-                                                }*/
+                        
                     }
                 }
 
@@ -272,12 +273,12 @@ namespace consoleTextRPG
         }
 
 
-        public static void SlowWrite(string str, ConsoleColor textColor = ConsoleColor.Yellow, bool needClear = true, int speed = 14, string teller = null)
+        public static void SlowWrite(string str, ConsoleColor textColor = ConsoleColor.Yellow, bool needClear = true, int speed = 14, string teller = null, bool ableToSkip = true)
         {
             object[] parameters = { str, textColor, needClear, speed, teller };
             writeThread t1 = new writeThread(parameters);
 
-            if (needClear)
+            if (ableToSkip)
             {
                 Console.ReadKey(true);
 
@@ -631,6 +632,11 @@ namespace consoleTextRPG
                 playerItems.Add(item);
             }
 
+            internal void RemoveItem(Item item)
+            {
+                playerItems.Remove(item);
+            }
+
 
         }
 
@@ -650,12 +656,20 @@ namespace consoleTextRPG
                 AmountOfItems++;
             }
             
-            public Item RemoveItem()
+            public Item UseItem()
             {
                 if ( AmountOfItems <= 0 )
                     return this;
                 AmountOfItems--;
                 return this;
+            }
+        }
+
+        internal class QuestItem: Item
+        {
+            public QuestItem(string name) : base(name)
+            {
+
             }
         }
 

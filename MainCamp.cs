@@ -70,6 +70,7 @@ namespace consoleTextRPG
 
         internal static void ToMainCampSecond(ref PlayerClass player, ref Story story)
         {
+            SlowWrite("Осматриваем лагерь, видим патрули", speed: 1, needClear: true, ableToSkip: false);
             Maps.GoToMap(ref player, ref story, ref MapList.MainCampSecond, MapList.MainCampSecond.PlayerPosX, MapList.MainCampSecond.PlayerPosY);
         }
 
@@ -143,9 +144,15 @@ namespace consoleTextRPG
                     break;
 
                 case (int)EventName.FreeVillagers:
+                    Item key = player.Inventory.playerItems.Find(item => item.Name == "Ключ от клетки");
+                    if (key == null)
+                        SlowWrite("Нужно найти ключ от клетки", speed: 1, needClear: true, ableToSkip: false);
                     // if key in inventory
-                    story.FreeVillagers = true;
-                    // else find key
+                    else
+                    {
+                        story.FreeVillagers = true;
+                        SlowWrite("освобождаем жителей", needClear: true, ableToSkip: false);
+                    }
                     break;
 
                 default: break;
@@ -252,6 +259,12 @@ namespace consoleTextRPG
                 new int[]{ 104, 3 }
             };
             EventsDictionary.Add(toNorthLadder, EventName.ToNorthLadder);
+
+            int[][] findFriend = new[]
+            {
+                new int[]{ 87, 23 }
+            };
+            InvisibleEventsDictionary.Add(findFriend, EventName.FindFriend);
         }
 
         internal override bool StartEvent(ref PlayerClass player, ref Story story, string nickName, int way)
@@ -261,11 +274,16 @@ namespace consoleTextRPG
             {
                 case (int)EventName.ToSouthLadder:
                     goOut = true;
-
+                    ToMainCampFifth(ref player, ref story);
                     break;
                 case (int)EventName.ToNorthLadder:
                     goOut = true;
                     ToMainCampSecond(ref player, ref story);
+                    break;
+
+                case (int)EventName.FindFriend:
+                    SlowWrite("Смотри, там друг!", needClear: true, ableToSkip: false);
+                    InvisibleEventsDictionary.Remove(InvisibleEventsDictionary.First().Key);
                     break;
                 default: break;
 
@@ -275,8 +293,7 @@ namespace consoleTextRPG
 
         internal static void ToMainCampSecond(ref PlayerClass player, ref Story story)
         {
-            Maps.GoToMap(ref player, ref story, ref MapList.MainCampSecond, MapList.MainCampSecond.PlayerPosX, MapList.MainCampSecond.PlayerPosY);
-
+            Maps.GoToMap(ref player, ref story, ref MapList.MainCampSecond, 105, 3);
         }
 
         internal static void ToMainCampFifth(ref PlayerClass player, ref Story story)
@@ -310,6 +327,62 @@ namespace consoleTextRPG
                 new int[]{ 104, 3 }
             };
             EventsDictionary.Add(toNorthLadder, EventName.ToNorthLadder);
+
+            int[][] friendDecision = new[]
+            {
+                new int[]{ 29, 9 },
+                new int[]{ 29, 10 },
+                new int[]{ 29, 11 }
+            };
+            InvisibleEventsDictionary.Add(friendDecision, EventName.FriendDecision);
+        }
+
+        internal override bool StartEvent(ref PlayerClass player, ref Story story, string nickName, int way)
+        {
+            bool goOut = false;
+            switch (way)
+            {
+                case (int)EventName.ToSouthLadder:
+                    goOut = true;
+                    SouthLadder(ref player, ref story);
+                    break;
+
+                case (int)EventName.ToNorthLadder:
+                    goOut = true;
+                    NorthLadder(ref player, ref story);
+                    break;
+
+                case (int)EventName.OutsideMainCamp:
+                    goOut = true;
+                    ToOutside(ref player, ref story);
+                    break;
+
+                case (int)EventName.FriendDecision:
+                    SlowWrite("А нужно ли сейвить друга?", needClear: true, ableToSkip: false);
+                    InvisibleEventsDictionary.Remove(InvisibleEventsDictionary.First().Key);
+                    break;
+
+
+                default: break;
+
+            }
+            return goOut;
+        }
+
+        internal static void SouthLadder(ref PlayerClass player, ref Story story)
+        {
+            // MainCampThird
+            Maps.GoToMap(ref player, ref story, ref MapList.MainCampThird, MapList.MainCampThird.PlayerPosX, MapList.MainCampThird.PlayerPosY);
+        }
+
+        internal static void NorthLadder(ref PlayerClass player, ref Story story)
+        {
+            Maps.GoToMap(ref player, ref story, ref MapList.MainCampThird, 103, 3);
+        }
+
+        internal static void ToOutside(ref PlayerClass player, ref Story story)
+        {
+
         }
     }
 }
