@@ -191,6 +191,7 @@ namespace consoleTextRPG
                         {
                             if (enemy.QuestItem != null)
                             {
+                                SlowWrite($"Получен {enemy.QuestItem}", speed: 1, needClear: true, ableToSkip: true);
                                 player.Inventory.AppendItem(enemy.QuestItem);
                             }
                             map.Enemies.Remove(enemy);
@@ -463,10 +464,10 @@ namespace consoleTextRPG
 
         public void Update()
         {
-            if (CurrentCoordinates[0] == StartCoordinates[0] && CurrentCoordinates[1] == StartCoordinates[1])
+            if (CurrentCoordinates[MoveCoordinate] == StartCoordinates[MoveCoordinate] && CurrentCoordinates[MoveCoordinate] == StartCoordinates[MoveCoordinate])
                 ToStart = false;
 
-            else if (CurrentCoordinates[0] == EndCoordinates[0] && CurrentCoordinates[1] == EndCoordinates[1])
+            else if (CurrentCoordinates[MoveCoordinate] == EndCoordinates[MoveCoordinate] && CurrentCoordinates[MoveCoordinate] == EndCoordinates[MoveCoordinate])
                 ToStart = true;
 
             UpdateByCoordinate();
@@ -476,24 +477,24 @@ namespace consoleTextRPG
 
         private void UpdateByCoordinate()
         {
-            if (StartCoordinates[0] < EndCoordinates[0] && !ToStart)
+            if (StartCoordinates[MoveCoordinate] < EndCoordinates[MoveCoordinate] && !ToStart)
             {
-                CurrentCoordinates[0] = CurrentCoordinates[0] + 1;
+                CurrentCoordinates[MoveCoordinate] = CurrentCoordinates[MoveCoordinate] + 1;
             }
 
-            else if (StartCoordinates[0] > EndCoordinates[0] && !ToStart)
+            else if (StartCoordinates[MoveCoordinate] > EndCoordinates[MoveCoordinate] && !ToStart)
             {
-                CurrentCoordinates[0] = CurrentCoordinates[0] - 1;
+                CurrentCoordinates[MoveCoordinate] = CurrentCoordinates[MoveCoordinate] - 1;
             }
 
-            else if (StartCoordinates[0] < EndCoordinates[0] && ToStart)
+            else if (StartCoordinates[MoveCoordinate] < EndCoordinates[MoveCoordinate] && ToStart)
             {
-                CurrentCoordinates[0] = CurrentCoordinates[0] - 1;
+                CurrentCoordinates[MoveCoordinate] = CurrentCoordinates[MoveCoordinate] - 1;
             }
 
-            else if (StartCoordinates[0] > EndCoordinates[0] && ToStart)
+            else if (StartCoordinates[MoveCoordinate] > EndCoordinates[MoveCoordinate] && ToStart)
             {
-                CurrentCoordinates[0] = CurrentCoordinates[0] + 1;
+                CurrentCoordinates[MoveCoordinate] = CurrentCoordinates[MoveCoordinate] + 1;
             }
         }
     }

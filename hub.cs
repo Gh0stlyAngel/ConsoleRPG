@@ -151,8 +151,8 @@ namespace ConsoleHub
             SlowWrite("Благодарю!", teller: player.NickName);
 
             Console.Clear();
-            SlowWrite("1. Спросить про запасы", needClear: false);
-            SlowWrite("2. Попрощаться", needClear: false);
+            SlowWrite("1. Спросить про запасы", needClear: false, ableToSkip: false, tech: true);
+            SlowWrite("2. Попрощаться", needClear: false, ableToSkip: false, tech: true);
             List<ConsoleKey> actions = NumberOfActions(2);
             ConsoleKey playerAction = GetPlayerAction(actions);
 

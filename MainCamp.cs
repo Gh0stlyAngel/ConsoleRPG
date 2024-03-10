@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using static consoleTextRPG.Program;
 
@@ -70,7 +71,11 @@ namespace consoleTextRPG
 
         internal static void ToMainCampSecond(ref PlayerClass player, ref Story story)
         {
-            SlowWrite("Осматриваем лагерь, видим патрули", speed: 1, needClear: true, ableToSkip: false);
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("123");
+            SlowWrite("Осматриваем лагерь, видим патрули", speed: 1, needClear: true, ableToSkip: true);
+
             Maps.GoToMap(ref player, ref story, ref MapList.MainCampSecond, MapList.MainCampSecond.PlayerPosX, MapList.MainCampSecond.PlayerPosY);
         }
 
@@ -146,12 +151,12 @@ namespace consoleTextRPG
                 case (int)EventName.FreeVillagers:
                     Item key = player.Inventory.playerItems.Find(item => item.Name == "Ключ от клетки");
                     if (key == null)
-                        SlowWrite("Нужно найти ключ от клетки", speed: 1, needClear: true, ableToSkip: false);
+                        SlowWrite("Нужно найти ключ от клетки", speed: 1, needClear: true, ableToSkip: true);
                     // if key in inventory
                     else
                     {
                         story.FreeVillagers = true;
-                        SlowWrite("освобождаем жителей", needClear: true, ableToSkip: false);
+                        SlowWrite("освобождаем жителей", needClear: true, ableToSkip: true);
                     }
                     break;
 
@@ -282,7 +287,7 @@ namespace consoleTextRPG
                     break;
 
                 case (int)EventName.FindFriend:
-                    SlowWrite("Смотри, там друг!", needClear: true, ableToSkip: false);
+                    SlowWrite("Смотри, там друг!", needClear: true, ableToSkip: true);
                     InvisibleEventsDictionary.Remove(InvisibleEventsDictionary.First().Key);
                     break;
                 default: break;
@@ -358,7 +363,7 @@ namespace consoleTextRPG
                     break;
 
                 case (int)EventName.FriendDecision:
-                    SlowWrite("А нужно ли сейвить друга?", needClear: true, ableToSkip: false);
+                    SlowWrite("А нужно ли сейвить друга?", needClear: true, ableToSkip: true);
                     InvisibleEventsDictionary.Remove(InvisibleEventsDictionary.First().Key);
                     break;
 

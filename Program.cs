@@ -89,6 +89,20 @@ namespace consoleTextRPG
                 mapEnemy3.QuestItem = new QuestItem("Ключ от клетки");
                 EnemyList.Add(mapEnemy3);
 
+                int[] enemy4StartCoord = { 87, 17 };
+                int[] enemy4EndCoord = { 87, 13 };
+                MapEnemy mapEnemy4 = AddEnemy("Культист-мечник", 80, 12, 0, enemy4StartCoord, enemy4EndCoord, (int)Coordinate.Y);
+                EnemyList.Add(mapEnemy4);
+
+                int[] enemy5StartCoord = { 91, 18 };
+                int[] enemy5EndCoord = { 98, 18 };
+                MapEnemy mapEnemy5 = AddEnemy("Культист-мечник", 80, 12, 0, enemy5StartCoord, enemy5EndCoord, (int)Coordinate.X);
+                EnemyList.Add(mapEnemy5);
+
+                int[] enemy6StartCoord = { 83, 18 };
+                int[] enemy6EndCoord = { 76, 18 };
+                MapEnemy mapEnemy6 = AddEnemy("Культист-мечник", 80, 12, 0, enemy6StartCoord, enemy6EndCoord, (int)Coordinate.X);
+                EnemyList.Add(mapEnemy6);
 
             }
 
@@ -134,7 +148,7 @@ namespace consoleTextRPG
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
                     Console.Write("\n   ");
                     Console.Write(teller);
-                    Console.Write("\n   ");
+                    Console.Write("\n");
                 }
 
                 Console.ForegroundColor = textColor;
@@ -179,7 +193,19 @@ namespace consoleTextRPG
         static void Main(string[] args)
         {
 
-
+            Task t = Task.Run(() => {
+                while (true)
+                {
+                    if (Console.WindowWidth < 150 || Console.WindowHeight < 31)
+                    {
+                        Console.SetWindowSize(150, 31);
+/*                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.SetCursorPosition(125, 31);
+                        Console.WriteLine("НЕ ТРОГАЙ ОКНО БЛЯТЬ!!1!");
+                        Console.CursorVisible = false;*/
+                    }
+                }
+            });
 
 
             Console.SetWindowSize(150, 31);
@@ -210,6 +236,7 @@ namespace consoleTextRPG
             player.Inventory.AppendItem(healingPotion);
             player.Inventory.AppendItem(manaPotion);
 
+            Maps.GoToMap(ref player, ref story, ref MapList.Hub, MapList.Hub.PlayerPosX, MapList.Hub.PlayerPosY);
             Maps.GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
 
             Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
@@ -217,12 +244,11 @@ namespace consoleTextRPG
 
             
 
-            Maps.GoToMap(ref player, ref story, ref MapList.Hub, MapList.Hub.PlayerPosX, MapList.Hub.PlayerPosY);
             
 
             SlowWrite("Продолжение следует...");
 
-
+            t.Wait();
 
             
         }
@@ -273,14 +299,21 @@ namespace consoleTextRPG
         }
 
 
-        public static void SlowWrite(string str, ConsoleColor textColor = ConsoleColor.Yellow, bool needClear = true, int speed = 14, string teller = null, bool ableToSkip = true)
+        public static void SlowWrite(string str, ConsoleColor textColor = ConsoleColor.Yellow, bool needClear = true, int speed = 1, string teller = null, bool ableToSkip = true, bool tech = false)
         {
             object[] parameters = { str, textColor, needClear, speed, teller };
             writeThread t1 = new writeThread(parameters);
-
+            bool inWhile = true;
+            ConsoleKey pressedKey;
             if (ableToSkip)
             {
-                Console.ReadKey(true);
+                do
+                {
+                    pressedKey = Console.ReadKey(true).Key;
+                    if (pressedKey == ConsoleKey.Enter || pressedKey == ConsoleKey.Spacebar)
+                        inWhile = false;
+                } while (inWhile); //   || !t1.thread.IsAlive
+
 
                 t1.thread.Abort();
 
@@ -291,8 +324,12 @@ namespace consoleTextRPG
                 while (t1.thread.IsAlive)
                 {
                     Thread.Sleep(0);
-                } 
-                
+
+                }
+                if (!tech)
+                    Console.ReadKey(true);
+
+
             }
 
         }
@@ -301,12 +338,12 @@ namespace consoleTextRPG
         static void ShowClassList(PlayerClass warrior, PlayerClass sorcerer, PlayerClass slayer, PlayerClass archer)
         {
             Console.Clear();
-            SlowWrite($"1. {warrior.Name}", ConsoleColor.Red, false, speed: 1);
-            SlowWrite($"2. {sorcerer.Name}", ConsoleColor.Blue, false, speed: 1);
-            SlowWrite($"3. {slayer.Name}", ConsoleColor.DarkRed, false, speed: 1);
-            SlowWrite($"4. {archer.Name}", ConsoleColor.Green, false, speed: 1);
+            SlowWrite($"1. {warrior.Name}", ConsoleColor.Red, false, speed: 1, ableToSkip: false, tech: true);
+            SlowWrite($"2. {sorcerer.Name}", ConsoleColor.Blue, false, speed: 1, ableToSkip: false, tech: true);
+            SlowWrite($"3. {slayer.Name}", ConsoleColor.DarkRed, false, speed: 1, ableToSkip: false, tech: true);
+            SlowWrite($"4. {archer.Name}", ConsoleColor.Green, false, speed: 1, ableToSkip: false, tech: true);
             Console.WriteLine();
-            SlowWrite("Нажми соответствующую цифру для получения подробной информации о классе.", needClear: false, speed: 0);
+            SlowWrite("Нажми соответствующую цифру для получения подробной информации о классе.", needClear: false, speed: 0, ableToSkip: false, tech: true);
         }
 
         static bool ChoisingClass(PlayerClass warrior, PlayerClass sorcerer, PlayerClass slayer, PlayerClass archer, ConsoleKeyInfo pressedKey, ref int chosenClass)
@@ -318,19 +355,19 @@ namespace consoleTextRPG
             {
                 case ConsoleKey.D1:
                     warrior.ShowStats(false);
-                    SlowWrite(text, needClear: false, speed: 0);
+                    SlowWrite(text, needClear: false, speed: 0, ableToSkip: false, tech: true);
                     break;
                 case ConsoleKey.D2:
                     sorcerer.ShowStats(false);
-                    SlowWrite(text, needClear: false, speed: 0);
+                    SlowWrite(text, needClear: false, speed: 0, ableToSkip: false, tech: true);
                     break;
                 case ConsoleKey.D3:
                     slayer.ShowStats(false);
-                    SlowWrite(text, needClear: false, speed: 0);
+                    SlowWrite(text, needClear: false, speed: 0, ableToSkip: false, tech: true);
                     break;
                 case ConsoleKey.D4:
                     archer.ShowStats(false);
-                    SlowWrite(text, needClear: false, speed: 0);
+                    SlowWrite(text, needClear: false, speed: 0, ableToSkip: false, tech: true);
                     break;
                 default:
                     Console.Clear();
@@ -424,24 +461,24 @@ namespace consoleTextRPG
             public virtual void ShowStats(bool showPotions = true)
             {
                 Console.Clear();
-                SlowWrite($"{Name}\n", ConsoleColor.Yellow, false, speed: 0);
-                SlowWrite($"Здоровье: {HP}", ConsoleColor.Yellow, false, speed: 0);
-                SlowWrite($"Мана: {MP}", ConsoleColor.Yellow, false, speed: 0);
+                SlowWrite($"{Name}\n", ConsoleColor.Yellow, false, speed: 0, ableToSkip: false, tech: true);
+                SlowWrite($"Здоровье: {HP}", ConsoleColor.Yellow, false, speed: 0, ableToSkip: false, tech: true);
+                SlowWrite($"Мана: {MP}", ConsoleColor.Yellow, false, speed: 0, ableToSkip: false, tech: true);
                 if (AtcRange < 1)
-                    SlowWrite("Ближний бой", ConsoleColor.Yellow, false, speed: 0);
+                    SlowWrite("Ближний бой", ConsoleColor.Yellow, false, speed: 0, ableToSkip: false, tech: true);
                 else
-                    SlowWrite("Дальний бой", ConsoleColor.Yellow, false, speed: 0);
+                    SlowWrite("Дальний бой", ConsoleColor.Yellow, false, speed: 0, ableToSkip: false, tech: true);
 
                 Console.WriteLine();
-                SlowWrite($"Снаряжение: {Weapon.Name}  Урон: {Weapon.Damage}", ConsoleColor.Yellow, false, speed: 0);
+                SlowWrite($"Снаряжение: {Weapon.Name}  Урон: {Weapon.Damage}", ConsoleColor.Yellow, false, speed: 0, ableToSkip: false, tech: true);
 
                 Console.WriteLine();
 
-                SlowWrite(ActiveAbility.Name, needClear: false, speed: 0);
-                SlowWrite(ActiveAbility.Description, needClear: false, speed: 0);
+                SlowWrite(ActiveAbility.Name, needClear: false, speed: 0, ableToSkip: false, tech: true);
+                SlowWrite(ActiveAbility.Description, needClear: false, speed: 0, ableToSkip: false, tech: true);
                 Console.WriteLine();
-                SlowWrite(PassiveAbility.Name, needClear: false, speed: 0);
-                SlowWrite(PassiveAbility.Description, needClear: false, speed: 0);
+                SlowWrite(PassiveAbility.Name, needClear: false, speed: 0, ableToSkip: false, tech: true);
+                SlowWrite(PassiveAbility.Description, needClear: false, speed: 0, ableToSkip: false, tech: true);
                 Console.WriteLine();
 
                 if (showPotions)
@@ -813,7 +850,7 @@ namespace consoleTextRPG
                             if (quest.QuestStarted && !quest.QuestPassed)  //if queest started and not passed
                             {
                                 integer++;
-                                SlowWrite($"{integer}. {quest.Name}", needClear: false, speed: 0);
+                                SlowWrite($"{integer}. {quest.Name}", needClear: false, speed: 0, ableToSkip: false, tech: true);
                                 activeQuests.Add(quest);
                             }
                     }
@@ -860,9 +897,9 @@ namespace consoleTextRPG
                         string questName = activeQuests[chosenQuest - 1].Name;
                         string questDescription = activeQuests[chosenQuest - 1].Descriptions[activeQuests[chosenQuest - 1].DescriptionCounter];
                         
-                        SlowWrite($"{questName}", speed: 0, needClear: false);
+                        SlowWrite($"{questName}", speed: 0, needClear: false, ableToSkip: false, tech: true);
                         Console.WriteLine();
-                        SlowWrite($"{questDescription}", speed: 0, needClear: false);
+                        SlowWrite($"{questDescription}", speed: 0, needClear: false, ableToSkip: false, tech: true);
                         Console.ReadKey(true);
                     }
                     catch 
