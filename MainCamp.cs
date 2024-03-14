@@ -151,12 +151,18 @@ namespace consoleTextRPG
                 case (int)EventName.FreeVillagers:
                     Item key = player.Inventory.playerItems.Find(item => item.Name == "Ключ от клетки");
                     if (key == null)
-                        SlowWrite("Нужно найти ключ от клетки", speed: 1, needClear: true, ableToSkip: true);
+                        SlowWrite("Нужно найти ключ от клетки.", speed: 1, needClear: true, ableToSkip: true);
                     // if key in inventory
-                    else
+                    else if (story.FreeVillagers == false)
                     {
                         story.FreeVillagers = true;
                         SlowWrite("освобождаем жителей", needClear: true, ableToSkip: true);
+                    }
+                    else
+                    {
+                        story.FreeVillagers = false;
+                        SlowWrite("Вы закрыли жителей обратно в клетку. Зачем?!", needClear: true, ableToSkip: true);
+                        //SlowWrite("Нужно вывести освобожденных жителей за пределы лагеря.", needClear: true, ableToSkip: true);
                     }
                     break;
 

@@ -15,6 +15,7 @@ using ConsoleHub;
 using ConsoleShop;
 using System.Runtime.InteropServices;
 using System.Runtime.ExceptionServices;
+using static consoleTextRPG.Program;
 
 
 
@@ -86,7 +87,7 @@ namespace consoleTextRPG
                 int[] enemy3StartCoord = { 112, 8 };
                 int[] enemy3EndCoord = { 113, 8 };
                 MapEnemy mapEnemy3 = AddEnemy("Культист-мечник", 80, 12, 0, enemy3StartCoord, enemy3EndCoord, (int)Coordinate.X);
-                mapEnemy3.QuestItem = new QuestItem("Ключ от клетки");
+                mapEnemy3.QuestItem = new QuestItem("Ключ от клетки", "Ключ от клетки, в которой держат жителей деревни.");
                 EnemyList.Add(mapEnemy3);
 
                 int[] enemy4StartCoord = { 87, 17 };
@@ -192,6 +193,7 @@ namespace consoleTextRPG
 
         static void Main(string[] args)
         {
+            Console.SetWindowSize(150, 31);
 
             Task t = Task.Run(() => {
                 while (true)
@@ -208,7 +210,6 @@ namespace consoleTextRPG
             });
 
 
-            Console.SetWindowSize(150, 31);
             MapList Data = new MapList();
 
 
@@ -236,8 +237,13 @@ namespace consoleTextRPG
             player.Inventory.AppendItem(healingPotion);
             player.Inventory.AppendItem(manaPotion);
 
-            Maps.GoToMap(ref player, ref story, ref MapList.Hub, MapList.Hub.PlayerPosX, MapList.Hub.PlayerPosY);
+            player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").AddItem();
+            player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").AddItem();
+            player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").AddItem();
+            player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").AddItem();
+
             Maps.GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
+            Maps.GoToMap(ref player, ref story, ref MapList.Hub, MapList.Hub.PlayerPosX, MapList.Hub.PlayerPosY);
 
             Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
 
@@ -483,7 +489,7 @@ namespace consoleTextRPG
 
                 if (showPotions)
                 {
-                    Inventory.ShowItems();
+                    Inventory.ShowPotions();
                     DrawBar(3, 20, HP, MaxHP, ConsoleColor.Green);
                     DrawBar(3, 22, MP, MaxMP, ConsoleColor.Blue);
                 }
@@ -642,8 +648,110 @@ namespace consoleTextRPG
 
             public List<Item> playerItems = new List<Item>() { };
 
-            public void ShowItems(bool inFight = false)
+            public void Open(ref PlayerClass player)
             {
+                bool inInventory = true;
+                while (inInventory)
+                {
+
+                    Console.Clear();
+
+                    int integer = 0;
+                    foreach (Item item in playerItems)
+                    {
+                        string itemName = item.Name;
+                        if (item.AbleToUse)
+                            itemName += $": {item.AmountOfItems}";
+                        integer++;
+                        SlowWrite($"{integer}. {itemName}", needClear: false, speed: 0, ableToSkip: false, tech: true, textColor:item.TextColor);
+                    }
+                    List<ConsoleKey> actions = NumberOfActions(integer);
+                    ConsoleKey playerAction = GetPlayerAction(actions, false, false, true);
+                    Console.Clear();
+                    int chosenItem;
+                    switch (playerAction)
+                    {
+                        case ConsoleKey.D1:
+                            chosenItem = 1;
+                            break;
+                        case ConsoleKey.D2:
+                            chosenItem = 2;
+                            break;
+                        case ConsoleKey.D3:
+                            chosenItem = 3;
+                            break;
+                        case ConsoleKey.D4:
+                            chosenItem = 4;
+                            break;
+                        case ConsoleKey.D5:
+                            chosenItem = 5;
+                            break;
+                        case ConsoleKey.D6:
+                            chosenItem = 6;
+                            break;
+                        case ConsoleKey.D7:
+                            chosenItem = 7;
+                            break;
+                        case ConsoleKey.D8:
+                            chosenItem = 8;
+                            break;
+                        case ConsoleKey.D9:
+                            chosenItem = 9;
+                            break;
+                        default:
+                            chosenItem = 0;
+                            inInventory = false;
+                            break;
+                    }
+                    try
+                    {
+                        string itemName = playerItems[chosenItem - 1].Name;
+                        string itemDescription = playerItems[chosenItem - 1].Description;
+
+                        SlowWrite($"{itemName}", speed: 0, needClear: false, ableToSkip: false, tech: true);
+                        Console.WriteLine();
+                        SlowWrite($"{itemDescription}", speed: 0, needClear: false, ableToSkip: false, tech: true);
+                        if (playerItems[chosenItem - 1].AbleToUse && playerItems[chosenItem - 1].AmountOfItems > 0)
+                        {
+                            Console.WriteLine();
+                            SlowWrite($"Enter - Использовать {itemName}", speed: 0, needClear: false, ableToSkip: false, tech: true);
+
+                            List<ConsoleKey> actions2 = new List<ConsoleKey>{ ConsoleKey.Enter };
+                            ConsoleKey playerAction2 = GetPlayerAction(actions2, false, false, true);
+                            switch (playerAction2)
+                            {
+                                case ConsoleKey.Enter:
+                                    playerItems[chosenItem - 1].UseItem();
+                                    if (playerItems[chosenItem - 1].GetType() == typeof(HealingPotion))
+                                    {
+                                        player.RestoreHP(HealingPotion.RestoreValue);
+                                        SlowWrite("Использовано зелье лечения.", needClear: true, speed: 0, ableToSkip: false, tech: true);
+                                    }
+                                    else
+                                    {
+                                        SlowWrite("Использовано зелье маны.", needClear: true, speed: 0, ableToSkip: false, tech: true);
+                                        player.RestoreMP(ManaPotion.RestoreValue);
+                                    }
+
+                                    break;
+                                default: break;
+                            }
+                            Console.Clear();
+                        }
+                        else
+                            Console.ReadKey(true);
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+
+                }
+            }
+
+            public void ShowPotions(bool inFight = false)
+            {
+                int potionCounter = 2;
 
                 int yPos;
                 if (inFight)
@@ -652,6 +760,9 @@ namespace consoleTextRPG
                     yPos = 25;
                 foreach (Item item in playerItems)
                 {
+                    if (potionCounter <= 0)
+                        break;
+                    potionCounter--;
                     Console.SetCursorPosition(3, yPos);
                     if (item.GetType() == typeof(HealingPotion))
                         Console.ForegroundColor = ConsoleColor.Green;
@@ -681,11 +792,20 @@ namespace consoleTextRPG
         {
             public string Name { get; protected set; }
 
+            public string Description { get; protected set; }
+
             public int AmountOfItems {  get; private set; }
-            public Item(string name)
+
+            public bool AbleToUse {  get; protected set; }
+
+            public ConsoleColor TextColor { get; protected set; }
+            public Item(string name, string description, bool ableToUse, ConsoleColor textColor)
             {
                 Name = name;
                 AmountOfItems = 0;
+                Description = description;
+                AbleToUse = ableToUse;
+                TextColor = textColor;
             }
 
             public void AddItem()
@@ -700,11 +820,21 @@ namespace consoleTextRPG
                 AmountOfItems--;
                 return this;
             }
+
+            public ConsoleColor GetItemColor(Item item)
+            {
+                ConsoleColor color = ConsoleColor.Yellow;
+                if (item.GetType() == typeof(HealingPotion))
+                    color = ConsoleColor.Green;
+                else if (item.GetType() == typeof(ManaPotion))
+                    color = ConsoleColor.Blue;
+                return color;
+            }
         }
 
         internal class QuestItem: Item
         {
-            public QuestItem(string name) : base(name)
+            public QuestItem(string name, string description, bool ableToUse = false, ConsoleColor textColor = ConsoleColor.Yellow) : base(name, description, ableToUse, textColor)
             {
 
             }
@@ -712,8 +842,8 @@ namespace consoleTextRPG
 
         internal abstract class Potion : Item
         {
-            public int RestoreValue { get; protected set; }
-            public Potion(string name) : base(name)
+            public static int RestoreValue { get; protected set; }
+            public Potion(string name, string description, bool ableToUse, ConsoleColor textColor) : base(name, description, ableToUse, textColor)
             {
 
             }
@@ -722,18 +852,20 @@ namespace consoleTextRPG
 
         internal class HealingPotion : Potion
         {
-            public HealingPotion(string name = "") : base(name)
+            public HealingPotion(string name = "", string description = "", bool ableToUse = true, ConsoleColor textColor = ConsoleColor.Green) : base(name, description, ableToUse, textColor)
             {
                 Name = "Зелье лечения";
+                Description = "Восстанавливает 20 ед. здоровья.";
                 RestoreValue = 20;
             }
         }
 
         internal class ManaPotion : Potion
         {
-            public ManaPotion(string name = "") : base(name)
+            public ManaPotion(string name = "", string description = "", bool ableToUse = true, ConsoleColor textColor = ConsoleColor.Blue) : base(name, description, ableToUse, textColor)
             {
                 Name = "Зелье маны";
+                Description = "Восстанавливает 10 ед. маны.";
                 RestoreValue = 10;
             }
         }

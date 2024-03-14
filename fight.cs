@@ -313,7 +313,7 @@ namespace ConsoleFight
             Console.SetCursorPosition(atcRangeX + 90, atcRangeY);
             Console.Write($"Дальность атаки: {enemyAtcRange}");
 
-            player.Inventory.ShowItems(true);
+            player.Inventory.ShowPotions(true);
 
         }
 
@@ -381,10 +381,10 @@ namespace ConsoleFight
             Console.ForegroundColor = actionsColor;
 
             HealingPotion healingPotion = (HealingPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения");
-            int healingValue = healingPotion.RestoreValue;
+            int healingValue = HealingPotion.RestoreValue;
 
             ManaPotion manaPotion = (ManaPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье маны");
-            int manaValue = manaPotion.RestoreValue;
+            int manaValue = ManaPotion.RestoreValue;
 
             Console.SetCursorPosition(startX, startY);
             Console.Write($"1. Атаковать ({dealtDamage - 2} - {dealtDamage + 2} урона)\n");
@@ -660,14 +660,14 @@ namespace ConsoleFight
                     break;
                 case ConsoleKey.D3:
                     HealingPotion healingPotion = (HealingPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").UseItem();
-                    player.RestoreHP(healingPotion.RestoreValue);
-                    WriteLogs(logQueue, $"{player.Name} использует зелье лечения. Восстановлено {healingPotion.RestoreValue} здоровья.");
+                    player.RestoreHP(HealingPotion.RestoreValue);
+                    WriteLogs(logQueue, $"{player.Name} использует зелье лечения. Восстановлено {HealingPotion.RestoreValue} здоровья.");
 
                     break;
                 case ConsoleKey.D4:
                     ManaPotion manaPotion = (ManaPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").UseItem();
-                    player.RestoreMP(manaPotion.RestoreValue);
-                    WriteLogs(logQueue, $"{player.Name} использует зелье маны. Восстановлено {manaPotion.RestoreValue} маны.");
+                    player.RestoreMP(ManaPotion.RestoreValue);
+                    WriteLogs(logQueue, $"{player.Name} использует зелье маны. Восстановлено {ManaPotion.RestoreValue} маны.");
                     break;
 
                 case ConsoleKey.C:
@@ -931,7 +931,7 @@ namespace ConsoleFight
             Console.SetCursorPosition(atcRangeX + 90, atcRangeY);
             Console.Write($"Дальность атаки: {enemyAtcRange}");
 
-            player.Inventory.ShowItems(true);
+            player.Inventory.ShowPotions(true);
 
         }
 
@@ -999,10 +999,10 @@ namespace ConsoleFight
             Console.ForegroundColor = actionsColor;
 
             HealingPotion healingPotion = (HealingPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения");
-            int healingValue = healingPotion.RestoreValue;
+            int healingValue = HealingPotion.RestoreValue;
 
             ManaPotion manaPotion = (ManaPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье маны");
-            int manaValue = manaPotion.RestoreValue;
+            int manaValue = ManaPotion.RestoreValue;
 
             Console.SetCursorPosition(startX, startY);
             Console.Write($"1. Атаковать ({dealtDamage - 2} - {dealtDamage + 2} урона)\n");
@@ -1171,14 +1171,14 @@ namespace ConsoleFight
 
                 case ConsoleKey.D3:
                     HealingPotion healingPotion = (HealingPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").UseItem();
-                    player.RestoreHP(healingPotion.RestoreValue);
-                    WriteLogs(logQueue, $"{player.Name} использует зелье лечения. Восстановлено {healingPotion.RestoreValue} здоровья.");
+                    player.RestoreHP(HealingPotion.RestoreValue);
+                    WriteLogs(logQueue, $"{player.Name} использует зелье лечения. Восстановлено {HealingPotion.RestoreValue} здоровья.");
 
                     break;
                 case ConsoleKey.D4:
                     ManaPotion manaPotion = (ManaPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").UseItem();
-                    player.RestoreMP(manaPotion.RestoreValue);
-                    WriteLogs(logQueue, $"{player.Name} использует зелье маны. Восстановлено {manaPotion.RestoreValue} маны.");
+                    player.RestoreMP(ManaPotion.RestoreValue);
+                    WriteLogs(logQueue, $"{player.Name} использует зелье маны. Восстановлено {ManaPotion.RestoreValue} маны.");
                     break;
 
                 case ConsoleKey.C:

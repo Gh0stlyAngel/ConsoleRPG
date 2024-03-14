@@ -48,6 +48,8 @@ namespace consoleTextRPG
             }
             Console.SetCursorPosition(mapArray[0].Length + 2, 5);
             Console.Write("J - Журнал");
+            Console.SetCursorPosition(mapArray[0].Length + 2, 6);
+            Console.Write("I - Инвентарь");
 
 
             int[] newPos;
@@ -110,6 +112,13 @@ namespace consoleTextRPG
                             gotEvent = true;
                             moveEnemy = false;
                         }
+                        break;
+                    case ConsoleKey.I:
+                        player.Inventory.Open(ref player);
+                        previousPosition[0] = playerPosX;
+                        previousPosition[1] = playerPosY;
+                        gotEvent = true;
+                        moveEnemy = false;
                         break;
 
                     default:
@@ -191,7 +200,7 @@ namespace consoleTextRPG
                         {
                             if (enemy.QuestItem != null)
                             {
-                                SlowWrite($"Получен {enemy.QuestItem}", speed: 1, needClear: true, ableToSkip: true);
+                                SlowWrite($"Получен {enemy.QuestItem.Name}", speed: 1, needClear: true, ableToSkip: true);
                                 player.Inventory.AppendItem(enemy.QuestItem);
                             }
                             map.Enemies.Remove(enemy);
