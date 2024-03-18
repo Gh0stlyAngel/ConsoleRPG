@@ -489,7 +489,6 @@ namespace consoleTextRPG
 
                 if (showPotions)
                 {
-                    Inventory.ShowPotions();
                     DrawBar(3, 20, HP, MaxHP, ConsoleColor.Green);
                     DrawBar(3, 22, MP, MaxMP, ConsoleColor.Blue);
                 }
@@ -721,16 +720,29 @@ namespace consoleTextRPG
                             switch (playerAction2)
                             {
                                 case ConsoleKey.Enter:
-                                    playerItems[chosenItem - 1].UseItem();
                                     if (playerItems[chosenItem - 1].GetType() == typeof(HealingPotion))
                                     {
-                                        player.RestoreHP(HealingPotion.RestoreValue);
-                                        SlowWrite("Использовано зелье лечения.", needClear: true, speed: 0, ableToSkip: false, tech: true);
+                                        if (player.HP >= player.MaxHP)
+                                            SlowWrite("У вас максимум здоровья.");
+                                        else
+                                        {
+                                            HealingPotion healingPotion = (HealingPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").UseItem();
+                                            player.RestoreHP(HealingPotion.RestoreValue);
+                                            SlowWrite("Использовано зелье лечения.", needClear: true, speed: 0, ableToSkip: false, tech: true);
+                                        }
                                     }
                                     else
                                     {
-                                        SlowWrite("Использовано зелье маны.", needClear: true, speed: 0, ableToSkip: false, tech: true);
-                                        player.RestoreMP(ManaPotion.RestoreValue);
+                                        if (player.MP >= player.MaxMP)
+                                            SlowWrite("У вас максимум маны.");
+                                        else
+                                        {
+                                            ManaPotion manaPotion = (ManaPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").UseItem();
+                                            player.RestoreMP(ManaPotion.RestoreValue);
+                                            SlowWrite("Использовано зелье маны.", needClear: true, speed: 0, ableToSkip: false, tech: true);
+                                            
+                                        }
+                                        
                                     }
 
                                     break;

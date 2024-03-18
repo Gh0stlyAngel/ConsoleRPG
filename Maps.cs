@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using static consoleTextRPG.Program;
+using static ConsoleFight.Fight;
 
 namespace consoleTextRPG
 {
@@ -54,6 +55,9 @@ namespace consoleTextRPG
 
             int[] newPos;
             bool gotEvent = false;
+            var logMovement = new List<ConsoleKey>();
+            ConsoleKey[] devMenu = { ConsoleKey.W,  ConsoleKey.S, ConsoleKey.D, ConsoleKey.A, ConsoleKey.W };
+
 
             while (!gotEvent)
             {
@@ -64,7 +68,7 @@ namespace consoleTextRPG
                 switch (playerMove)
                 {
                     case ConsoleKey.LeftArrow:
-
+                    case ConsoleKey.A:
                         newPos = DrawNewPlayerPos(mapArray, playerPosX, playerPosY, playerPosX - 1, playerPosY, map);
                         previousPosition[0] = playerPosX;
                         previousPosition[1] = playerPosY;
@@ -73,6 +77,7 @@ namespace consoleTextRPG
 
                         break;
                     case ConsoleKey.UpArrow:
+                    case ConsoleKey.W:
                         newPos = DrawNewPlayerPos(mapArray, playerPosX, playerPosY, playerPosX, playerPosY - 1, map);
                         previousPosition[0] = playerPosX;
                         previousPosition[1] = playerPosY;
@@ -81,6 +86,7 @@ namespace consoleTextRPG
 
                         break;
                     case ConsoleKey.RightArrow:
+                    case ConsoleKey.D:
                         newPos = DrawNewPlayerPos(mapArray, playerPosX, playerPosY, playerPosX + 1, playerPosY, map);
                         previousPosition[0] = playerPosX;
                         previousPosition[1] = playerPosY;
@@ -89,6 +95,7 @@ namespace consoleTextRPG
 
                         break;
                     case ConsoleKey.DownArrow:
+                    case ConsoleKey.S:
                         newPos = DrawNewPlayerPos(mapArray, playerPosX, playerPosY, playerPosX, playerPosY + 1, map);
                         previousPosition[0] = playerPosX;
                         previousPosition[1] = playerPosY;
@@ -125,6 +132,15 @@ namespace consoleTextRPG
                         moveEnemy = false;
                         break;
                 }
+                logMovement.Add(playerMove);
+
+                if (CheckDevMenu(devMenu, ref logMovement))
+                {
+                    gotEvent = true;
+                    ToDevMenu(ref player, ref story, map, previousPosition);
+                }
+                
+
 
                 bool gotTrigger = map.Events.Triggered(mapArray[playerPosY][playerPosX], playerPosX, playerPosY);
                 if (gotTrigger)
@@ -217,6 +233,68 @@ namespace consoleTextRPG
             }
         }
 
+        internal static bool CheckDevMenu(ConsoleKey[] devMenu, ref List<ConsoleKey> logMovement)
+        {
+            bool toDevMenu = true;
+            for (int i = 0; i < devMenu.Length; i++)
+            {
+                try
+                {
+                    if (devMenu[i] != logMovement[i])
+                    {
+                        toDevMenu = false;
+                    }
+                }
+                catch
+                {
+                    toDevMenu = false;
+                }
+
+            }
+            if (logMovement.Count > 4)
+                logMovement.RemoveAt(0);
+            return toDevMenu;
+        }
+
+        internal static void ToDevMenu(ref PlayerClass player, ref Story story, Map map, int[] previousPosition)
+        {
+            Console.Clear();
+            Console.SetCursorPosition(0, 0);
+            SlowWrite("1. ToHub", speed: 0, needClear: false, ableToSkip: false, tech: true);
+            SlowWrite("2. ToMainCamp", speed: 0, needClear: false, ableToSkip: false, tech: true);
+            SlowWrite("3. ToBridge", speed: 0, needClear: false, ableToSkip: false, tech: true);
+            SlowWrite("4. GetHealingPotion", speed: 0, needClear: false, ableToSkip: false, tech: true);
+            SlowWrite("5. GetManaPotion", speed: 0, needClear: false, ableToSkip: false, tech: true);
+
+
+
+            List<ConsoleKey> actions = NumberOfActions(5);
+            ConsoleKey action = GetPlayerAction(actions);
+
+            switch (action)
+            {
+                case ConsoleKey.D1:
+                    GoToMap(ref player, ref story, ref MapList.Hub, MapList.Hub.PlayerPosX, MapList.Hub.PlayerPosY);            
+                    break;
+                case ConsoleKey.D2:
+                    GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
+                    break;
+                case ConsoleKey.D3:
+                    GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
+                    break;
+                case ConsoleKey.D4:
+                    player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").AddItem();
+                    GoToMap(ref player, ref story, ref map, nickName: player.NickName, playerPosX: previousPosition[0], playerPosY: previousPosition[1]);
+                    break;
+                case ConsoleKey.D5:
+                    player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").AddItem();
+                    GoToMap(ref player, ref story, ref map, nickName: player.NickName, playerPosX: previousPosition[0], playerPosY: previousPosition[1]);
+                    break;
+                    
+                    
+
+            }
+        }
         internal static int[] DrawNewPlayerPos(string[] mapString, int oldX, int oldY, int newX, int newY, Map map)
         {
             bool gotTrigger = map.Events.Triggered(mapString[newY][newX], newX, newY);

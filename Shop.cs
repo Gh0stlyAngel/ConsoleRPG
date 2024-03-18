@@ -26,8 +26,8 @@ namespace ConsoleShop
                 List<ConsoleKey> actions;
                 if ((story.TraderQuest.QuestStarted && !story.TraderQuest.QuestCompleted) || story.TraderQuest.QuestPassed || !story.FirstVisitHeadman)
                 {
-                    SlowWrite("1. Посмотреть ассортимент", needClear: false);
-                    SlowWrite("2. Покинуть магазин", needClear: false);
+                    SlowWrite("1. Посмотреть ассортимент", needClear: false, ableToSkip: false, tech: true);
+                    SlowWrite("2. Покинуть магазин", needClear: false, ableToSkip: false, tech: true);
                     actions = new List<ConsoleKey> { ConsoleKey.D1, ConsoleKey.D2 };
                     ConsoleKey playerAction = GetPlayerAction(actions);
 
@@ -51,9 +51,9 @@ namespace ConsoleShop
                 }
                 else
                 {
-                    SlowWrite("1. Посмотреть ассортимент", needClear: false);
-                    SlowWrite("2. Спросить про запасы", needClear: false);
-                    SlowWrite("3. Покинуть магазин", needClear: false);
+                    SlowWrite("1. Посмотреть ассортимент", needClear: false, ableToSkip: false, tech: true);
+                    SlowWrite("2. Спросить про запасы", needClear: false, ableToSkip: false, tech: true);
+                    SlowWrite("3. Покинуть магазин", needClear: false, ableToSkip: false, tech: true);
                     actions = NumberOfActions(3);
                     ConsoleKey playerAction = GetPlayerAction(actions);
 
@@ -93,11 +93,11 @@ namespace ConsoleShop
             {
 
                 Console.Clear();
-                SlowWrite("Ассортимент:", needClear: false, speed: 0);
+                SlowWrite("Ассортимент:", needClear: false, speed: 0, ableToSkip: false, tech: true);
                 Console.WriteLine();
-                SlowWrite($"1. Зелье лечения - {HealingPotionPrice} монет", needClear: false, speed: 0);
-                SlowWrite($"2. Зелье маны - {ManaPotionPrice} монет", needClear: false, speed: 0);
-                SlowWrite("3. Покинуть магазин", needClear: false, speed: 0);
+                SlowWrite($"1. Зелье лечения - {HealingPotionPrice} монет", needClear: false, speed: 0, ableToSkip: false, tech: true);
+                SlowWrite($"2. Зелье маны - {ManaPotionPrice} монет", needClear: false, speed: 0, ableToSkip: false, tech: true);
+                SlowWrite("3. Покинуть магазин", needClear: false, speed: 0, ableToSkip: false, tech: true);
                 Console.SetCursorPosition(65, 1);
                 Console.Write($"Монет: {player.Gold}");
 

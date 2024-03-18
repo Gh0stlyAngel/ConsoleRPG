@@ -16,7 +16,7 @@ namespace consoleTextRPG
 {
     internal class HubEvents : MapEvents
     {
-        public static string EmptyHome = "Вы постучали в дверь, но никто не ответил. Наверное, дома никого нет.";
+        public static string EmptyHome = "Вы постучали в дверь, но никто не ответил. Наверное, внутри никого нет.";
 
         public static string VisitHome = "Это подождет, нужно посетить родных.";
 
@@ -117,7 +117,34 @@ namespace consoleTextRPG
             EventsDictionary.Add(outside, EventName.Outside);
         }
 
+        internal static bool BasicAnswers(Story story, bool knock)
+        {
+            bool said = false;
+            if (!story.FirstVillageVisit)
+            {
+                said = true;
+                SlowWrite(VisitHome);
+            }
+            else if (!story.ArtefactCollected)
+            {
+                said = true;
+                SlowWrite(CollectArtefact);
+            }
+            else if (knock)
+                said = Knock(story);
+            return said;
+        }
 
+        internal static bool Knock(Story story)
+        {
+            bool said = false;
+            if (story.ArtefactCollected && !story.HeadmanMainQuest.QuestPassed)
+            {
+                said = true;
+                SlowWrite(EmptyHome);
+            }
+            return said;
+        }
         internal override bool StartEvent(ref PlayerClass player, ref Story story, string nickName, int way)
         {
             bool goOut = false;
@@ -157,48 +184,53 @@ namespace consoleTextRPG
         }
         internal static void ToTraderHouse(ref PlayerClass player, ref Story story)
         {
-            if (!story.FirstVillageVisit)
-                SlowWrite(VisitHome);
-            else if (!story.ArtefactCollected)
-                SlowWrite(CollectArtefact);
+            if (BasicAnswers(story, false))
+            {
+
+            }
+
             else
                 Shop.ToShop(ref player, ref story);
         }
         internal static void ToHerbalistHouse(ref PlayerClass player, ref Story story)
         {
-            if (!story.FirstVillageVisit)
-                SlowWrite(VisitHome);
-            else if (!story.ArtefactCollected)
-                SlowWrite(CollectArtefact);
-            else
-                SlowWrite(EmptyHome);
+            if (BasicAnswers(story, true))
+            {
+
+            }
+                
+            else 
+                SlowWrite("ToHerbalistHouse");
         }
         internal static void ToFriendHouse(ref PlayerClass player, ref Story story)
         {
-            if (!story.FirstVillageVisit)
-                SlowWrite(VisitHome);
-            else if (!story.ArtefactCollected)
-                SlowWrite(CollectArtefact);
+            if (BasicAnswers(story, true))
+            {
+
+            }
+
             else
-                SlowWrite(EmptyHome);
+                SlowWrite("ToFriendHouse");
         }
         internal static void ToManufactory(ref PlayerClass player, ref Story story)
         {
-            if (!story.FirstVillageVisit)
-                SlowWrite(VisitHome);
-            else if (!story.ArtefactCollected)
-                SlowWrite(CollectArtefact);
+            if (BasicAnswers(story, true))
+            {
+
+            }
+
             else
-                SlowWrite(EmptyHome);
+                SlowWrite("ToManufactory");
         }
         internal static void ToTemple(ref PlayerClass player, ref Story story)
         {
-            if (!story.FirstVillageVisit)
-                SlowWrite(VisitHome);
-            else if (!story.ArtefactCollected)
-                SlowWrite(CollectArtefact);
+            if (BasicAnswers(story, true))
+            {
+
+            }
+
             else
-                SlowWrite(EmptyHome);
+                SlowWrite("ToTemple");
         }
         internal static void ToHome(ref PlayerClass player, ref Story story, string nickName = null)
         {
@@ -212,14 +244,14 @@ namespace consoleTextRPG
             else if (!story.FirstVisitHeadman)
                 SlowWrite("Тебе стоило бы посетить старосту, он тебя ждет.", teller: "Мама");
             else
-                SlowWrite("ToHome");
+                SlowWrite("Дом, милый дом..");
         }
         internal static void ToHeadmanHouse(ref PlayerClass player, ref Story story)
         {
-            if (!story.FirstVillageVisit)
-                SlowWrite(VisitHome);
-            else if (!story.ArtefactCollected)
-                SlowWrite(CollectArtefact);
+            if (BasicAnswers(story, false))
+            {
+
+            }
             else if (!story.FirstVisitHeadman)
             {
                 Console.Clear();
@@ -230,13 +262,13 @@ namespace consoleTextRPG
             {
                 SlowWrite($"Загляни к торговцу, скажи что от меня, он выдаст тебе несколько зелий, на всякий случай. А после жду тебя тут.", teller: "Староста");
             }
-            else if (story.FirstVisitHeadman && story.FirstShopVisit)
+            else if (story.FirstVisitHeadman && story.FirstShopVisit && !story.HeadmanMainQuest.QuestStarted)
             {
                 Hub.HeadmanMainQuest(ref player, ref story);
             }
             else
             {
-                SlowWrite("toHeadman");
+                SlowWrite("Дом старосты. Пока мне от него ничего не нужно.");
             }
 
         }
@@ -252,8 +284,61 @@ namespace consoleTextRPG
             }
             else
             {
+                List<ConsoleKey> actions = new List<ConsoleKey>();
+                int counter = 1;
+                bool anyWay = false;
                 Console.Clear();
-                Console.WriteLine("ToOutside");
+                if (story.HeadmanMainQuest.QuestStarted || story.TraderQuest.QuestStarted)
+                {
+                    if (story.HeadmanMainQuest.QuestStarted)
+                    {
+                        SlowWrite($"{counter}. К лагерю культистов.", needClear: false, ableToSkip: false, tech: true);
+                        counter++;
+                        actions.Add(ConsoleKey.D1);
+                    }
+                    else
+                    {
+                        SlowWrite($"{counter}. ???", needClear: false, ableToSkip: false, tech: true);
+                        counter++;
+                    }
+                    if (story.TraderQuest.QuestStarted)
+                    {
+                        SlowWrite($"{counter}. К мосту у деревни.", needClear: false, ableToSkip: false, tech: true);
+                        counter++;
+                        actions.Add(ConsoleKey.D2);
+                    }
+                    else
+                    {
+                        SlowWrite($"{counter}. ???", needClear: false, ableToSkip: false, tech: true);
+                        counter++;
+                    }
+                    SlowWrite($"{counter}. Назад", needClear: false, ableToSkip: false, tech: true);
+                    actions.Add(ConsoleKey.D3);
+                    if (counter > 1)
+                    {
+                        ConsoleKey playerAction = ConsoleFight.Fight.GetPlayerAction(actions, false, false);
+
+                        switch (playerAction)
+                        {
+                            case ConsoleKey.D1:
+                                Maps.GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
+                                break;
+                            case ConsoleKey.D2:
+                                Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
+                                break;
+                            case ConsoleKey.D3:
+                                Maps.GoToMap(ref player, ref story, ref MapList.Hub, 82, 9);
+                                break;
+                        }
+                    }
+                }
+                
+                else
+                {
+                    SlowWrite("Пока мне там ничего не нужно.", needClear: false, ableToSkip: false, tech: true);
+                }
+                
+
                 Console.ReadKey(true);
             }
 

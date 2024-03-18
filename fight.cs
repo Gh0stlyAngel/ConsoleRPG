@@ -341,7 +341,7 @@ namespace ConsoleFight
             {
                 Console.SetCursorPosition(logPositionX, logPositionY);
                 logPositionY++;
-                Console.Write( log);
+                Console.Write(log);
 
             }
 
