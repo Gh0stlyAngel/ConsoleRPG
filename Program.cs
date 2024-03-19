@@ -227,8 +227,16 @@ namespace consoleTextRPG
             Console.CursorVisible = false;
             SlowWrite("ConsoleTextRPG");
             Console.Clear();
-            SlowWrite("Введите имя персонажа: ", needClear: false);
-            string nickName = Console.ReadLine();
+            SlowWrite("Введите имя персонажа: ", needClear: false, ableToSkip: false, tech: true);
+            string nickName;
+            nickName = Console.ReadLine();
+            while (nickName == "")
+            {
+                SlowWrite("Имя не может быть пустым", speed: 0);
+                Console.Clear();
+                SlowWrite("Введите имя персонажа: ", needClear: false, ableToSkip: false, tech: true);
+                nickName = Console.ReadLine();
+            }
 
             Hub.Welcome(nickName, ref story);
 
@@ -242,10 +250,10 @@ namespace consoleTextRPG
             player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").AddItem();
             player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").AddItem();
 
-            Maps.GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
             Maps.GoToMap(ref player, ref story, ref MapList.Hub, MapList.Hub.PlayerPosX, MapList.Hub.PlayerPosY);
+            //Maps.GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
 
-            Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
+            //Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
 
 
             
@@ -897,6 +905,9 @@ namespace consoleTextRPG
 
             public bool FirstVisitHeadman = false;
 
+            public bool SecondHeadmanVisit = false;
+
+            public bool FoundedSteps = false;
 
             public bool FreeVillagers = false;
 

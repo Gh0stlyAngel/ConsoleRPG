@@ -78,7 +78,13 @@ namespace consoleTextRPG
             {
                 case (int)EventName.Convoy:
                     goOut = true;
+                    story.FoundedSteps = true;
                     ToBridgeSecond(ref player, ref story);
+                    break;
+
+                case (int)EventName.OutsideBridge:
+                    goOut = true;
+                    HubEvents.ToOutside(ref player, ref story);
                     break;
                 default: break;
 
@@ -156,6 +162,10 @@ namespace consoleTextRPG
                     ToBridgeThird(ref player, ref story);
                     break;
 
+                case (int)EventName.OutsideBridge:
+                    goOut = true;
+                    HubEvents.ToOutside(ref player, ref story);
+                    break;
                 default: break;
 
             }

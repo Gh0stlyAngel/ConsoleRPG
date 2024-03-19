@@ -30,7 +30,7 @@ namespace ConsoleHub
                         SlowWrite("Это текстовая РПГ для моего обучения.");
                         SlowWrite("Для начала выбери класс персонажа:");*/
         }
-        internal static void ToHeadman(ref PlayerClass player)
+        internal static void ToHeadman(ref PlayerClass player, ref Story story)
         {
 /*            SlowWrite($"Первым делом {player.Name} решает навестить старосту деревни, чтобы узнать подробности.");
             SlowWrite($"Однако староста нашёл его раньше...");*/
@@ -50,6 +50,7 @@ namespace ConsoleHub
             player.RestoreHP(player.MaxHP - player.HP);
             SlowWrite($"Не вино конечно, а? Зато на ноги быстро ставит!", teller: "Староста");
             SlowWrite($"Загляни к торговцу, скажи что от меня, он выдаст тебе несколько зелий, на всякий случай. А после жду тебя тут.", teller: "Староста");
+            story.HeadmanMainQuest.StartQuest();
         }
 
         internal static void HeadmanMainQuest(ref PlayerClass player, ref Story story)
@@ -60,7 +61,7 @@ namespace ConsoleHub
             SlowWrite($"Прошу тебя, проникни в их лагерь и спаси наших людей!", teller: "Староста");
             SlowWrite($"Постараюсь вернуть их к рассвету.", teller: player.NickName);
             SlowWrite($"Рассчитываю на тебя. Береги себя!", teller: "Староста");
-            story.HeadmanMainQuest.StartQuest();
+            
         }
 
         internal static void ComeToHome(ref PlayerClass player, string nickName, ref Story story)
@@ -106,7 +107,7 @@ namespace ConsoleHub
             SlowWrite($"...");
             SlowWrite($"Вернувшись домой {player.NickName} рассказал родителям о произошедшем. Это повергло родителей в ужас. Сев на кухне, семья начали рассуждать, с чем может быть связано такое поведение стража.");
             SlowWrite($"Посидев и подумав, мама вспомнила, что пару дней назад ощутила всплеск темной магии в округе, и предположила, что такое поведение стража может быть связано с высокой чувствительностью стража к магии.");
-            SlowWrite($"По решению семейного совета было принято решение об убийстве стража и {player.NickName} нужно сделать это как можно скорее.");
+            SlowWrite($"По решению семейного совета было принято решение об убийстве стража и сделать это нужно как можно скорее.");
             SlowWrite($"Но прежде, чем {player.NickName} отправится на бой со стражем, было также решено использовать подготовленную часть артефакта, чтобы ослабить печать. И силы, которая высвободится, должно быть достаточно, чтобы одолеть стража.");
             SlowWrite($"...");
             SlowWrite($"Утром следующего дня {player.NickName} снова пришел к логову стража для своей первой битвы с новыми силами, которые он открыл в себе. ");

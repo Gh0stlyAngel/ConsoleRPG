@@ -256,15 +256,16 @@ namespace consoleTextRPG
             {
                 Console.Clear();
                 story.FirstVisitHeadman = true;
-                Hub.ToHeadman(ref player);
+                Hub.ToHeadman(ref player, ref story);
             }
             else if (story.FirstVisitHeadman && !story.FirstShopVisit)
             {
                 SlowWrite($"Загляни к торговцу, скажи что от меня, он выдаст тебе несколько зелий, на всякий случай. А после жду тебя тут.", teller: "Староста");
             }
-            else if (story.FirstVisitHeadman && story.FirstShopVisit && !story.HeadmanMainQuest.QuestStarted)
+            else if (story.FirstVisitHeadman && story.FirstShopVisit && story.HeadmanMainQuest.QuestStarted && !story.SecondHeadmanVisit)
             {
                 Hub.HeadmanMainQuest(ref player, ref story);
+                story.SecondHeadmanVisit = true;
             }
             else
             {
@@ -290,7 +291,7 @@ namespace consoleTextRPG
                 Console.Clear();
                 if (story.HeadmanMainQuest.QuestStarted || story.TraderQuest.QuestStarted)
                 {
-                    if (story.HeadmanMainQuest.QuestStarted)
+                    if (story.SecondHeadmanVisit)
                     {
                         SlowWrite($"{counter}. К лагерю культистов.", needClear: false, ableToSkip: false, tech: true);
                         counter++;
@@ -312,7 +313,7 @@ namespace consoleTextRPG
                         SlowWrite($"{counter}. ???", needClear: false, ableToSkip: false, tech: true);
                         counter++;
                     }
-                    SlowWrite($"{counter}. Назад", needClear: false, ableToSkip: false, tech: true);
+                    SlowWrite($"{counter}. В деревню.", needClear: false, ableToSkip: false, tech: true);
                     actions.Add(ConsoleKey.D3);
                     if (counter > 1)
                     {
@@ -324,7 +325,10 @@ namespace consoleTextRPG
                                 Maps.GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
                                 break;
                             case ConsoleKey.D2:
-                                Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
+                                if (!story.FoundedSteps)
+                                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
+                                else
+                                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeSecond, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
                                 break;
                             case ConsoleKey.D3:
                                 Maps.GoToMap(ref player, ref story, ref MapList.Hub, 82, 9);

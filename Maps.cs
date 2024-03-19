@@ -265,10 +265,11 @@ namespace consoleTextRPG
             SlowWrite("3. ToBridge", speed: 0, needClear: false, ableToSkip: false, tech: true);
             SlowWrite("4. GetHealingPotion", speed: 0, needClear: false, ableToSkip: false, tech: true);
             SlowWrite("5. GetManaPotion", speed: 0, needClear: false, ableToSkip: false, tech: true);
+            SlowWrite("6. FirstVillageVisit - ture", speed: 0, needClear: false, ableToSkip: false, tech: true);
+            SlowWrite("7. ArtefactCollected - ture", speed: 0, needClear: false, ableToSkip: false, tech: true);
 
 
-
-            List<ConsoleKey> actions = NumberOfActions(5);
+            List<ConsoleKey> actions = NumberOfActions(7);
             ConsoleKey action = GetPlayerAction(actions);
 
             switch (action)
@@ -289,6 +290,12 @@ namespace consoleTextRPG
                 case ConsoleKey.D5:
                     player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").AddItem();
                     GoToMap(ref player, ref story, ref map, nickName: player.NickName, playerPosX: previousPosition[0], playerPosY: previousPosition[1]);
+                    break;
+                case ConsoleKey.D6:
+                    story.FirstVillageVisit = true;
+                    break;
+                case ConsoleKey.D7:
+                    story.ArtefactCollected = true;
                     break;
                     
                     

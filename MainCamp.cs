@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using static consoleTextRPG.Program;
@@ -80,8 +81,8 @@ namespace consoleTextRPG
         }
 
         internal static void ToOutside(ref PlayerClass player, ref Story story)
-        {
-
+        {  
+            HubEvents.ToOutside(ref player, ref story);
         }
 
     }
@@ -174,7 +175,7 @@ namespace consoleTextRPG
 
         internal static void ToOutside(ref PlayerClass player, ref Story story)
         {
-
+            HubEvents.ToOutside(ref player, ref story);
         }
 
         internal static void SouthLadder(ref PlayerClass player, ref Story story)
@@ -393,7 +394,7 @@ namespace consoleTextRPG
 
         internal static void ToOutside(ref PlayerClass player, ref Story story)
         {
-
+            HubEvents.ToOutside(ref player, ref story);
         }
     }
 }
