@@ -327,6 +327,14 @@ namespace consoleTextRPG
             SpawnOnStartPosition = false;
             Triggers = new char[] { '|', '-' };
 
+            int[][] toOutside = new[]
+            {
+                new int[]{ 0, 6 },
+                new int[]{ 0, 7 },
+                new int[]{ 0, 8 }
+            };
+            EventsDictionary.Add(toOutside, EventName.OutsideMainCamp);
+
 
             int[][] toSouthLadder = new[]
 {

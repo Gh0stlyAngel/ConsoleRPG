@@ -9,6 +9,77 @@ using static consoleTextRPG.Program;
 
 namespace consoleTextRPG
 {
+
+    internal class BridgeZeroEvents: MapEvents
+    {
+        public BridgeZeroEvents()
+        {
+            MapString = "#######################################################\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#      Мост                                           #\r\n" +
+                        "###################                                   #\r\n" +
+                        "|                 #                                   #\r\n" +
+                        "|                                                     #\r\n" +
+                        "|                 #                                   #\r\n" +
+                        "###################                                   #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#                                                     #\r\n" +
+                        "#######################################################\r\n";
+            PlayerPosX = 1;
+            PlayerPosY = 7;
+            SpawnOnStartPosition = false;
+            Triggers = new char[] { '/', '\\', '|', '_' };
+
+            int[][] outside = new[]
+            {
+                new int[]{ 0, 6 },
+                new int[]{ 0, 7 },
+                new int[]{ 0, 8 }
+            };
+            EventsDictionary.Add(outside, EventName.OutsideBridge);
+
+            int[][] drawConvoy = new[]
+            {
+                new int[]{ 18, 7 }
+            };
+            InvisibleEventsDictionary.Add(drawConvoy, EventName.DrawConvoy);
+        }
+
+        internal override bool StartEvent(ref PlayerClass player, ref Story story, string nickName, int way)
+        {
+            bool goOut = false;
+            switch (way)
+            {
+                case (int)EventName.OutsideBridge:
+                    goOut = true;
+                    HubEvents.ToOutside(ref player, ref story);
+                    break;
+
+                case (int)EventName.DrawConvoy:
+                    goOut = true;
+                    SlowWrite("Ооооо, конвой!", speed: 1, needClear: true, ableToSkip: true);
+                    story.FoundedConvoy = true;
+                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
+                    break;
+                default: break;
+
+            }
+            return goOut;
+        }
+    }
+
     internal class BridgeFirstEvents: MapEvents
     {
         public BridgeFirstEvents()
@@ -36,7 +107,7 @@ namespace consoleTextRPG
                         "#                                                     #\r\n" +
                         "#                                                     #\r\n" +
                         "#######################################################\r\n";
-            PlayerPosX = 1;
+            PlayerPosX = 18;
             PlayerPosY = 7;
             SpawnOnStartPosition = false;
             Triggers = new char[] { '/', '\\', '|', '_' };

@@ -58,6 +58,7 @@ namespace consoleTextRPG
             SpawnOnStartPosition = false;
             Triggers = new char [] { '/', '\\', '|' };
 
+            Collectables = new List<CollectableItem>();
 
             int[][] trader = new[]
             {
@@ -115,6 +116,19 @@ namespace consoleTextRPG
                 new int[]{ 83, 10 }
             };
             EventsDictionary.Add(outside, EventName.Outside);
+
+
+            CollectableItem grass1 = new CollectableItem('$', 30, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass1);
+            CollectableItem grass2 = new CollectableItem('$', 31, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass2);
+            CollectableItem grass3 = new CollectableItem('$', 32, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass3);
+            CollectableItem grass4 = new CollectableItem('$', 33, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass4);
+            CollectableItem grass5 = new CollectableItem('$', 34, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass5);
+
         }
 
         internal static bool BasicAnswers(Story story, bool knock)
@@ -287,7 +301,6 @@ namespace consoleTextRPG
             {
                 List<ConsoleKey> actions = new List<ConsoleKey>();
                 int counter = 1;
-                bool anyWay = false;
                 Console.Clear();
                 if (story.HeadmanMainQuest.QuestStarted || story.TraderQuest.QuestStarted)
                 {
@@ -325,8 +338,13 @@ namespace consoleTextRPG
                                 Maps.GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
                                 break;
                             case ConsoleKey.D2:
-                                if (!story.FoundedSteps)
+                                if (!story.FoundedConvoy && !story.FoundedSteps)
+                                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeZero, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
+
+
+                                else if (!story.FoundedSteps)
                                     Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
+
                                 else
                                     Maps.GoToMap(ref player, ref story, ref MapList.BridgeSecond, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
                                 break;

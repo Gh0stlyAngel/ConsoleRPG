@@ -39,6 +39,9 @@ namespace consoleTextRPG
             BridgeFirstEvents BridgeFirstEvents = new BridgeFirstEvents();
             public static Map BridgeFirst;
 
+            BridgeZeroEvents BridgeZeroEvents = new BridgeZeroEvents();
+            public static Map BridgeZero;
+
 
 
             private static List<MapEnemy> EnemyList = new List<MapEnemy>();
@@ -66,6 +69,7 @@ namespace consoleTextRPG
                 BridgeThird = new Map(BridgeThirdEvents);
                 BridgeSecond = new Map(BridgeSecondEvents);
                 BridgeFirst = new Map(BridgeFirstEvents);
+                BridgeZero = new Map(BridgeZeroEvents);
 
 
                 MainCampFirst = new Map(MainCampFirstEvents);
@@ -852,6 +856,25 @@ namespace consoleTextRPG
             }
         }
 
+        internal class CollectableItem: Item
+        {
+            public char ItemChar { get; private set; }
+
+            public int ItemCoordinateX { get; private set; }
+
+            public int ItemCoordinateY { get; private set; }
+
+            public ConsoleColor ItemColor { get; private set; }
+
+            public CollectableItem(char itemChar, int itemCoordinateX, int itemCoordinateY, string name, string description, ConsoleColor itemColor = ConsoleColor.Magenta, bool ableToUse = false, ConsoleColor textColor = ConsoleColor.Yellow) : base(name, description, ableToUse, textColor)
+            {
+                ItemChar = itemChar;
+                ItemCoordinateX = itemCoordinateX;
+                ItemCoordinateY = itemCoordinateY;
+                ItemColor = itemColor;
+            }
+        }
+
         internal class QuestItem: Item
         {
             public QuestItem(string name, string description, bool ableToUse = false, ConsoleColor textColor = ConsoleColor.Yellow) : base(name, description, ableToUse, textColor)
@@ -908,6 +931,8 @@ namespace consoleTextRPG
             public bool SecondHeadmanVisit = false;
 
             public bool FoundedSteps = false;
+
+            public bool FoundedConvoy = false;
 
             public bool FreeVillagers = false;
 

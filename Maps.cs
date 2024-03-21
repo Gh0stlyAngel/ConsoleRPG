@@ -37,6 +37,7 @@ namespace consoleTextRPG
             Console.Write("@");
 
             map.Events.DrawEnemies(mapArray);
+            CheckOnCollectables(ref player, playerPosX, playerPosY, ref map);
 
 
             Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -174,6 +175,8 @@ namespace consoleTextRPG
                     CheckOnEnemy(ref player, ref story, playerPosX, playerPosY, ref map);
                 }
 
+                CheckOnCollectables(ref player, playerPosX, playerPosY, ref map);
+
             }
             int[] coordinates = { playerPosX, playerPosY };
             bool goOut = MoveTo(ref player, ref story, map, coordinates, nickName);
@@ -231,6 +234,33 @@ namespace consoleTextRPG
                 }
 
             }
+        }
+
+
+        internal static void CheckOnCollectables(ref PlayerClass player, int playerPosX, int playerPosY, ref Map map)
+        {
+            ConsoleColor consoleColor = Console.ForegroundColor;
+            if (map.Collectables != null)
+            {
+                foreach (var collectable in map.Collectables)
+                {
+                    if (playerPosX == collectable.ItemCoordinateX && playerPosY == collectable.ItemCoordinateY)
+                    {
+                        player.Inventory.AppendItem(collectable);
+                        map.Collectables.Remove(collectable);
+                        break;
+                    }
+                }
+            }
+
+            foreach (var collectable in map.Collectables)
+            {
+                Console.SetCursorPosition(collectable.ItemCoordinateX, collectable.ItemCoordinateY);
+                Console.ForegroundColor = collectable.ItemColor;
+                Console.Write(collectable.ItemChar);
+            }
+
+            Console.ForegroundColor = consoleColor;
         }
 
         internal static bool CheckDevMenu(ConsoleKey[] devMenu, ref List<ConsoleKey> logMovement)
@@ -393,7 +423,9 @@ namespace consoleTextRPG
 
         public char[] Triggers { get; protected set; }
 
-        public List<MapEnemy> Enemies = new List<MapEnemy>();
+        public List<MapEnemy> Enemies { get; protected set; }
+
+        public List<CollectableItem> Collectables { get; protected set; }
 
         public Map(MapEvents events)
         {
@@ -404,8 +436,10 @@ namespace consoleTextRPG
             SpawnOnStartPosition = events.SpawnOnStartPosition;
             Triggers = events.Triggers;
             Enemies = events.Enemies;
+            Collectables = events.Collectables;
         }
     }
+
 
 
     abstract class MapEvents
@@ -425,6 +459,8 @@ namespace consoleTextRPG
         public bool SpawnOnStartPosition { get; set; }
 
         public char[] Triggers { get; protected set; }
+
+        public List<CollectableItem> Collectables = new List<CollectableItem>();
 
 
 
@@ -497,6 +533,7 @@ namespace consoleTextRPG
         Combat,
 
         OutsideBridge,
+        DrawConvoy,
         Convoy,
         BridgeCamp,
         OutsideCamp,
