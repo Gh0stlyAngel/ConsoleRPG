@@ -297,9 +297,10 @@ namespace consoleTextRPG
             SlowWrite("5. GetManaPotion", speed: 0, needClear: false, ableToSkip: false, tech: true);
             SlowWrite("6. FirstVillageVisit - ture", speed: 0, needClear: false, ableToSkip: false, tech: true);
             SlowWrite("7. ArtefactCollected - ture", speed: 0, needClear: false, ableToSkip: false, tech: true);
+            SlowWrite("8. FirstVisitHeadman - ture", speed: 0, needClear: false, ableToSkip: false, tech: true);
 
 
-            List<ConsoleKey> actions = NumberOfActions(7);
+            List<ConsoleKey> actions = NumberOfActions(8);
             ConsoleKey action = GetPlayerAction(actions);
 
             switch (action)
@@ -326,6 +327,9 @@ namespace consoleTextRPG
                     break;
                 case ConsoleKey.D7:
                     story.ArtefactCollected = true;
+                    break;
+                case ConsoleKey.D8:
+                    story.FirstVisitHeadman = true;
                     break;
                     
                     
@@ -537,6 +541,9 @@ namespace consoleTextRPG
         Convoy,
         BridgeCamp,
         OutsideCamp,
+        Storage,
+        BossHouse,
+        Tent,
 
         MainCampFirst,
         MainCampSecond,

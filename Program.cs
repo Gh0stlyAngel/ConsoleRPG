@@ -989,7 +989,7 @@ namespace consoleTextRPG
                 HeadmanPersonalQuest = new Quest("Личная просьба старосты", descriptions);
                 Quests.Add(HeadmanPersonalQuest);
 
-                descriptions = new string[] { "Изучить обломки обозов около моста, недалеко от деревни." };
+                descriptions = new string[] { "Изучить обломки обозов около моста, недалеко от деревни.", "Проследовать по следам ведущим в чащу.", "Проникнуть в лагерь и вернуться припасы.\n   Убить главу лагеря (необяз.)", "Вернуться к торговцу за наградой." };
                 TraderQuest = new Quest("Помощь торговцу", descriptions);
                 Quests.Add(TraderQuest);
 
@@ -1116,6 +1116,7 @@ namespace consoleTextRPG
             {
                 if (DescriptionCounter < Descriptions.Length - 1)
                 {
+                    SlowWrite($"Задание \"{Name}\" обновлено.");
                     DescriptionCounter++;
                 }
                 

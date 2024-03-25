@@ -339,14 +339,14 @@ namespace consoleTextRPG
                                 break;
                             case ConsoleKey.D2:
                                 if (!story.FoundedConvoy && !story.FoundedSteps)
-                                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeZero, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
+                                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeZero, MapList.BridgeZero.PlayerPosX, MapList.BridgeZero.PlayerPosY);
 
 
                                 else if (!story.FoundedSteps)
-                                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
+                                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeZero.PlayerPosX, MapList.BridgeZero.PlayerPosY);
 
                                 else
-                                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeSecond, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
+                                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeSecond, MapList.BridgeZero.PlayerPosX, MapList.BridgeZero.PlayerPosY);
                                 break;
                             case ConsoleKey.D3:
                                 Maps.GoToMap(ref player, ref story, ref MapList.Hub, 82, 9);

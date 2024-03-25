@@ -66,17 +66,24 @@ namespace consoleTextRPG
                     goOut = true;
                     HubEvents.ToOutside(ref player, ref story);
                     break;
-
+                    
                 case (int)EventName.DrawConvoy:
                     goOut = true;
-                    SlowWrite("Ооооо, конвой!", speed: 1, needClear: true, ableToSkip: true);
-                    story.FoundedConvoy = true;
-                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
+                    FindConvoy(ref player, ref story);
                     break;
                 default: break;
 
             }
             return goOut;
+        }
+
+        internal static void FindConvoy(ref PlayerClass player, ref Story story)
+        {
+            SlowWrite("Да где же может быть этот обоз? Нужно осмотреться.", speed: 1, needClear: true, ableToSkip: true);
+            SlowWrite("...", speed: 1, needClear: true, ableToSkip: true);
+            SlowWrite($"Осмотревшись, {player.NickName} замечает какие-то обломки в стороне от дороги. Возможно, это тот самый обоз, о котором говорил торговец. ", speed: 1, needClear: true, ableToSkip: true);
+            story.FoundedConvoy = true;
+            Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeFirst.PlayerPosX, MapList.BridgeFirst.PlayerPosY);
         }
     }
 
@@ -121,7 +128,7 @@ namespace consoleTextRPG
             EventsDictionary.Add(outside, EventName.OutsideBridge);
 
             int[][] convoy = new[]
-{
+            {
                 new int[]{ 6, 12 },
                 new int[]{ 7, 12 },
                 new int[]{ 8, 12 },
@@ -150,6 +157,8 @@ namespace consoleTextRPG
                 case (int)EventName.Convoy:
                     goOut = true;
                     story.FoundedSteps = true;
+                    SlowWrite($"Подойдя и осмотрев обломки {player.NickName} замечает следы, которые ведут куда-то в густую чащу.", speed: 1, needClear: true, ableToSkip: true);
+                    story.TraderQuest.NextDescription();
                     ToBridgeSecond(ref player, ref story);
                     break;
 
@@ -216,6 +225,25 @@ namespace consoleTextRPG
                 new int[] { 55, 8 }
             };
             EventsDictionary.Add(bridgeCamp, EventName.BridgeCamp);
+
+            int[][] convoy = new[]
+            {
+                new int[]{ 6, 12 },
+                new int[]{ 7, 12 },
+                new int[]{ 8, 12 },
+                new int[]{ 5, 13 },
+                new int[]{ 9, 13 },
+                new int[]{ 4, 14 },
+                new int[]{ 10, 14 },
+                new int[]{ 4, 15 },
+                new int[]{ 10, 15 },
+                new int[]{ 5, 16 },
+                new int[]{ 9, 16 },
+                new int[]{ 6, 16 },
+                new int[]{ 7, 16 },
+                new int[]{ 8, 16 },
+            };
+            EventsDictionary.Add(convoy, EventName.Convoy);
         }
 
         internal override bool StartEvent(ref PlayerClass player, ref Story story, string nickName, int way)
@@ -224,12 +252,13 @@ namespace consoleTextRPG
             switch (way)
             {
                 case (int)EventName.Convoy:
-                    goOut = true;
-                    //ToBridgeThird(ref player, ref story);
+                    SlowWrite($"Здесь пусто. Возможно, следы приведут меня куда нужно.", speed: 1, needClear: true, ableToSkip: true);
                     break;
 
                 case (int)EventName.BridgeCamp: 
                     goOut = true;
+                    SlowWrite($"Пройдя по следам, {player.NickName} вышел на большую поляну, на которой располагался лагерь, и следы вели прямо в него.", speed: 1, needClear: true, ableToSkip: true);
+                    story.TraderQuest.NextDescription();
                     ToBridgeThird(ref player, ref story);
                     break;
 
@@ -286,6 +315,27 @@ namespace consoleTextRPG
                 new int[]{ 21, 22 }
             };
             EventsDictionary.Add(outside, EventName.OutsideCamp);
+
+            int[][] storage = new[]
+            {
+                new int[]{ 10, 7 },
+                new int[]{ 11, 7 }
+            };
+            EventsDictionary.Add(storage, EventName.Storage);
+
+            int[][] bossHouse = new[]
+            {
+                new int[]{ 24, 9 },
+                new int[]{ 25, 9 }
+            };
+            EventsDictionary.Add(bossHouse, EventName.BossHouse);
+
+            int[][] tent = new[]
+            {
+                new int[]{ 24, 9 },
+                new int[]{ 25, 9 }
+            };
+            EventsDictionary.Add(tent, EventName.Tent);
 
 
             int[] enemy1StartCoord = { 18, 18 };
