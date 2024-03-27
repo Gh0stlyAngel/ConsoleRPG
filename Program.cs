@@ -61,9 +61,19 @@ namespace consoleTextRPG
             MainCampFifthEvents MainCampFifthEvents = new MainCampFifthEvents(EnemyList);
             public static Map MainCampFifth;
 
+
+
+            private
+
+            HerbalistEvents HerbalistEvents = new HerbalistEvents();
+            public static Map HerbalistMap;
+
             public MapList()
             {
                 Hub = new Map(HubEvents);
+
+
+                HerbalistMap = new Map(HerbalistEvents);
 
 
                 BridgeThird = new Map(BridgeThirdEvents);
@@ -659,116 +669,164 @@ namespace consoleTextRPG
 
             public List<Item> playerItems = new List<Item>() { };
 
+            public void CountPageItems(ref int itemsPerPage, ref int integer, ref int pageCounter)
+            {
+
+                Console.Clear();
+
+                    for (int i = (pageCounter - 1) * itemsPerPage; i < playerItems.Count && i < (pageCounter - 1) * itemsPerPage + 9; i++)
+                    {
+/*                        if (integer / pageCounter >= itemsPerPage)
+                        {
+                            break;
+                        }*/
+
+                        string itemName = playerItems[i].Name;
+                        if (playerItems[i].AbleToUse)
+                            itemName += $": {playerItems[i].AmountOfItems}";
+                        integer++;
+                        SlowWrite($"{i + 1 - (pageCounter - 1) * itemsPerPage}. {itemName}", needClear: false, speed: 0, ableToSkip: false, tech: true, textColor: playerItems[i].TextColor);
+
+                    }
+            }
             public void Open(ref PlayerClass player)
             {
+                int itemsPerPage = 9;
+                int integer = 0;
+                int pageCounter = 1;
                 bool inInventory = true;
                 while (inInventory)
                 {
+                    CountPageItems(ref itemsPerPage, ref integer, ref pageCounter);
 
-                    Console.Clear();
-
-                    int integer = 0;
-                    foreach (Item item in playerItems)
-                    {
-                        string itemName = item.Name;
-                        if (item.AbleToUse)
-                            itemName += $": {item.AmountOfItems}";
-                        integer++;
-                        SlowWrite($"{integer}. {itemName}", needClear: false, speed: 0, ableToSkip: false, tech: true, textColor:item.TextColor);
-                    }
                     List<ConsoleKey> actions = NumberOfActions(integer);
+
+                    if (playerItems.Count > itemsPerPage && (pageCounter * itemsPerPage) < playerItems.Count)
+                    {
+                        SlowWrite($"\n   →. Вперед", needClear: false, speed: 0, ableToSkip: false, tech: true);
+                        actions.Add(ConsoleKey.RightArrow);
+                    }
+
+                    if (playerItems.Count > itemsPerPage && pageCounter > 1)
+                    {
+                        SlowWrite($"\n   ←. Назад", needClear: false, speed: 0, ableToSkip: false, tech: true);
+                        actions.Add(ConsoleKey.LeftArrow);
+                    }
+                        
+
                     ConsoleKey playerAction = GetPlayerAction(actions, false, false, true);
                     Console.Clear();
                     int chosenItem;
                     switch (playerAction)
                     {
                         case ConsoleKey.D1:
-                            chosenItem = 1;
+                            chosenItem = 1 + (pageCounter - 1) * itemsPerPage;
                             break;
                         case ConsoleKey.D2:
-                            chosenItem = 2;
+                            chosenItem = 2 + (pageCounter - 1) * itemsPerPage;
                             break;
                         case ConsoleKey.D3:
-                            chosenItem = 3;
+                            chosenItem = 3 + (pageCounter - 1) * itemsPerPage;
                             break;
                         case ConsoleKey.D4:
-                            chosenItem = 4;
+                            chosenItem = 4 + (pageCounter - 1) * itemsPerPage;
                             break;
                         case ConsoleKey.D5:
-                            chosenItem = 5;
+                            chosenItem = 5 + (pageCounter - 1) * itemsPerPage;
                             break;
                         case ConsoleKey.D6:
-                            chosenItem = 6;
+                            chosenItem = 6 + (pageCounter - 1) * itemsPerPage;
                             break;
                         case ConsoleKey.D7:
-                            chosenItem = 7;
+                            chosenItem = 7 + (pageCounter - 1) * itemsPerPage;
                             break;
                         case ConsoleKey.D8:
-                            chosenItem = 8;
+                            chosenItem = 8 + (pageCounter - 1) * itemsPerPage;
                             break;
                         case ConsoleKey.D9:
-                            chosenItem = 9;
+                            chosenItem = 9 + (pageCounter - 1) * itemsPerPage;
                             break;
+
+                        case ConsoleKey.RightArrow:
+                            if (playerItems.Count > itemsPerPage && (pageCounter * itemsPerPage) < playerItems.Count)
+                                pageCounter += 1; 
+                            else
+                                inInventory = false;
+                            chosenItem = 0;
+                            break;
+
+                        case ConsoleKey.LeftArrow:
+                            if (playerItems.Count > itemsPerPage && pageCounter > 1)
+                                pageCounter -= 1;
+                            else
+                                inInventory = false;
+                            chosenItem = 0;
+                            break;
+
                         default:
                             chosenItem = 0;
                             inInventory = false;
                             break;
                     }
-                    try
+                    if (chosenItem != 0)
                     {
-                        string itemName = playerItems[chosenItem - 1].Name;
-                        string itemDescription = playerItems[chosenItem - 1].Description;
-
-                        SlowWrite($"{itemName}", speed: 0, needClear: false, ableToSkip: false, tech: true);
-                        Console.WriteLine();
-                        SlowWrite($"{itemDescription}", speed: 0, needClear: false, ableToSkip: false, tech: true);
-                        if (playerItems[chosenItem - 1].AbleToUse && playerItems[chosenItem - 1].AmountOfItems > 0)
+                        try
                         {
+                            string itemName = playerItems[chosenItem - 1].Name;
+                            string itemDescription = playerItems[chosenItem - 1].Description;
+
+                            SlowWrite($"{itemName}", speed: 0, needClear: false, ableToSkip: false, tech: true);
                             Console.WriteLine();
-                            SlowWrite($"Enter - Использовать {itemName}", speed: 0, needClear: false, ableToSkip: false, tech: true);
-
-                            List<ConsoleKey> actions2 = new List<ConsoleKey>{ ConsoleKey.Enter };
-                            ConsoleKey playerAction2 = GetPlayerAction(actions2, false, false, true);
-                            switch (playerAction2)
+                            SlowWrite($"{itemDescription}", speed: 0, needClear: false, ableToSkip: false, tech: true);
+                            if (playerItems[chosenItem - 1].AbleToUse && playerItems[chosenItem - 1].AmountOfItems > 0)
                             {
-                                case ConsoleKey.Enter:
-                                    if (playerItems[chosenItem - 1].GetType() == typeof(HealingPotion))
-                                    {
-                                        if (player.HP >= player.MaxHP)
-                                            SlowWrite("У вас максимум здоровья.");
-                                        else
-                                        {
-                                            HealingPotion healingPotion = (HealingPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").UseItem();
-                                            player.RestoreHP(HealingPotion.RestoreValue);
-                                            SlowWrite("Использовано зелье лечения.", needClear: true, speed: 0, ableToSkip: false, tech: true);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (player.MP >= player.MaxMP)
-                                            SlowWrite("У вас максимум маны.");
-                                        else
-                                        {
-                                            ManaPotion manaPotion = (ManaPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").UseItem();
-                                            player.RestoreMP(ManaPotion.RestoreValue);
-                                            SlowWrite("Использовано зелье маны.", needClear: true, speed: 0, ableToSkip: false, tech: true);
-                                            
-                                        }
-                                        
-                                    }
+                                Console.WriteLine();
+                                SlowWrite($"Enter - Использовать {itemName}", speed: 0, needClear: false, ableToSkip: false, tech: true);
 
-                                    break;
-                                default: break;
+                                List<ConsoleKey> actions2 = new List<ConsoleKey> { ConsoleKey.Enter };
+                                ConsoleKey playerAction2 = GetPlayerAction(actions2, false, false, true);
+                                switch (playerAction2)
+                                {
+                                    case ConsoleKey.Enter:
+                                        if (playerItems[chosenItem - 1].GetType() == typeof(HealingPotion))
+                                        {
+                                            if (player.HP >= player.MaxHP)
+                                                SlowWrite("У вас максимум здоровья.");
+                                            else
+                                            {
+                                                HealingPotion healingPotion = (HealingPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").UseItem();
+                                                player.RestoreHP(HealingPotion.RestoreValue);
+                                                SlowWrite("Использовано зелье лечения.", needClear: true, speed: 0, ableToSkip: false, tech: true);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (player.MP >= player.MaxMP)
+                                                SlowWrite("У вас максимум маны.");
+                                            else
+                                            {
+                                                ManaPotion manaPotion = (ManaPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").UseItem();
+                                                player.RestoreMP(ManaPotion.RestoreValue);
+                                                SlowWrite("Использовано зелье маны.", needClear: true, speed: 0, ableToSkip: false, tech: true);
+
+                                            }
+
+                                        }
+
+                                        break;
+                                    default: break;
+                                }
+                                Console.Clear();
                             }
-                            Console.Clear();
+                            else
+                                Console.ReadKey(true);
                         }
-                        else
-                            Console.ReadKey(true);
+                        catch
+                        {
+                            continue;
+                        }
                     }
-                    catch
-                    {
-                        continue;
-                    }
+                    
 
                 }
             }

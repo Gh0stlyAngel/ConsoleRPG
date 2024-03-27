@@ -117,18 +117,50 @@ namespace consoleTextRPG
             };
             EventsDictionary.Add(outside, EventName.Outside);
 
+            // Трава для тестов
+            CollectableItem grass;
+            grass = new CollectableItem('$', 30, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 31, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 32, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 33, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 34, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 35, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 36, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 37, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 38, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 39, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
 
-            CollectableItem grass1 = new CollectableItem('$', 30, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass1);
-            CollectableItem grass2 = new CollectableItem('$', 31, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass2);
-            CollectableItem grass3 = new CollectableItem('$', 32, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass3);
-            CollectableItem grass4 = new CollectableItem('$', 33, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass4);
-            CollectableItem grass5 = new CollectableItem('$', 34, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass5);
-
+            // Трава для тестов
+            grass = new CollectableItem('$', 30, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 31, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 32, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 33, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 34, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 35, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 36, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 37, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 38, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
+            grass = new CollectableItem('$', 39, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            Collectables.Add(grass);
         }
 
         internal static bool BasicAnswers(Story story, bool knock)
@@ -302,7 +334,7 @@ namespace consoleTextRPG
                 List<ConsoleKey> actions = new List<ConsoleKey>();
                 int counter = 1;
                 Console.Clear();
-                if (story.HeadmanMainQuest.QuestStarted || story.TraderQuest.QuestStarted)
+                if (story.HeadmanMainQuest.QuestStarted || story.TraderQuest.QuestStarted || true)
                 {
                     if (story.SecondHeadmanVisit)
                     {
@@ -328,37 +360,39 @@ namespace consoleTextRPG
                     }
                     SlowWrite($"{counter}. В деревню.", needClear: false, ableToSkip: false, tech: true);
                     actions.Add(ConsoleKey.D3);
-                    if (counter > 1)
+
+                    counter++;
+                    SlowWrite($"{counter}. HerbalistMap.", needClear: false, ableToSkip: false, tech: true);
+                    actions.Add(ConsoleKey.D4);
+
+                    ConsoleKey playerAction = ConsoleFight.Fight.GetPlayerAction(actions, false, false);
+
+                    switch (playerAction)
                     {
-                        ConsoleKey playerAction = ConsoleFight.Fight.GetPlayerAction(actions, false, false);
-
-                        switch (playerAction)
-                        {
-                            case ConsoleKey.D1:
-                                Maps.GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
-                                break;
-                            case ConsoleKey.D2:
-                                if (!story.FoundedConvoy && !story.FoundedSteps)
-                                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeZero, MapList.BridgeZero.PlayerPosX, MapList.BridgeZero.PlayerPosY);
+                        case ConsoleKey.D1:
+                            Maps.GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
+                            break;
+                        case ConsoleKey.D2:
+                            if (!story.FoundedConvoy && !story.FoundedSteps)
+                                Maps.GoToMap(ref player, ref story, ref MapList.BridgeZero, MapList.BridgeZero.PlayerPosX, MapList.BridgeZero.PlayerPosY);
 
 
-                                else if (!story.FoundedSteps)
-                                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeZero.PlayerPosX, MapList.BridgeZero.PlayerPosY);
+                            else if (!story.FoundedSteps)
+                                Maps.GoToMap(ref player, ref story, ref MapList.BridgeFirst, MapList.BridgeZero.PlayerPosX, MapList.BridgeZero.PlayerPosY);
 
-                                else
-                                    Maps.GoToMap(ref player, ref story, ref MapList.BridgeSecond, MapList.BridgeZero.PlayerPosX, MapList.BridgeZero.PlayerPosY);
-                                break;
-                            case ConsoleKey.D3:
-                                Maps.GoToMap(ref player, ref story, ref MapList.Hub, 82, 9);
-                                break;
-                        }
+                            else
+                                Maps.GoToMap(ref player, ref story, ref MapList.BridgeSecond, MapList.BridgeZero.PlayerPosX, MapList.BridgeZero.PlayerPosY);
+                            break;
+                        case ConsoleKey.D3:
+                            Maps.GoToMap(ref player, ref story, ref MapList.Hub, 82, 9);
+                            break;
+                        case ConsoleKey.D4:
+                            Maps.GoToMap(ref player, ref story, ref MapList.HerbalistMap, MapList.HerbalistMap.PlayerPosX, MapList.HerbalistMap.PlayerPosY);
+                            break;
                     }
                 }
-                
-                else
-                {
-                    SlowWrite("Пока мне там ничего не нужно.", needClear: false, ableToSkip: false, tech: true);
-                }
+
+
                 
 
                 Console.ReadKey(true);

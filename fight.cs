@@ -460,8 +460,9 @@ namespace ConsoleFight
                 List<char> unavilableActions = new List<char>();
                 for (int i = numberOfActions; i < 10; i++)
                 {
-                    unavilableActions.Add(((char)i));
+                    unavilableActions.Add((char)i);
                 }
+
                 bool validAction = true;
                 do
                 {

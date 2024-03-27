@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="BridgeMap.cs" />
     <Compile Include="fight.cs" />
+    <Compile Include="HerbalistMap.cs" />
     <Compile Include="hub.cs" />
     <Compile Include="HubMap.cs" />
     <Compile Include="MainCamp.cs" />

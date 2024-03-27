@@ -3,14 +3,6 @@
   "WorkspaceRootPath": "D:\\GitProjects\\ConsoleRPG\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|d:\\gitprojects\\consolerpg\\bridgemap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|solutionrelative:bridgemap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|D:\\GitProjects\\ConsoleRPG\\maps.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|solutionrelative:maps.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|D:\\GitProjects\\ConsoleRPG\\hubmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|solutionrelative:hubmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -19,16 +11,28 @@
       "RelativeMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|D:\\GitProjects\\ConsoleRPG\\maincamp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|d:\\gitprojects\\consolerpg\\maincamp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|solutionrelative:maincamp.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|D:\\GitProjects\\ConsoleRPG\\hub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|solutionrelative:hub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|d:\\gitprojects\\consolerpg\\herbalistmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|solutionrelative:herbalistmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|D:\\GitProjects\\ConsoleRPG\\fight.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|solutionrelative:fight.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|D:\\GitProjects\\ConsoleRPG\\maps.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|solutionrelative:maps.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|D:\\GitProjects\\ConsoleRPG\\bridgemap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|solutionrelative:bridgemap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|D:\\GitProjects\\ConsoleRPG\\hub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|solutionrelative:hub.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{F2904123-C576-47B6-9264-1E3842095679}|consoleTextRPG.csproj|D:\\GitProjects\\ConsoleRPG\\shop.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -42,73 +46,90 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "HubMap.cs",
               "DocumentMoniker": "D:\\GitProjects\\ConsoleRPG\\HubMap.cs",
               "RelativeDocumentMoniker": "HubMap.cs",
               "ToolTip": "D:\\GitProjects\\ConsoleRPG\\HubMap.cs",
               "RelativeToolTip": "HubMap.cs",
-              "ViewState": "AQIAAAABAAAAAAAAAAAAwBoBAAANAAAA",
+              "ViewState": "AQIAAGsAAAAAAAAAAAAYwIwAAAAkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-04T17:08:43.273Z",
-              "IsPinned": true
+              "IsPinned": true,
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
+              "Title": "HerbalistMap.cs",
+              "DocumentMoniker": "D:\\GitProjects\\ConsoleRPG\\HerbalistMap.cs",
+              "RelativeDocumentMoniker": "HerbalistMap.cs",
+              "ToolTip": "D:\\GitProjects\\ConsoleRPG\\HerbalistMap.cs",
+              "RelativeToolTip": "HerbalistMap.cs",
+              "ViewState": "AQIAAC4AAAAAAAAAAAAgwEsAAAAlAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-03-27T16:32:17.089Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
               "Title": "MainCamp.cs",
               "DocumentMoniker": "D:\\GitProjects\\ConsoleRPG\\MainCamp.cs",
               "RelativeDocumentMoniker": "MainCamp.cs",
               "ToolTip": "D:\\GitProjects\\ConsoleRPG\\MainCamp.cs",
               "RelativeToolTip": "MainCamp.cs",
-              "ViewState": "AQIAADsAAAAAAAAAAAAAAE0AAAA5AAAA",
+              "ViewState": "AQIAAIYAAAAAAAAAAAAcwIoBAAAuAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-06T18:41:22.386Z"
+              "WhenOpened": "2024-03-06T18:41:22.386Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\GitProjects\\ConsoleRPG\\Program.cs",
               "RelativeDocumentMoniker": "Program.cs",
               "ToolTip": "D:\\GitProjects\\ConsoleRPG\\Program.cs",
               "RelativeToolTip": "Program.cs",
-              "ViewState": "AQIAAMkDAAAAAAAAAAAAAF4EAABAAAAA",
+              "ViewState": "AQIAANwCAAAAAAAAAAAAANkCAAAiAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-04T17:08:43.503Z"
+              "WhenOpened": "2024-03-04T17:08:43.503Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 6,
               "Title": "BridgeMap.cs",
               "DocumentMoniker": "D:\\GitProjects\\ConsoleRPG\\BridgeMap.cs",
               "RelativeDocumentMoniker": "BridgeMap.cs",
               "ToolTip": "D:\\GitProjects\\ConsoleRPG\\BridgeMap.cs",
               "RelativeToolTip": "BridgeMap.cs",
-              "ViewState": "AQIAAP0AAAAAAAAAAAAkwP8AAAAaAAAA",
+              "ViewState": "AQIAADcAAAAAAAAAAAAAwFcBAAAjAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-03-04T17:08:43.328Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 5,
               "Title": "Maps.cs",
               "DocumentMoniker": "D:\\GitProjects\\ConsoleRPG\\Maps.cs",
               "RelativeDocumentMoniker": "Maps.cs",
               "ToolTip": "D:\\GitProjects\\ConsoleRPG\\Maps.cs",
               "RelativeToolTip": "Maps.cs",
-              "ViewState": "AQIAAB4BAAAAAAAAAAAAAEwBAAAaAAAA",
+              "ViewState": "AQIAABkAAAAAAAAAAAAiwCwAAAAbAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-04T17:08:43.384Z"
+              "WhenOpened": "2024-03-04T17:08:43.384Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 7,
               "Title": "hub.cs",
               "DocumentMoniker": "D:\\GitProjects\\ConsoleRPG\\hub.cs",
               "RelativeDocumentMoniker": "hub.cs",
@@ -120,7 +141,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "Shop.cs",
               "DocumentMoniker": "D:\\GitProjects\\ConsoleRPG\\Shop.cs",
               "RelativeDocumentMoniker": "Shop.cs",
@@ -132,15 +153,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 4,
               "Title": "fight.cs",
               "DocumentMoniker": "D:\\GitProjects\\ConsoleRPG\\fight.cs",
               "RelativeDocumentMoniker": "fight.cs",
               "ToolTip": "D:\\GitProjects\\ConsoleRPG\\fight.cs",
               "RelativeToolTip": "fight.cs",
-              "ViewState": "AQIAAIMCAAAAAAAAAAAIwJICAAAVAAAA",
+              "ViewState": "AQIAALkBAAAAAAAAAAAwwNABAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-03-04T17:08:43.329Z"
+              "WhenOpened": "2024-03-04T17:08:43.329Z",
+              "EditorCaption": ""
             }
           ]
         }
