@@ -37,7 +37,7 @@ namespace consoleTextRPG
             Console.Write("@");
 
             map.Events.DrawEnemies(mapArray);
-            CheckOnCollectables(ref player, playerPosX, playerPosY, ref map);
+            DrawCollectables(map);
 
 
             Console.ForegroundColor = ConsoleColor.DarkYellow;
@@ -175,7 +175,7 @@ namespace consoleTextRPG
                     CheckOnEnemy(ref player, ref story, playerPosX, playerPosY, ref map);
                 }
 
-                CheckOnCollectables(ref player, playerPosX, playerPosY, ref map);
+                CheckOnCollectables(ref player, playerPosX, playerPosY, ref map, story);
 
             }
             int[] coordinates = { playerPosX, playerPosY };
@@ -237,29 +237,117 @@ namespace consoleTextRPG
         }
 
 
-        internal static void CheckOnCollectables(ref PlayerClass player, int playerPosX, int playerPosY, ref Map map)
+        internal static void CheckOnCollectables(ref PlayerClass player, int playerPosX, int playerPosY, ref Map map, Story story)
         {
-            ConsoleColor consoleColor = Console.ForegroundColor;
             if (map.Collectables != null)
             {
                 foreach (var collectable in map.Collectables)
                 {
                     if (playerPosX == collectable.ItemCoordinateX && playerPosY == collectable.ItemCoordinateY)
                     {
-                        player.Inventory.AppendItem(collectable);
-                        map.Collectables.Remove(collectable);
-                        break;
+                        if (collectable.Name == "lootbox")
+                        {
+                            OpenLootbox(ref player);
+                            DrawInterface(ref map, playerPosX, playerPosY, story, collectable);
+                            break;
+                        }
+                        else
+                        {
+                            player.Inventory.AppendItem(collectable);
+                            map.Collectables.Remove(collectable);
+                            DrawCollectables(map);
+                            break;
+                        }
                     }
                 }
             }
+        }
 
+        internal static void OpenLootbox(ref PlayerClass player)
+        {
+            Random rnd = new Random();
+            int loot = rnd.Next(0, 3);
+
+            switch (loot)
+            {
+                case (int)Lootbox.HealingPotion:
+                    player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").AddItem();
+                    SlowWrite("Получено зелье лечения.", tech: true);
+                    break;
+
+                case (int)Lootbox.ManaPotion:
+                    player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").AddItem();
+                    SlowWrite("Получено зелье маны.", tech: true);
+                    break;
+
+                case (int)Lootbox.Gold:
+                    int reward = rnd.Next(7, 21);
+                    player.getGold(reward);
+                    SlowWrite($"Получено {reward} золота.", tech: true);
+
+
+                    break;
+                default:
+                    break;
+            }
+
+            
+        }
+
+        internal static void DrawInterface(ref Map map, int playerPosX, int playerPosY, Story story, CollectableItem collectable)
+        {
+            map.Collectables.Remove(collectable);
+
+            Console.Clear();
+            Console.CursorVisible = false;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            string[] separator = { "\r\n" };
+
+            string[] mapArray = map.MapString.Split(separator, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string mapItem in mapArray)
+            {
+                Console.WriteLine(mapItem);
+            }
+
+            Console.SetCursorPosition(playerPosX, playerPosY);
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.Write("@");
+
+            map.Events.DrawEnemies(mapArray);
+            DrawCollectables(map);
+
+
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
+            Console.SetCursorPosition(mapArray[0].Length + 2, 3);
+            Console.Write("→ ← ↑ ↓ - Управление");
+            if (story.FirstVillageVisit)
+            {
+                Console.SetCursorPosition(mapArray[0].Length + 2, 4);
+                Console.Write("C - Персонаж");
+            }
+            Console.SetCursorPosition(mapArray[0].Length + 2, 5);
+            Console.Write("J - Журнал");
+            Console.SetCursorPosition(mapArray[0].Length + 2, 6);
+            Console.Write("I - Инвентарь");
+        }
+
+        enum Lootbox
+        {
+            HealingPotion,
+            ManaPotion,
+            Gold
+        }
+
+        internal static void DrawCollectables(Map map)
+        {
+            ConsoleColor consoleColor = Console.ForegroundColor;
             foreach (var collectable in map.Collectables)
             {
                 Console.SetCursorPosition(collectable.ItemCoordinateX, collectable.ItemCoordinateY);
                 Console.ForegroundColor = collectable.ItemColor;
                 Console.Write(collectable.ItemChar);
             }
-
             Console.ForegroundColor = consoleColor;
         }
 
@@ -556,6 +644,10 @@ namespace consoleTextRPG
         ToNorthLadder,
         FindFriend,
         FriendDecision,
+
+        OutsideHerbalistMap,
+
+        OutsideAltarMap,
 
     }
 

@@ -38,7 +38,7 @@ namespace consoleTextRPG
             PlayerPosX = 1;
             PlayerPosY = 5;
             SpawnOnStartPosition = false;
-            Triggers = null;
+            Triggers = new char[] { '|' };
 
             int[] enemy1StartCoord = { 41, 12 };
             int[] enemy1EndCoord = { 41, 12 };
@@ -75,12 +75,31 @@ namespace consoleTextRPG
             CollectableItem grass9 = new CollectableItem('$', 35, 19, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
             Collectables.Add(grass9);
 
+            int[][] toOutside = new[]
+            {
+                new int[]{ 0, 4 },
+                new int[]{ 0, 5 },
+                new int[]{ 0, 6 }
+            };
+            EventsDictionary.Add(toOutside, EventName.OutsideHerbalistMap);
+
         }
 
-        /*internal override bool StartEvent(ref PlayerClass player, ref Story story, string nickName, int way)
+        internal override bool StartEvent(ref PlayerClass player, ref Story story, string nickName, int way)
         {
+            bool goOut = false;
+            switch (way)
+            {
+                case (int)EventName.OutsideHerbalistMap:
+                    goOut = true;
+                    HubEvents.ToOutside(ref player, ref story);
+                    break;
 
-        }*/
+                default: break;
+
+            }
+            return goOut;
+        }
 
         internal static MapEnemy AddEnemy(string enemyName, int enemyHP, int enemyDamage, int enemyAtcRange, int[] enemyStartCoord, int[] enemyEndCoord, int coordinate)
         {

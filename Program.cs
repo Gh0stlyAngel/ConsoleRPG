@@ -62,11 +62,11 @@ namespace consoleTextRPG
             public static Map MainCampFifth;
 
 
-
-            private
-
             HerbalistEvents HerbalistEvents = new HerbalistEvents();
             public static Map HerbalistMap;
+
+            AltarMapEvents AltarEvents = new AltarMapEvents();
+            public static Map AltarMap;
 
             public MapList()
             {
@@ -74,6 +74,9 @@ namespace consoleTextRPG
 
 
                 HerbalistMap = new Map(HerbalistEvents);
+
+
+                AltarMap = new Map(AltarEvents);
 
 
                 BridgeThird = new Map(BridgeThirdEvents);
@@ -795,7 +798,7 @@ namespace consoleTextRPG
                                             else
                                             {
                                                 HealingPotion healingPotion = (HealingPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье лечения").UseItem();
-                                                player.RestoreHP(HealingPotion.RestoreValue);
+                                                player.RestoreHP(healingPotion.RestoreValue);
                                                 SlowWrite("Использовано зелье лечения.", needClear: true, speed: 0, ableToSkip: false, tech: true);
                                             }
                                         }
@@ -806,7 +809,7 @@ namespace consoleTextRPG
                                             else
                                             {
                                                 ManaPotion manaPotion = (ManaPotion)player.Inventory.playerItems.Find(item => item.Name == "Зелье маны").UseItem();
-                                                player.RestoreMP(ManaPotion.RestoreValue);
+                                                player.RestoreMP(manaPotion.RestoreValue);
                                                 SlowWrite("Использовано зелье маны.", needClear: true, speed: 0, ableToSkip: false, tech: true);
 
                                             }
@@ -943,7 +946,7 @@ namespace consoleTextRPG
 
         internal abstract class Potion : Item
         {
-            public static int RestoreValue { get; protected set; }
+            public int RestoreValue { get; protected set; }
             public Potion(string name, string description, bool ableToUse, ConsoleColor textColor) : base(name, description, ableToUse, textColor)
             {
 

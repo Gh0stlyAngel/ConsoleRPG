@@ -126,6 +126,13 @@ namespace ConsoleHub
             story.SealMainQuest.PassQuest();
         }
 
+
+        internal static void PassShopQuest(ref PlayerClass player, ref Story story)
+        {
+            SlowWrite($"{player.NickName}, добро пожаловать!", teller: "Торговец");
+            SlowWrite("Я смог найти твои припасы.", teller: player.NickName);
+
+        }
         internal static void ShopQuest(PlayerClass player, ref Story story)
         {
             SlowWrite("А что с запасами? Может я смогу помочь?", teller: player.NickName);

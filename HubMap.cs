@@ -119,19 +119,19 @@ namespace consoleTextRPG
 
             // Трава для тестов
             CollectableItem grass;
-            grass = new CollectableItem('$', 30, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            grass = new CollectableItem('$', 30, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
             Collectables.Add(grass);
-            grass = new CollectableItem('$', 31, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            grass = new CollectableItem('$', 31, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
             Collectables.Add(grass);
-            grass = new CollectableItem('$', 32, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            grass = new CollectableItem('$', 32, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
             Collectables.Add(grass);
-            grass = new CollectableItem('$', 33, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            grass = new CollectableItem('$', 33, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
             Collectables.Add(grass);
-            grass = new CollectableItem('$', 34, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            grass = new CollectableItem('$', 34, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
             Collectables.Add(grass);
-            grass = new CollectableItem('$', 35, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            grass = new CollectableItem('$', 35, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
             Collectables.Add(grass);
-            grass = new CollectableItem('$', 36, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            grass = new CollectableItem('$', 36, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
             Collectables.Add(grass);
             grass = new CollectableItem('$', 37, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
             Collectables.Add(grass);
@@ -275,8 +275,10 @@ namespace consoleTextRPG
 
             }
 
-            else
+            else if (!story.HeadmanMainQuest.QuestPassed)
                 SlowWrite("ToTemple");
+            else
+                Console.WriteLine("sad");
         }
         internal static void ToHome(ref PlayerClass player, ref Story story, string nickName = null)
         {
@@ -336,11 +338,14 @@ namespace consoleTextRPG
                 Console.Clear();
                 if (story.HeadmanMainQuest.QuestStarted || story.TraderQuest.QuestStarted || true)
                 {
+                    SlowWrite($"{counter}. В деревню.", needClear: false, ableToSkip: false, tech: true);
+                    actions.Add(ConsoleKey.D1);
+                    counter++;
                     if (story.SecondHeadmanVisit)
                     {
                         SlowWrite($"{counter}. К лагерю культистов.", needClear: false, ableToSkip: false, tech: true);
                         counter++;
-                        actions.Add(ConsoleKey.D1);
+                        actions.Add(ConsoleKey.D2);
                     }
                     else
                     {
@@ -351,28 +356,33 @@ namespace consoleTextRPG
                     {
                         SlowWrite($"{counter}. К мосту у деревни.", needClear: false, ableToSkip: false, tech: true);
                         counter++;
-                        actions.Add(ConsoleKey.D2);
+                        actions.Add(ConsoleKey.D3);
                     }
                     else
                     {
                         SlowWrite($"{counter}. ???", needClear: false, ableToSkip: false, tech: true);
                         counter++;
                     }
-                    SlowWrite($"{counter}. В деревню.", needClear: false, ableToSkip: false, tech: true);
-                    actions.Add(ConsoleKey.D3);
 
-                    counter++;
                     SlowWrite($"{counter}. HerbalistMap.", needClear: false, ableToSkip: false, tech: true);
                     actions.Add(ConsoleKey.D4);
+                    counter++;
+
+                    SlowWrite($"{counter}. AltarMap.", needClear: false, ableToSkip: false, tech: true);
+                    actions.Add(ConsoleKey.D5);
+                    counter++;
 
                     ConsoleKey playerAction = ConsoleFight.Fight.GetPlayerAction(actions, false, false);
 
                     switch (playerAction)
                     {
                         case ConsoleKey.D1:
-                            Maps.GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
+                            Maps.GoToMap(ref player, ref story, ref MapList.Hub, 82, 9);
                             break;
                         case ConsoleKey.D2:
+                            Maps.GoToMap(ref player, ref story, ref MapList.MainCampFirst, MapList.MainCampFirst.PlayerPosX, MapList.MainCampFirst.PlayerPosY);
+                            break;
+                        case ConsoleKey.D3:
                             if (!story.FoundedConvoy && !story.FoundedSteps)
                                 Maps.GoToMap(ref player, ref story, ref MapList.BridgeZero, MapList.BridgeZero.PlayerPosX, MapList.BridgeZero.PlayerPosY);
 
@@ -383,11 +393,11 @@ namespace consoleTextRPG
                             else
                                 Maps.GoToMap(ref player, ref story, ref MapList.BridgeSecond, MapList.BridgeZero.PlayerPosX, MapList.BridgeZero.PlayerPosY);
                             break;
-                        case ConsoleKey.D3:
-                            Maps.GoToMap(ref player, ref story, ref MapList.Hub, 82, 9);
-                            break;
                         case ConsoleKey.D4:
                             Maps.GoToMap(ref player, ref story, ref MapList.HerbalistMap, MapList.HerbalistMap.PlayerPosX, MapList.HerbalistMap.PlayerPosY);
+                            break;
+                        case ConsoleKey.D5:
+                            Maps.GoToMap(ref player, ref story, ref MapList.AltarMap, MapList.AltarMap.PlayerPosX, MapList.AltarMap.PlayerPosY);
                             break;
                     }
                 }
