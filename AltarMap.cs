@@ -54,13 +54,13 @@ namespace consoleTextRPG
 
             int[] enemy3StartCoord = { 44, 16 };
             int[] enemy3EndCoord = { 44, 16 };
-            MapEnemy mapEnemy3 = AddEnemy("Культист-маг", 50, 14, 1, enemy3StartCoord, enemy3EndCoord, (int)Coordinate.Y);
+            MapEnemy mapEnemy3 = AddEnemy("Высший маг", 70, 16, 1, enemy3StartCoord, enemy3EndCoord, (int)Coordinate.Y);
             Enemies.Add(mapEnemy3);
 
 
-            CollectableItem grass1 = new CollectableItem('$', 2, 21, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            CollectableItem grass1 = new CollectableItem('$', 2, 21, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
             Collectables.Add(grass1);
-            CollectableItem grass2 = new CollectableItem('$', 4, 21, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
+            CollectableItem grass2 = new CollectableItem('$', 4, 21, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
             Collectables.Add(grass2);
 
             int[][] toOutside = new[]

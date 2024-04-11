@@ -37,7 +37,7 @@ namespace ConsoleShop
                     {
 
                         case ConsoleKey.D1:
-                            OpenShop(player);
+                            OpenShop(player, ref story);
 
                             break;
 
@@ -63,7 +63,7 @@ namespace ConsoleShop
                     {
 
                         case ConsoleKey.D1:
-                            OpenShop(player);
+                            OpenShop(player, ref story);
 
                             break;
                         case ConsoleKey.D2:
@@ -82,7 +82,7 @@ namespace ConsoleShop
             
         }
 
-        internal static void OpenShop(PlayerClass player)
+        internal static void OpenShop(PlayerClass player, ref Story story)
         {
             bool leave = false;
             int HealingPotionPrice = 5;
@@ -107,11 +107,17 @@ namespace ConsoleShop
                 switch (playerAction)
                 {
                     case ConsoleKey.D1:
-                        BuyItem(HealingPotionPrice, "Зелье лечения", player);
+                        if (story.BoughtPotions < 5 || story.HerbalistMainQuest.QuestPassed)
+                            BuyItem(HealingPotionPrice, "Зелье лечения", player, ref story);
+                        else
+                            SlowWrite("Прости, но из-за того что пропала травница, мои запасыы быстро иссякли, ведь она была основным поставщиком зелий. Если сможешь найти и вернуть ее - она сможет решить проблему нехватки зелий.");
                         break;
 
                     case ConsoleKey.D2:
-                        BuyItem(ManaPotionPrice, "Зелье маны", player);
+                        if (story.BoughtPotions < 5 || story.HerbalistMainQuest.QuestPassed)
+                            BuyItem(ManaPotionPrice, "Зелье маны", player, ref story);
+                        else
+                            SlowWrite("Прости, но из-за того что пропала травница, мои запасыы быстро иссякли, ведь она была основным поставщиком зелий. Если сможешь найти и вернуть ее - она сможет решить проблему нехватки зелий.");
 
                         break;
 
@@ -128,13 +134,14 @@ namespace ConsoleShop
 
             
         }
-        public static void BuyItem(int itemPrice, string itemName, PlayerClass player)
+        public static void BuyItem(int itemPrice, string itemName, PlayerClass player, ref Story story)
         {
             bool ableToPay = player.SpendGold(itemPrice);
             if (ableToPay)
             {
                 player.Inventory.playerItems.Find(item => item.Name == itemName).AddItem();
                 SlowWrite($"Куплено {itemName}.");
+                story.BoughtPotions++;
             }
             else
                 SlowWrite("Недостаточно монет для покупки.");

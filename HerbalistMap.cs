@@ -92,6 +92,17 @@ namespace consoleTextRPG
             {
                 case (int)EventName.OutsideHerbalistMap:
                     goOut = true;
+
+                    if (story.HerbalistMainQuest.QuestStarted)
+                    {
+                        if (Collectables.Count >= 9)
+                        {
+                            SlowWrite("Этого количества травы должно быть достаточно. Нужно принести ее травнице.");
+                        }
+                        else
+                            SlowWrite("Думаю травнице может пригодится больше травы, чем я собрал. Нужно поискать еще.");
+                    }
+                    
                     HubEvents.ToOutside(ref player, ref story);
                     break;
 

@@ -117,50 +117,7 @@ namespace consoleTextRPG
             };
             EventsDictionary.Add(outside, EventName.Outside);
 
-            // Трава для тестов
-            CollectableItem grass;
-            grass = new CollectableItem('$', 30, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 31, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 32, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 33, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 34, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 35, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 36, 10, "lootbox", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 37, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 38, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 39, 10, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-
-            // Трава для тестов
-            grass = new CollectableItem('$', 30, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 31, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 32, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 33, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 34, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 35, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 36, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 37, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 38, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
-            grass = new CollectableItem('$', 39, 11, "Трын-трава", "Трын-трава для травницы", textColor: ConsoleColor.Magenta);
-            Collectables.Add(grass);
+            
         }
 
         internal static bool BasicAnswers(Story story, bool knock)
@@ -245,8 +202,28 @@ namespace consoleTextRPG
 
             }
                 
-            else 
-                SlowWrite("ToHerbalistHouse");
+            else if (story.HeadmanMainQuest.QuestPassed && !story.HerbalistMainQuest.QuestStarted)
+            {
+                SlowWrite("'Текст получения квеста травницы'");
+                story.HerbalistMainQuest.StartQuest();
+            }
+            else if (story.HerbalistMainQuest.QuestStarted)
+            {
+                int grassCounter = 0;
+                foreach (var item in player.Inventory.playerItems)
+                {
+                    if (item.Name == "Трын-трава")
+                    { grassCounter++; }
+                }
+                if (grassCounter >= 9)
+                {
+                    SlowWrite("'Текст завершения квеста травницы'");
+                    story.HerbalistMainQuest.PassQuest();
+                }
+                else
+                    SlowWrite("Слышь де трава?!");
+            }
+                
         }
         internal static void ToFriendHouse(ref PlayerClass player, ref Story story)
         {
@@ -275,8 +252,17 @@ namespace consoleTextRPG
 
             }
 
-            else if (!story.HeadmanMainQuest.QuestPassed)
-                SlowWrite("ToTemple");
+            else if (story.HeadmanMainQuest.QuestPassed && !story.TempleQuest.QuestStarted)
+            {
+                SlowWrite("Текст получения квеста храмовницы/монашки.");
+                story.TempleQuest.StartQuest();
+            }
+            else if (story.TempleQuest.QuestCompleted)
+            {
+                SlowWrite("Текст сдачи квеста");
+                story.TempleQuest.PassQuest();
+            }
+
             else
                 Console.WriteLine("sad");
         }

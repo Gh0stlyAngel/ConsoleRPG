@@ -997,10 +997,13 @@ namespace consoleTextRPG
 
             public bool FreeVillagers = false;
 
+            public int BoughtPotions = 0;
 
 
 
-            
+
+
+
             public Quest FirstVisitHomeQuest;
 
 

@@ -222,6 +222,7 @@ namespace consoleTextRPG
                                 SlowWrite($"Получен {enemy.QuestItem.Name}", speed: 1, needClear: true, ableToSkip: true);
                                 player.Inventory.AppendItem(enemy.QuestItem);
                             }
+                            FightEvents(enemy, ref story);
                             map.Enemies.Remove(enemy);
                         }
                         else
@@ -233,6 +234,14 @@ namespace consoleTextRPG
                     }
                 }
 
+            }
+        }
+
+        internal static void FightEvents(MapEnemy enemy, ref Story story)
+        {
+            if (enemy.BaseEnemy.Name == "Высший маг")
+            {
+                story.TempleQuest.CompleteQuest();
             }
         }
 
