@@ -395,9 +395,10 @@ namespace consoleTextRPG
             SlowWrite("6. FirstVillageVisit - ture", speed: 0, needClear: false, ableToSkip: false, tech: true);
             SlowWrite("7. ArtefactCollected - ture", speed: 0, needClear: false, ableToSkip: false, tech: true);
             SlowWrite("8. FirstVisitHeadman - ture", speed: 0, needClear: false, ableToSkip: false, tech: true);
+            SlowWrite("9. StartBossQuest - ture", speed: 0, needClear: false, ableToSkip: false, tech: true);
 
 
-            List<ConsoleKey> actions = NumberOfActions(8);
+            List<ConsoleKey> actions = NumberOfActions(9);
             ConsoleKey action = GetPlayerAction(actions);
 
             switch (action)
@@ -428,8 +429,11 @@ namespace consoleTextRPG
                 case ConsoleKey.D8:
                     story.FirstVisitHeadman = true;
                     break;
-                    
-                    
+                case ConsoleKey.D9:
+                    story.BossfightQuest.StartQuest();
+                    break;
+
+
 
             }
         }

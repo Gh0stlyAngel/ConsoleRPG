@@ -11,6 +11,7 @@ using consoleTextRPG;
 using ConsoleHub;
 using static consoleTextRPG.Program;
 using System.Security.Policy;
+using static ConsoleFight.Fight;
 
 namespace consoleTextRPG
 {
@@ -207,7 +208,7 @@ namespace consoleTextRPG
                 SlowWrite("'Текст получения квеста травницы'");
                 story.HerbalistMainQuest.StartQuest();
             }
-            else if (story.HerbalistMainQuest.QuestStarted)
+            else if (story.HerbalistMainQuest.QuestStarted && !story.HerbalistMainQuest.QuestPassed)
             {
                 int grassCounter = 0;
                 foreach (var item in player.Inventory.playerItems)
@@ -217,13 +218,22 @@ namespace consoleTextRPG
                 }
                 if (grassCounter >= 9)
                 {
+                    foreach (var item in player.Inventory.playerItems)
+                    {
+                        if (item.Name == "Трын-трава")
+                            player.Inventory.playerItems.Remove(item);
+                    }
                     SlowWrite("'Текст завершения квеста травницы'");
                     story.HerbalistMainQuest.PassQuest();
                 }
                 else
-                    SlowWrite("Слышь де трава?!");
+                    SlowWrite("Слышь де трава?!", teller: "Травница");
             }
-                
+            else
+            {
+                SlowWrite("Сейчас от Травницы мне ничего не нужно.");
+            }
+
         }
         internal static void ToFriendHouse(ref PlayerClass player, ref Story story)
         {
@@ -241,9 +251,14 @@ namespace consoleTextRPG
             {
 
             }
-
+            else if(story.HeadmanMainQuest.QuestPassed && !story.WeaponUpgraded)
+            {
+                SlowWrite("Привет, спасибо за спасение, в благодарность я хочу немного улучшить твое оружие.", teller: "Кузнец");
+                player.Weapon.UpgradeWeapon();
+                story.WeaponUpgraded = true;
+            }
             else
-                SlowWrite("ToManufactory");
+                SlowWrite("Не буду тревожить кузнеца, он сейчас занят.");
         }
         internal static void ToTemple(ref PlayerClass player, ref Story story)
         {
@@ -257,14 +272,14 @@ namespace consoleTextRPG
                 SlowWrite("Текст получения квеста храмовницы/монашки.");
                 story.TempleQuest.StartQuest();
             }
-            else if (story.TempleQuest.QuestCompleted)
+            else if (story.TempleQuest.QuestCompleted && !story.TempleQuest.QuestPassed)
             {
                 SlowWrite("Текст сдачи квеста");
                 story.TempleQuest.PassQuest();
             }
 
             else
-                Console.WriteLine("sad");
+                Console.WriteLine("Кажется храмовница помогает местным жителям, не буду ей мешать.");
         }
         internal static void ToHome(ref PlayerClass player, ref Story story, string nickName = null)
         {
@@ -300,6 +315,24 @@ namespace consoleTextRPG
             {
                 Hub.HeadmanMainQuest(ref player, ref story);
                 story.SecondHeadmanVisit = true;
+            }
+            else if (story.HeadmanMainQuest.QuestStarted && !story.HeadmanMainQuest.QuestCompleted)
+            {
+                SlowWrite("Нужно спасти жителей, староста рассчитывает на меня!");
+            }
+            else if(story.HeadmanMainQuest.QuestCompleted && !story.HeadmanMainQuest.QuestPassed)
+            {
+                SlowWrite("Жители спасены, огромное спасибо тебе!");
+                story.HeadmanMainQuest.PassQuest();
+            }
+            else if (story.HeadmanMainQuest.QuestPassed && !story.BossfightQuest.QuestStarted)
+            {
+                SlowWrite("Спасенные жители рассказали, что видели главу культа, когда были в плену.", teller: "Староста");
+                SlowWrite("Он хотел принести жертву, чтобы стать сильнее. Ты нарушил его планы, но не думаю, что он остановится.", teller: "Староста");
+                SlowWrite("Нужно разобраться с ним раз и навсегда, иначе, если ему удасться воплотить свои планы в жизнь..", teller: "Староста");
+                SlowWrite("Проблемы будут не только у нашей деревни. И только ты можешь с ним справится!", teller: "Староста");
+
+                story.BossfightQuest.StartQuest();
             }
             else
             {
@@ -350,13 +383,44 @@ namespace consoleTextRPG
                         counter++;
                     }
 
-                    SlowWrite($"{counter}. HerbalistMap.", needClear: false, ableToSkip: false, tech: true);
-                    actions.Add(ConsoleKey.D4);
-                    counter++;
+                    if (story.HerbalistMainQuest.QuestStarted)
+                    {
+                        SlowWrite($"{counter}. К опушке у деревни.", needClear: false, ableToSkip: false, tech: true);
+                        actions.Add(ConsoleKey.D4);
+                        counter++;
+                    }
+                    else
+                    {
+                        SlowWrite($"{counter}. ???", needClear: false, ableToSkip: false, tech: true);
+                        counter++;
+                    }
 
-                    SlowWrite($"{counter}. AltarMap.", needClear: false, ableToSkip: false, tech: true);
-                    actions.Add(ConsoleKey.D5);
-                    counter++;
+                    if (story.TempleQuest.QuestStarted)
+                    {
+                        SlowWrite($"{counter}. К алтарю.", needClear: false, ableToSkip: false, tech: true);
+                        actions.Add(ConsoleKey.D5);
+                        counter++;
+                    }
+                    else
+                    {
+                        SlowWrite($"{counter}. ???", needClear: false, ableToSkip: false, tech: true);
+                        counter++;
+                    }
+
+                    if (story.BossfightQuest.QuestStarted)
+                    {
+                        SlowWrite($"{counter}. \"Главная угроза\"", needClear: false, ableToSkip: false, tech: true);
+                        actions.Add(ConsoleKey.D6);
+                        counter++;
+                    }
+                    else
+                    {
+                        SlowWrite($"{counter}. ???", needClear: false, ableToSkip: false, tech: true);
+                        counter++;
+                    }
+
+
+
 
                     ConsoleKey playerAction = ConsoleFight.Fight.GetPlayerAction(actions, false, false);
 
@@ -384,6 +448,43 @@ namespace consoleTextRPG
                             break;
                         case ConsoleKey.D5:
                             Maps.GoToMap(ref player, ref story, ref MapList.AltarMap, MapList.AltarMap.PlayerPosX, MapList.AltarMap.PlayerPosY);
+                            break;
+
+                        case ConsoleKey.D6:
+                            SlowWrite("Перед боем лучше подготовиться. Вы готовы?");
+
+                            List<ConsoleKey> fightSolution;
+                            SlowWrite("1. Да!", needClear: false, ableToSkip: false, tech: true);
+                            SlowWrite("2. Нет.", needClear: false, ableToSkip: false, tech: true);
+                            actions = new List<ConsoleKey> { ConsoleKey.D1, ConsoleKey.D2 };
+
+                            ConsoleKey fightlayerAction = GetPlayerAction(actions);
+
+
+
+                            switch (fightlayerAction)
+                            {
+
+                                case ConsoleKey.D1:
+                                    BaseEnemy boss = new BaseEnemy("Глава Культа", 150, 10, 1);
+                                    StartFight(ref player, boss);
+
+                                    if (player.HP > 0)
+                                    {
+                                        while (true)
+                                            SlowWrite("Конец :)");
+                                    }
+                                    else
+                                        SlowWrite("Game Over");
+                                    break;
+
+                                case ConsoleKey.D2:
+                                    Maps.GoToMap(ref player, ref story, ref MapList.Hub, 82, 9);
+
+                                    break;
+
+                                default: break;
+                            }
                             break;
                     }
                 }

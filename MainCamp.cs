@@ -145,6 +145,10 @@ namespace consoleTextRPG
                     break;
 
                 case (int)EventName.OutsideMainCamp:
+                    if (story.FreeVillagers && !story.HeadmanMainQuest.QuestCompleted)
+                    {
+                        story.HeadmanMainQuest.CompleteQuest();
+                    }
                     goOut = true;
                     ToOutside(ref player, ref story);
                     break;
@@ -373,6 +377,10 @@ namespace consoleTextRPG
                     break;
 
                 case (int)EventName.OutsideMainCamp:
+                    if (story.FreeVillagers && !story.HeadmanMainQuest.QuestCompleted)
+                    {
+                        story.HeadmanMainQuest.CompleteQuest();
+                    }
                     goOut = true;
                     ToOutside(ref player, ref story);
                     break;

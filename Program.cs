@@ -591,28 +591,28 @@ namespace consoleTextRPG
                 {
                     ActiveAbility = new PlayerActiveAbility("Изнуряющий удар", $"Воин наносит 15 урона противнику, уменьшая наносимый им урон на 30% на 2 хода. Нанесение урона изнуренному противнику оглушает его.", 15, 6);
                     PassiveAbility = new PlayerPassiveAbility("Нарастающая ярость", "Течение битвы ожесточает воина, увеличивая наносимый им урон на 1 за ход.");
-                    weapon = new Weapon("Стандартный меч", 10);
+                    weapon = new Weapon("Стандартный меч", 10, "Улучшеный меч", 12);
                     return new PlayerClass("Воин", nickName, 120, 20, 0, 1, 0, weapon, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 2)
                 {
                     ActiveAbility = new PlayerActiveAbility("Ледяное копье", "Маг поражает противника ледяным копьем, которое наносит 18 урона и замораживает цель на 1 ход.", 18, 15);
                     PassiveAbility = new PlayerPassiveAbility("Благословение богов", "Боги направляют руку мага, что может значительно усилить его заклинания.");
-                    weapon = new Weapon("Стандартный посох", 15);
+                    weapon = new Weapon("Стандартный посох", 15, "Улучшеный посох", 17);
                     return new PlayerClass("Маг", nickName, 65, 75, 1, 1, 1, weapon, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 3)
                 {
                     ActiveAbility = new PlayerActiveAbility("Казнь", "Убийца наносит выверенный удар клинком (23 урона). Умение может мгновенно убить противника, если его здоровье ниже 30%.", 23, 11);
                     PassiveAbility = new PlayerPassiveAbility("Ловкость", "Ловкость убийцы позволяет ему уклоняться от ударов противника с вероятностью 15%.");
-                    weapon = new Weapon("Стандартный кинжал", 17);
+                    weapon = new Weapon("Стандартный кинжал", 17, "Улучшеный кинжал", 19);
                     return new PlayerClass("Убийца", nickName, 90, 30, 0, 1, 0, weapon, ActiveAbility, PassiveAbility);
                 }
                 else if (value == 4)
                 {
                     ActiveAbility = new PlayerActiveAbility("Отступление", "Лучник разрывает дистанцию с противником на 1, нанося 8 урона и обездвиживая его на 1 ход", 8, 9);
                     PassiveAbility = new PlayerPassiveAbility("Меткий глаз", "Меткость лучника позволяет ему наносить дополнительные 3 урона удаленным целям, а также почти никогда не промахиваться.");
-                    weapon = new Weapon("Стандартный лук", 12);
+                    weapon = new Weapon("Стандартный лук", 12, "Улучшеный лук", 14);
                     return new PlayerClass("Лучник", nickName, 80, 20, 2, 1, 0, weapon, ActiveAbility, PassiveAbility);
                 }
                 else { throw new ArgumentException("Неверный класс"); }
@@ -625,10 +625,21 @@ namespace consoleTextRPG
         {
             public string Name { get; private set; }
             public int Damage { get; private set; }
-            public Weapon(string weaponName, int weaponDamage) 
+            public string UpgradedName { get; private set; }
+            public int UpgradedDamage { get; private set; }
+            public Weapon(string weaponName, int weaponDamage, string upgradedName, int upgradedDamage)
             {
                 Name = weaponName;
                 Damage = weaponDamage;
+                UpgradedName = upgradedName;
+                UpgradedDamage = upgradedDamage;
+            }
+
+            public void UpgradeWeapon()
+            {
+                Name = UpgradedName;
+                Damage = UpgradedDamage;
+                SlowWrite($"Новое оружие - {Name}", needClear: true, ableToSkip: true);
             }
         }
 
@@ -999,6 +1010,8 @@ namespace consoleTextRPG
 
             public int BoughtPotions = 0;
 
+            public bool WeaponUpgraded = false;
+
 
 
 
@@ -1017,15 +1030,15 @@ namespace consoleTextRPG
    
 
             public Quest FriendQuest;
+
+
+            public Quest BossfightQuest;
    
 
             public Quest HeadmanMainQuest;
         
 
             public Quest TempleQuest;
-   
-
-            public Quest BlacksmithMainQuest;
            
 
             public Quest HerbalistMainQuest;
@@ -1070,12 +1083,12 @@ namespace consoleTextRPG
                 Quests.Add(TempleQuest);
 
                 descriptions = new string[] { "@Описание@" };
-                BlacksmithMainQuest = new Quest("blacksmithMainQuest", descriptions);
-                Quests.Add(BlacksmithMainQuest);
-
-                descriptions = new string[] { "@Описание@" };
                 HerbalistMainQuest = new Quest("herbalistMainQuest", descriptions);
                 Quests.Add(HerbalistMainQuest);
+
+                descriptions = new string[] { "@Описание@" };
+                BossfightQuest = new Quest("Главная угроза", descriptions);
+                Quests.Add(BossfightQuest);
 
             }
 

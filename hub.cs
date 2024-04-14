@@ -61,7 +61,7 @@ namespace ConsoleHub
             SlowWrite($"Прошу тебя, проникни в их лагерь и спаси наших людей!", teller: "Староста");
             SlowWrite($"Постараюсь вернуть их к рассвету.", teller: player.NickName);
             SlowWrite($"Рассчитываю на тебя. Береги себя!", teller: "Староста");
-            
+            story.HeadmanMainQuest.StartQuest();
         }
 
         internal static void ComeToHome(ref PlayerClass player, string nickName, ref Story story)

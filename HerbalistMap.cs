@@ -95,7 +95,7 @@ namespace consoleTextRPG
 
                     if (story.HerbalistMainQuest.QuestStarted)
                     {
-                        if (Collectables.Count >= 9)
+                        if (Collectables.Count < 1)
                         {
                             SlowWrite("Этого количества травы должно быть достаточно. Нужно принести ее травнице.");
                         }
